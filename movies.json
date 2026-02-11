@@ -3,11 +3,69 @@
     "id": 1,
     "titulo": "La Noche de los Muertos Vivientes",
     "año": 1968,
-    "sinopsis": "Un grupo de personas se refugia en una granja mientras los muertos vuelven a la vida. El clásico que definió el género.",
+    "sinopsis": "Las radiaciones procedentes de un satélite provocan un fenómeno terrorífico: los muertos salen de sus tumbas y atacan a los hombres para alimentarse. La acción comienza en un cementerio de Pennsylvania, donde Barbara, después de ser atacada por un muerto viviente, huye hacia una granja. Allí también se ha refugiado Ben. Ambos construirán barricadas para defenderse de una multitud de despiadados zombies que sólo pueden ser vencidos con un golpe en la cabeza.",
     "videoUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Night_of_the_Living_Dead_%281968%29.webm",
     "poster": "https://www.themoviedb.org/t/p/w600_and_h900_face/5cjDlHqfb6CJV9gUcAcSp7jlEs4.jpg",
     "subtitulos": [
-      {"label": "Español", "srclang": "es", "src": "subs/noche_es.vtt"}
+      {
+        "label": "Español",
+        "srclang": "es",
+        "src": "subs/noche_es.vtt"
+      }
+    ],
+    "categoria": "NEXO.TV",
+    "isEssential": false,
+    "isOriginal": false
+  },
+  {
+    "id": 2,
+    "titulo": "M, el vampiro de Düsseldorf",
+    "año": 1931,
+    "sinopsis": "Un asesino de niñas tiene atemorizada a toda la ciudad. La policía lo busca frenética y desesperadamente, deteniendo a cualquier persona mínimamente sospechosa. Por su parte, los jefes del hampa, furiosos por las redadas que están sufriendo por culpa del asesino, deciden buscarlo ellos mismos.",
+    "videoUrl": "https://ia601005.us.archive.org/3/items/m-1931-forNEXO.TV/fritz%20lang%27s%20m-1931-restored%20movie-720p-hd.mp4",
+    "poster": "https://www.themoviedb.org/t/p/w600_and_h900_face/5jAaU3LStpQNlaBnZYsExMlvsBQ.jpg",
+    "subtitulos": [
+      {
+        "label": "Español",
+        "srclang": "es",
+        "src": "subs/noche_es.vtt"
+      }
+    ],
+    "categoria": "NEXO.TV",
+    "isEssential": false,
+    "isOriginal": false
+  },
+  {
+    "id": 3,
+    "titulo": "Woman on the Run",
+    "año": 1950,
+    "sinopsis": "Frank Johnson (Ross Elliott) es testigo de un asesinato mientras pasea una noche a su perro. El inspector Ferris (Robert Keith) le pide que declare ante el gran jurado, pero Frank decide huir. Su mujer, Eleanor (Ann Sheridan), que además piensa que en realidad huye de un matrimonio fracasado, obtiene la ayuda de un periodista, Danny Leggett (Dennis O'Keefe), para localizar a su marido. Pero ellos no son los únicos que le están buscando...",
+    "videoUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Woman_On_The_Run_1950.webm",
+    "poster": "https://www.themoviedb.org/t/p/w600_and_h900_face/6wp0FpyQvYVphtUSvANiCarawop.jpg",
+    "subtitulos": [
+      {
+        "label": "Español",
+        "srclang": "es",
+        "src": "subs/noche_es.vtt"
+      }
+    ],
+    "categoria": "NEXO.TV",
+    "isEssential": false,
+    "isOriginal": false
+  },
+  {
+    "id": 3,
+    "titulo": "Clash by Night",
+    "año": 1952,
+    "sinopsis": "Mae Doyle (Barbara Stanwyck) vuelve a su pueblo natal, una pequeña población pesquera de Monterrey (California). Allí se hace amiga de una joven (Marilyn Monroe) que trabaja en la fábrica de conservas. También conoce a un amable pescador (Paul Douglas) con el que se casa, aunque poco a poco se sentirá atraída por otro hombre del pueblo (Robert Ryan).",
+    "videoUrl": "https://dn721602.ca.archive.org/0/items/clash-by-night-1952/Clash%20By%20Night%201952%20-%20Barbara%20Stanwyck%2C%20Robert%20Ryan%2C%20Paul%20Douglas%2C%20Marilyn_x264.ia.mp4",
+    "poster": "https://www.themoviedb.org/t/p/w600_and_h900_face/zhGWvfuKUSeOZZaHJrIGyluGLZY.jpg",
+    "subtitulos": [
+      {
+        "label": "Español",
+        "srclang": "es",
+        "src": "subs/noche_es.vtt"
+      }
     ],
     "categoria": "NEXO.TV",
     "isEssential": false,

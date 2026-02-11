@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+button:not(:disabled),
+.btn:not(:disabled) {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
 :root {
     --primary-dark: #1a1a1a;
     --secondary-dark: #2d2d2d;
@@ -18,6 +24,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -25,6 +32,8 @@ body {
     background-color: var(--primary-dark);
     color: var(--text-light);
     line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* ==================== ENCABEZADO ==================== */
@@ -165,7 +174,9 @@ body {
 
 .movie-poster {
     width: 100%;
-    height: 300px;
+    height: auto;
+    aspect-ratio: 2/3;
+    /* Proporción estándar de póster (500x750) */
     object-fit: cover;
     display: block;
     background-color: var(--tertiary-dark);
@@ -269,92 +280,365 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 2rem;
+    /* Evita que se corte arriba si es muy alto */
+    padding: 4rem 1rem 2rem;
+    /* Más espacio arriba */
+    background-color: rgba(0, 0, 0, 0.95);
+    overflow-y: auto;
 }
 
 .player-container {
     background-color: var(--secondary-dark);
     border-radius: 12px;
-    max-width: 1000px;
-    width: 100%;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    width: 95%;
+    max-width: 1200px;
     position: relative;
-    margin-top: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Importante para que los bordes redondeados funcionen */
 }
 
 .close-btn {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background-color: var(--gold);
-    border: none;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid var(--gold);
+    color: #fff;
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    font-size: 2rem;
+    font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    z-index: 10;
+    z-index: 9999;
+    padding: 0;
+    line-height: 1;
 }
 
 .close-btn:hover {
-    background-color: var(--light-gold);
+    background: var(--gold);
+    color: #000;
     transform: rotate(90deg);
 }
 
-/* Video player */
+/* Video Wrapper */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+}
+
+/* ====== FULLSCREEN STYLES ====== */
+/* Usamos tanto :fullscreen como clase .is-fullscreen para máxima compatibilidad */
+
+.video-wrapper:fullscreen,
+.video-wrapper:-webkit-full-screen,
+.video-wrapper:-moz-full-screen,
+.video-wrapper:-ms-fullscreen,
+.video-wrapper.is-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background-color: #000 !important;
+    border-radius: 0 !important;
+}
+
+.video-wrapper:fullscreen .video-player,
+.video-wrapper:-webkit-full-screen .video-player,
+.video-wrapper:-moz-full-screen .video-player,
+.video-wrapper:-ms-fullscreen .video-player,
+.video-wrapper.is-fullscreen .video-player {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+.video-wrapper:fullscreen .video-overlay,
+.video-wrapper:-webkit-full-screen .video-overlay,
+.video-wrapper:-moz-full-screen .video-overlay,
+.video-wrapper:-ms-fullscreen .video-overlay,
+.video-wrapper.is-fullscreen .video-overlay {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10;
+}
+
+.video-wrapper:fullscreen .video-controls,
+.video-wrapper:-webkit-full-screen .video-controls,
+.video-wrapper:-moz-full-screen .video-controls,
+.video-wrapper:-ms-fullscreen .video-controls,
+.video-wrapper.is-fullscreen .video-controls {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 20;
+}
+
+/* Busca .video-player y reemplázalo por esto: */
 .video-player {
     width: 100%;
     height: auto;
-    max-height: 600px;
+    aspect-ratio: 16 / 9;
+    /* Fuerza la proporción de cine */
     background-color: #000;
     display: block;
+    object-fit: contain;
+    /* Asegura que se vea toda la película */
 }
 
-/* Estilos para controles nativos del video */
+/* Asegúrate de que el wrapper no limite el tamaño */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+    line-height: 0;
+    /* Elimina espacios fantasma debajo del video */
+}
+
 video {
     outline: none;
 }
 
-/* Controles personalizados */
-.custom-controls {
-    background: linear-gradient(180deg, var(--tertiary-dark) 0%, var(--secondary-dark) 100%);
-    padding: 2rem 1.5rem;
-    border-top: 1px solid var(--border-color);
+/* Video Overlay con controles */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 20;
 }
 
-.controls-top {
-    margin-bottom: 1.5rem;
+.video-wrapper:hover .video-overlay,
+.video-overlay.show {
+    opacity: 1;
+    pointer-events: all;
 }
 
-.player-title {
-    font-size: 1.5rem;
-    font-weight: 700;
+/* Pantalla de Carga y Error */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     color: var(--gold);
-    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 15;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
-.player-synopsis {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
+.loading-overlay.active {
+    opacity: 1;
+    pointer-events: all;
 }
 
-.controls-bottom {
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(212, 175, 55, 0.3);
+    border-top: 5px solid var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Botón central de play/pause */
+
+
+
+
+.center-play-btn.playing {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Controles de video */
+.video-controls {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 100%);
+    pointer-events: all;
+    margin-top: auto;
+}
+
+/* Barra de progreso */
+.progress-container {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar:hover {
+    height: 8px;
+    transition: height 0.2s ease;
+}
+
+.progress-filled {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--light-gold) 100%);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s linear;
+    position: relative;
+}
+
+.progress-filled::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background-color: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.progress-bar:hover .progress-filled::after {
+    opacity: 1;
+}
+
+/* Fila de controles */
+.controls-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
 }
 
+.controls-left,
+.controls-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+/* Botones de control */
+.control-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.4rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background-color: rgba(212, 175, 55, 0.2);
+    color: var(--gold);
+    transform: scale(1.1);
+}
+
+/* Slider de volumen */
+.volume-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: var(--light-gold);
+    transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: var(--light-gold);
+    transform: scale(1.2);
+}
+
+/* Info del player */
 .player-info {
     color: var(--text-muted);
     font-size: 0.9rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 #currentTime {
@@ -370,30 +654,28 @@ video {
     margin: 0 0.3rem;
 }
 
-.quality-selector {
-    display: flex;
-    gap: 0.5rem;
+/* Controles personalizados (info debajo del video) */
+.custom-controls {
+    background: linear-gradient(180deg, var(--tertiary-dark) 0%, var(--secondary-dark) 100%);
+    padding: 2rem 1.5rem;
+    border-top: 1px solid var(--border-color);
 }
 
-.quality-btn {
-    padding: 0.5rem 1rem;
-    background-color: var(--tertiary-dark);
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    color: var(--text-light);
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
+.controls-top {
+    margin-bottom: 0;
 }
 
-.quality-btn:hover {
-    border-color: var(--gold);
+.player-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
 }
 
-.quality-btn.active {
-    background-color: var(--gold);
-    color: var(--primary-dark);
-    border-color: var(--gold);
+.player-synopsis {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 /* Detalles de la película */
@@ -471,6 +753,11 @@ video {
 }
 
 /* ==================== RESPONSIVE ==================== */
+
+
+
+
+/* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
@@ -491,18 +778,71 @@ video {
     }
 
     .player-container {
-        max-width: 100%;
+        width: 100%;
+        height: auto;
+        max-height: none;
         border-radius: 0;
         margin-top: 0;
+        display: flex;
+        flex-direction: column;
     }
 
-    .controls-bottom {
-        flex-direction: column;
-        align-items: flex-start;
+    .video-wrapper {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        background: #000;
+    }
+
+    .video-player {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* Asegura que se vea todo el video */
+    }
+
+    /* Controles más grandes para táctil */
+    .control-btn {
+        font-size: 1.5rem;
+        /* Iconos más grandes */
+        width: 48px;
+        /* Área táctil mínima recomendada */
+        height: 48px;
+        padding: 5px;
+    }
+
+    /* Barra de progreso más gruesa */
+    .progress-container {
+        height: 10px;
+    }
+
+    .progress-bar {
+        height: 100%;
+    }
+
+    .controls-row {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .controls-left,
+    .controls-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .volume-slider {
+        width: 100px;
+        /* Slider mas ancho para dedo */
     }
 
     .details-grid {
-        grid-template-columns: 1fr;
+        display: none;
+        /* Ocultar detalles técnicos en móvil para espacio */
+    }
+
+    .player-info h2 {
+        font-size: 1.2rem;
     }
 }
 
@@ -535,6 +875,74 @@ video {
     .play-button {
         opacity: 0.7;
     }
+
+    .video-controls {
+        padding: 0.8rem 1rem;
+    }
+
+    .control-btn {
+        font-size: 1.1rem;
+        min-width: 35px;
+        padding: 0.3rem;
+    }
+
+    /* Ocultar volumen en pantallas muy pequeñas */
+    .volume-slider {
+        display: none;
+    }
+
+    .player-info {
+        font-size: 0.8rem;
+    }
+
+    /* Ajuste botón cerrar en móvil */
+    .close-btn {
+        top: -35px;
+        right: 0;
+        font-size: 1.5rem;
+        padding: 5px;
+        background: rgba(0, 0, 0, 0.5);
+        /* Fondo semitransparente para mejor visibilidad */
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Modo Landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    .player-modal {
+        padding: 0;
+        align-items: flex-start;
+    }
+
+    .player-container {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        border: none;
+        max-width: none;
+    }
+
+    .video-wrapper {
+        height: 100%;
+        width: 100%;
+    }
+
+    .player-info,
+    .related-movies {
+        display: none;
+        /* En landscape móvil solo ver video */
+    }
+
+    .close-btn {
+        top: 10px;
+        right: 20px;
+        /* Más margen para notch/isla */
+    }
 }
 
 /* Animaciones */
@@ -543,6 +951,7 @@ video {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
