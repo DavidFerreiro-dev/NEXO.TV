@@ -2,7 +2,6 @@
 
 ![License: Public Domain](https://img.shields.io/badge/License-Public_Domain-gold.svg)
 ![Status: Concept/Academic](https://img.shields.io/badge/Status-Academic_Project-blue.svg)
-![Build: CS50](https://img.shields.io/badge/Course-CS50-white.svg)
 
 > **"Ars nos uni"** — NEXO.TV es un concepto de plataforma de streaming diseñado para explorar la intersección entre el cine de dominio público y las interfaces de usuario modernas.
 
