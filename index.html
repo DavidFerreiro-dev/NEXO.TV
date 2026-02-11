@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXO.TV - Streaming Service</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">NEXO<span class="logo-dot">.</span>TV</h1>
+            
+            <div class="search-bar">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Buscar películas..." 
+                    class="search-input"
+                >
+                <button class="search-btn">🔍</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Categorías -->
+    <nav class="categories">
+        <button class="category-btn active" data-category="all">Todas</button>
+        <button class="category-btn" data-category="essential">NEXO.TV Essential</button>
+        <button class="category-btn" data-category="original">NEXO.TV Original</button>
+    </nav>
+
+    <!-- Contenedor de películas -->
+    <main class="main-content">
+        <div class="movies-container" id="moviesContainer">
+            <!-- Las películas se cargarán aquí dinámicamente -->
+        </div>
+    </main>
+
+    <!-- Modal del reproductor -->
+    <div class="modal" id="playerModal">
+        <div class="player-container">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            
+            <video id="videoPlayer" class="video-player" controls crossorigin="anonymous" controlsList="nodownload">
+                <source id="videoSource" src="" type="video/mp4">
+                Tu navegador no soporta HTML5 video.
+            </video>
+
+            <!-- Controles personalizados -->
+            <div class="custom-controls">
+                <div class="controls-top">
+                    <h2 id="playerTitle" class="player-title"></h2>
+                    <p id="playerSynopsis" class="player-synopsis"></p>
+                </div>
+
+                <div class="controls-bottom">
+                    <div class="player-info">
+                        <span id="currentTime" class="time">0:00</span>
+                        <span class="time-separator">/</span>
+                        <span id="duration" class="time">0:00</span>
+                    </div>
+
+                    <div class="quality-selector">
+                        <button class="quality-btn active">1080p</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info de la película -->
+            <div class="movie-details">
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Año:</span>
+                        <span id="detailYear" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Categoría:</span>
+                        <span id="detailCategory" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tipo:</span>
+                        <span id="detailType" class="detail-value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Películas relacionadas -->
+            <div class="related-movies">
+                <h3>Más películas</h3>
+                <div class="related-list" id="relatedList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

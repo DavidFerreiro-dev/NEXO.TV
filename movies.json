@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "titulo": "La Noche de los Muertos Vivientes",
+    "año": 1968,
+    "sinopsis": "Un grupo de personas se refugia en una granja mientras los muertos vuelven a la vida. El clásico que definió el género.",
+    "videoUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Night_of_the_Living_Dead_%281968%29.webm",
+    "poster": "https://www.themoviedb.org/t/p/w600_and_h900_face/5cjDlHqfb6CJV9gUcAcSp7jlEs4.jpg",
+    "subtitulos": [
+      {"label": "Español", "srclang": "es", "src": "subs/noche_es.vtt"}
+    ],
+    "categoria": "NEXO.TV",
+    "isEssential": false,
+    "isOriginal": false
+  }
+]
