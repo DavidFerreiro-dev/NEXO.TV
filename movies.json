@@ -64,6 +64,17 @@
   "categoria": "NEXO.TV",
   "isEssential": true,
   "isOriginal": false
+},
+{
+  "id": 7,
+  "titulo": "Duck and Cover",
+  "año": 1951,
+  "sinopsis": "Cortometraje instructivo dirigido a niños en edad escolar de principios de la década de 1950 que combina animación e imágenes de acción real con narración en voz en off para explicar qué hacer para aumentar sus posibilidades de sobrevivir a la explosión de una bomba atómica.",
+  "videoUrl": "https://ia800301.us.archive.org/28/items/0771_Duck_and_Cover_12_33_20_12/0771_Duck_and_Cover_12_33_20_12.mp4",
+  "poster": "https://image.tmdb.org/t/p/original/iOvHXalffspkXAPIOUiMcxfvomc.jpg",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": false
 }
 
 ]
