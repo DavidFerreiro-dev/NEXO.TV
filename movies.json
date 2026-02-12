@@ -62,7 +62,7 @@
   "videoUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/The_Kid_%281921%29.webm",
   "poster": "https://image.tmdb.org/t/p/original/t0hK2XUqjfZNOgEDqPK0NFu0tYc.jpg",
   "categoria": "NEXO.TV",
-  "isEssential": true,
+  "isEssential": false,
   "isOriginal": false
 }
 
