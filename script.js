@@ -18,7 +18,6 @@ class NexoTVStreaming {
         this.stableMode = false;
         this.bufferInterval = null;
         this.lastSeekAt = 0; // timestamp of last user/programmatic seek
-        this.bufferSeconds = null; // último valor de segundos de buffer mostrado
 
         this.initializeElements();
         this.setupEventListeners();
@@ -508,7 +507,6 @@ class NexoTVStreaming {
     resetBufferingStats() {
         this.stallCount = 0;
         if (this.bufferInterval) clearInterval(this.bufferInterval);
-        this.showLoading();
     }
 
     handleBuffering() {
@@ -519,66 +517,14 @@ class NexoTVStreaming {
         }
 
         this.showLoading();
-        this.stallCount++;
-        
-        // Si se atasca más de 2 veces, activar modo estable automáticamente
-        if (this.stallCount > 2 && !this.stableMode) {
-            this.activateStableMode();
-        }
-
-        if (this.stableMode) {
-            // En modo estable, pausamos y esperamos a tener más buffer para evitar cortes
-            if (!this.videoPlayer.paused) this.videoPlayer.pause();
-            
-            if (this.bufferInterval) clearInterval(this.bufferInterval);
-            
-            this.bufferInterval = setInterval(() => {
-                if (!this.videoPlayer) return;
-                
-                const buffered = this.videoPlayer.buffered;
-                const current = this.videoPlayer.currentTime;
-                let loadedEnd = 0;
-
-                // Encontrar hasta dónde ha cargado el navegador
-                for (let i = 0; i < buffered.length; i++) {
-                    if (buffered.start(i) <= current && buffered.end(i) >= current) {
-                        loadedEnd = buffered.end(i);
-                        break;
-                    }
-                }
-
-                // Calcular segundos de buffer disponibles y actualizar popup
-                const availableSeconds = Math.max(0, Math.floor(loadedEnd - current));
-                this.bufferSeconds = availableSeconds;
-                if (this.loadingOverlay) {
-                    const span = this.loadingOverlay.querySelector('span');
-                    if (span) span.textContent = `CARGANDO (Búfer: ${availableSeconds}s)`;
-                }
-
-                // Objetivo: Cargar 8 segundos por delante o llegar al final
-                const targetBuffer = 8; 
-                const remaining = this.videoPlayer.duration - current;
-                const needed = Math.min(targetBuffer, remaining);
-
-                if ((loadedEnd - current) >= needed || loadedEnd >= this.videoPlayer.duration - 0.5) {
-                    clearInterval(this.bufferInterval);
-                    this.videoPlayer.play().catch(e => console.error('Reanudando...', e));
-                }
-            }, 1000);
-        }
     }
 
     showLoading() {
         if (this.loadingOverlay) {
             this.loadingOverlay.classList.add('active');
-            // Mantener el mensaje principal siempre como "CARGANDO" y añadir info de buffer si existe
             const span = this.loadingOverlay.querySelector('span');
             if (span) {
-                let text = 'CARGANDO';
-                if (this.bufferSeconds !== null && !isNaN(this.bufferSeconds)) {
-                    text += ` (Búfer: ${this.bufferSeconds}s)`;
-                }
-                span.textContent = text;
+                span.textContent = 'CARGANDO';
                 span.style.color = ''; // Resetear color (quitar rojo de error)
             }
             const spinner = this.loadingOverlay.querySelector('.spinner');
