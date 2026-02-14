@@ -8,6 +8,15 @@ class NexoTVStreaming {
         this.jsonUrl = './movies.json';
         this.storageKey = 'nexo-tv-data';
         this.progressKey = 'nexo-tv-progress';
+        this.favoritesKey = 'nexo-tv-favorites';
+        this.hudHideTimeout = null;
+        this.hudHideDelay = 4000; // 4 segundos antes de ocultar los controles
+        this.heroSlideInterval = null;
+        this.currentHeroSlide = 0;
+        
+        this.stallCount = 0;
+        this.stableMode = false;
+        this.bufferInterval = null;
 
         this.initializeElements();
         this.setupEventListeners();
@@ -32,6 +41,7 @@ class NexoTVStreaming {
         this.playPauseBtn = document.getElementById('playPauseBtn');
         this.muteBtn = document.getElementById('muteBtn');
         this.volumeSlider = document.getElementById('volumeSlider');
+        this.favBtn = document.getElementById('favBtn');
         this.fullscreenBtn = document.getElementById('fullscreenBtn');
         this.progressBar = document.getElementById('progressBar');
         this.progressFilled = document.getElementById('progressFilled');
@@ -47,8 +57,25 @@ class NexoTVStreaming {
         this.currentTimeEl = document.getElementById('currentTime');
         this.durationEl = document.getElementById('duration');
 
-        // Lista de relacionados
+        // Ficha Técnica
+        this.sheetDirector = document.getElementById('sheetDirector');
+        this.sheetCast = document.getElementById('sheetCast');
+        this.sheetProducer = document.getElementById('sheetProducer');
+
+        // Sección "Seguir Viendo"
+        this.continueWatchingSection = document.getElementById('continueWatchingSection');
+        this.continueWatchingContainer = document.getElementById('continueWatchingContainer');
+
+        // Lista de películas relacionadas
         this.relatedList = document.getElementById('relatedList');
+
+        // Hero Slideshow
+        this.heroSlidesContainer = document.getElementById('heroSlides');
+
+        // Footer & Términos
+        this.termsBtn = document.getElementById('termsBtn');
+        this.termsModal = document.getElementById('termsModal');
+        this.closeTermsBtn = document.getElementById('closeTermsBtn');
     }
 
     setupEventListeners() {
@@ -113,6 +140,11 @@ class NexoTVStreaming {
             this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
         }
 
+        // Botón de Favoritos
+        if (this.favBtn) {
+            this.favBtn.addEventListener('click', () => this.toggleFavorite());
+        }
+
         // Doble click para fullscreen
         if (this.videoPlayer) {
             this.videoPlayer.addEventListener('dblclick', () => this.toggleFullscreen());
@@ -141,8 +173,8 @@ class NexoTVStreaming {
             this.videoPlayer.addEventListener('ended', () => this.onVideoEnded());
 
             // Eventos de carga
-            this.videoPlayer.addEventListener('loadstart', () => this.showLoading());
-            this.videoPlayer.addEventListener('waiting', () => this.showLoading());
+            this.videoPlayer.addEventListener('loadstart', () => this.resetBufferingStats());
+            this.videoPlayer.addEventListener('waiting', () => this.handleBuffering());
             this.videoPlayer.addEventListener('canplay', () => this.hideLoading());
             this.videoPlayer.addEventListener('playing', () => this.hideLoading());
 
@@ -152,23 +184,53 @@ class NexoTVStreaming {
 
         // Mostrar/ocultar controles en hover
         if (this.videoOverlay) {
-            let hideTimeout;
+            const videoContainer = this.videoOverlay.parentElement;
+
+            // Función para mostrar los controles
             const showControls = () => {
                 this.videoOverlay.classList.add('show');
-                clearTimeout(hideTimeout);
-                hideTimeout = setTimeout(() => {
-                    if (!this.videoPlayer.paused) {
+                videoContainer.style.cursor = 'default'; // Mostrar cursor
+                clearTimeout(this.hudHideTimeout);
+
+                // Programar ocultación solo si el video está en reproducción
+                if (!this.videoPlayer.paused) {
+                    this.hudHideTimeout = setTimeout(() => {
                         this.videoOverlay.classList.remove('show');
-                    }
-                }, 3000);
+                        videoContainer.style.cursor = 'none'; // Ocultar cursor
+                    }, this.hudHideDelay);
+                }
             };
 
-            this.videoOverlay.parentElement.addEventListener('mousemove', showControls);
-            this.videoOverlay.parentElement.addEventListener('mouseleave', () => {
-                clearTimeout(hideTimeout);
-                if (!this.videoPlayer.paused) {
+            // Event listeners para movimiento del ratón
+            videoContainer.addEventListener('mousemove', showControls);
+            videoContainer.addEventListener('mouseenter', showControls);
+
+            // Mostrar controles cuando se pausa
+            this.videoPlayer.addEventListener('pause', () => {
+                clearTimeout(this.hudHideTimeout);
+                this.videoOverlay.classList.add('show');
+                videoContainer.style.cursor = 'default';
+            });
+            // Ocultar después de 4 segundos cuando se reanuda
+            this.videoPlayer.addEventListener('play', () => {
+                clearTimeout(this.hudHideTimeout);
+                this.hudHideTimeout = setTimeout(() => {
                     this.videoOverlay.classList.remove('show');
-                }
+                    videoContainer.style.cursor = 'none';
+                }, this.hudHideDelay);
+            });
+        }
+
+        // Eventos Modal Términos
+        if (this.termsBtn) {
+            this.termsBtn.addEventListener('click', () => this.openTerms());
+        }
+        if (this.closeTermsBtn) {
+            this.closeTermsBtn.addEventListener('click', () => this.closeTerms());
+        }
+        if (this.termsModal) {
+            this.termsModal.addEventListener('click', (e) => {
+                if (e.target === this.termsModal) this.closeTerms();
             });
         }
 
@@ -188,9 +250,13 @@ class NexoTVStreaming {
                 if (videoWrapper && videoWrapper.classList.contains('is-fullscreen')) {
                     // Salir del fullscreen por fallback
                     videoWrapper.classList.remove('is-fullscreen');
-                    if (this.fullscreenBtn) this.fullscreenBtn.textContent = '⛶';
+                    if (this.fullscreenBtn) this.fullscreenBtn.querySelector('img').src = 'Assets/fullscreen.png';
                 } else if (!document.fullscreenElement) {
                     this.closePlayer();
+                    // También cerrar términos si está abierto
+                    if (this.termsModal && this.termsModal.classList.contains('active')) {
+                        this.closeTerms();
+                    }
                 }
             }
         });
@@ -206,6 +272,10 @@ class NexoTVStreaming {
 
             this.filterMovies();
             this.saveToStorage();
+            this.initHeroSlideshow();
+            
+            // Iniciar detección de red
+            this.initNetworkDetection();
         } catch (error) {
             console.error('❌ Error cargando películas:', error);
             this.moviesContainer.innerHTML = '<p class="error">Error al cargar el catálogo. Intente recargar la página.</p>';
@@ -224,26 +294,32 @@ class NexoTVStreaming {
         if (data) {
             this.movies = JSON.parse(data);
             this.filterMovies();
+            this.initHeroSlideshow();
         }
     }
 
     filterMovies() {
         const term = this.searchInput ? this.searchInput.value.toLowerCase() : '';
+        const favorites = this.getFavorites();
 
         this.filteredMovies = this.movies.filter(movie => {
             // Filtro Categoría
             let matchCat = (this.currentCategory === 'all') ||
                 (this.currentCategory === 'essential' && movie.isEssential) ||
-                (this.currentCategory === 'original' && movie.isOriginal);
+                (this.currentCategory === 'original' && movie.isOriginal) ||
+                (this.currentCategory === 'favorites' && favorites.includes(movie.id));
 
-            // Filtro Búsqueda
+            // Filtro Búsqueda (incluye título, sinopsis, director y reparto)
             let matchSearch = !term ||
                 movie.titulo.toLowerCase().includes(term) ||
-                (movie.sinopsis && movie.sinopsis.toLowerCase().includes(term));
+                (movie.sinopsis && movie.sinopsis.toLowerCase().includes(term)) ||
+                (movie.director && movie.director.toLowerCase().includes(term)) ||
+                (movie.cast && movie.cast.toLowerCase().includes(term));
 
             return matchCat && matchSearch;
         });
 
+        this.renderContinueWatching();
         this.render();
     }
 
@@ -294,19 +370,19 @@ class NexoTVStreaming {
     }
 
     onVideoPlay() {
-        if (this.playPauseBtn) this.playPauseBtn.textContent = '⏸';
+        if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/pause.png';
         if (this.centerPlayBtn) this.centerPlayBtn.classList.add('playing');
         if (this.videoOverlay) this.videoOverlay.classList.add('show');
     }
 
     onVideoPause() {
-        if (this.playPauseBtn) this.playPauseBtn.textContent = '▶';
+        if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
         if (this.centerPlayBtn) this.centerPlayBtn.classList.remove('playing');
         if (this.videoOverlay) this.videoOverlay.classList.add('show');
     }
 
     onVideoEnded() {
-        if (this.playPauseBtn) this.playPauseBtn.textContent = '▶';
+        if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
         if (this.centerPlayBtn) this.centerPlayBtn.classList.remove('playing');
         if (this.videoOverlay) this.videoOverlay.classList.add('show');
         // Resetear progreso
@@ -323,10 +399,11 @@ class NexoTVStreaming {
     updateMuteButton() {
         if (!this.muteBtn || !this.videoPlayer) return;
 
+        const img = this.muteBtn.querySelector('img');
         if (this.videoPlayer.muted || this.videoPlayer.volume === 0) {
-            this.muteBtn.textContent = '🔇';
+            if (img) img.src = 'Assets/volumeOff.png';
         } else {
-            this.muteBtn.textContent = '🔊';
+            if (img) img.src = 'Assets/volumeOn.png';
         }
     }
 
@@ -367,7 +444,7 @@ class NexoTVStreaming {
                 document.body.style.overflow = 'hidden';
             }
 
-            if (this.fullscreenBtn) this.fullscreenBtn.textContent = '⮌';
+            if (this.fullscreenBtn) this.fullscreenBtn.querySelector('img').src = 'Assets/minimize.png';
         } else {
             // Salir de fullscreen
             if (document.fullscreenElement) {
@@ -381,7 +458,7 @@ class NexoTVStreaming {
             // Siempre quitar la clase de fallback
             videoWrapper.classList.remove('is-fullscreen');
 
-            if (this.fullscreenBtn) this.fullscreenBtn.textContent = '⛶';
+            if (this.fullscreenBtn) this.fullscreenBtn.querySelector('img').src = 'Assets/fullscreen.png';
         }
     }
 
@@ -402,18 +479,95 @@ class NexoTVStreaming {
 
     // === GESTIÓN DE CARGA Y ERRORES ===
 
+    initNetworkDetection() {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection) {
+            const checkConnection = () => {
+                const type = connection.effectiveType;
+                // Si es 2g, 3g o tiene saveData activado
+                if (type === '2g' || type === '3g' || type === 'slow-2g' || connection.saveData) {
+                    console.log(`📡 Conexión lenta detectada (${type}). Activando Modo Estable.`);
+                    this.activateStableMode();
+                }
+            };
+            checkConnection();
+            connection.addEventListener('change', checkConnection);
+        }
+    }
+
+    activateStableMode() {
+        if (this.stableMode) return;
+        this.stableMode = true;
+        this.showToast('📡 Modo de Conexión Lenta activado. Optimizando búfer...');
+    }
+
+    resetBufferingStats() {
+        this.stallCount = 0;
+        if (this.bufferInterval) clearInterval(this.bufferInterval);
+        this.showLoading();
+    }
+
+    handleBuffering() {
+        this.showLoading();
+        this.stallCount++;
+        
+        // Si se atasca más de 2 veces, activar modo estable automáticamente
+        if (this.stallCount > 2 && !this.stableMode) {
+            this.activateStableMode();
+        }
+
+        if (this.stableMode) {
+            // En modo estable, pausamos y esperamos a tener más buffer para evitar cortes
+            if (!this.videoPlayer.paused) this.videoPlayer.pause();
+            
+            if (this.bufferInterval) clearInterval(this.bufferInterval);
+            
+            this.bufferInterval = setInterval(() => {
+                if (!this.videoPlayer) return;
+                
+                const buffered = this.videoPlayer.buffered;
+                const current = this.videoPlayer.currentTime;
+                let loadedEnd = 0;
+
+                // Encontrar hasta dónde ha cargado el navegador
+                for (let i = 0; i < buffered.length; i++) {
+                    if (buffered.start(i) <= current && buffered.end(i) >= current) {
+                        loadedEnd = buffered.end(i);
+                        break;
+                    }
+                }
+
+                // Objetivo: Cargar 8 segundos por delante o llegar al final
+                const targetBuffer = 8; 
+                const remaining = this.videoPlayer.duration - current;
+                const needed = Math.min(targetBuffer, remaining);
+
+                if ((loadedEnd - current) >= needed || loadedEnd >= this.videoPlayer.duration - 0.5) {
+                    clearInterval(this.bufferInterval);
+                    this.videoPlayer.play().catch(e => console.error('Reanudando...', e));
+                }
+            }, 1000);
+        }
+    }
+
     showLoading() {
         if (this.loadingOverlay) {
             this.loadingOverlay.classList.add('active');
             // Asegurar que el mensaje sea "CARGANDO..."
             const span = this.loadingOverlay.querySelector('span');
-            if (span) span.textContent = 'CARGANDO...';
+            if (span) {
+                span.textContent = this.stableMode ? 'OPTIMIZANDO BÚFER...' : 'CARGANDO...';
+                span.style.color = ''; // Resetear color (quitar rojo de error)
+            }
+            const spinner = this.loadingOverlay.querySelector('.spinner');
+            if (spinner) spinner.style.display = ''; // Asegurar que el spinner se muestra
         }
     }
 
     hideLoading() {
         if (this.loadingOverlay) {
             this.loadingOverlay.classList.remove('active');
+            if (this.bufferInterval) clearInterval(this.bufferInterval);
         }
     }
 
@@ -432,6 +586,22 @@ class NexoTVStreaming {
         }
     }
 
+    showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Forzar reflow para animación
+        toast.offsetHeight;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 500);
+        }, 4000);
+    }
+
     // Gestión de Progreso
     saveProgress() {
         if (!this.currentMovie || !this.videoPlayer) return;
@@ -443,6 +613,79 @@ class NexoTVStreaming {
     getSavedProgress(id) {
         const data = JSON.parse(localStorage.getItem(this.progressKey)) || {};
         return data[id] || 0;
+    }
+
+    renderContinueWatching() {
+        if (!this.continueWatchingContainer || !this.continueWatchingSection) return;
+
+        // No mostrar "Seguir Viendo" si está en categorías especiales
+        if (this.currentCategory !== 'all') {
+            this.continueWatchingSection.style.display = 'none';
+            return;
+        }
+
+        const progressData = JSON.parse(localStorage.getItem(this.progressKey)) || {};
+        const moviesWithProgress = [];
+
+        // Obtener películas con progreso
+        for (const movieId in progressData) {
+            const progress = progressData[movieId];
+            const movie = this.movies.find(m => m.id == movieId);
+            
+            if (movie && progress > 0) {
+                moviesWithProgress.push({ movie, progress });
+            }
+        }
+
+        // Mostrar/ocultar sección
+        if (moviesWithProgress.length === 0) {
+            this.continueWatchingSection.style.display = 'none';
+            return;
+        }
+
+        this.continueWatchingSection.style.display = 'block';
+        this.continueWatchingContainer.innerHTML = '';
+
+        // Renderizar películas
+        moviesWithProgress.forEach(({ movie, progress }) => {
+            const card = document.createElement('div');
+            card.className = 'continue-item';
+
+            card.innerHTML = `
+                <div style="position: relative;">
+                    <img src="${movie.poster}" alt="${movie.titulo}" class="movie-poster" loading="lazy">
+                    <div class="continue-progress">
+                        <div class="continue-progress-bar" data-movie-id="${movie.id}" style="width: 0%"></div>
+                    </div>
+                    <button class="continue-remove-btn" title="Eliminar del historial">×</button>
+                </div>
+            `;
+
+            // Actualizar barra de progreso cuando se carga el video
+            const tempVideo = document.createElement('video');
+            tempVideo.src = movie.videoUrl;
+            tempVideo.addEventListener('loadedmetadata', () => {
+                const progressPercent = (progress / tempVideo.duration) * 100;
+                const progressBar = card.querySelector('.continue-progress-bar');
+                if (progressBar) progressBar.style.width = Math.min(progressPercent, 95) + '%';
+            });
+
+            const removeBtn = card.querySelector('.continue-remove-btn');
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeFromContinueWatching(movie.id);
+            });
+
+            card.addEventListener('click', () => this.playMovie(movie));
+            this.continueWatchingContainer.appendChild(card);
+        });
+    }
+
+    removeFromContinueWatching(movieId) {
+        const progressData = JSON.parse(localStorage.getItem(this.progressKey)) || {};
+        delete progressData[movieId];
+        localStorage.setItem(this.progressKey, JSON.stringify(progressData));
+        this.renderContinueWatching(); // Renderizar nuevamente
     }
 
     render() {
@@ -465,7 +708,7 @@ class NexoTVStreaming {
             card.innerHTML = `
                 <div style="position: relative;">
                     <img src="${movie.poster}" alt="${movie.titulo}" class="movie-poster" loading="lazy">
-                    <button class="play-button">▶</button>
+                    <button class="play-button"><img src="Assets/play.png" alt="Play"></button>
                 </div>
                 <div class="movie-info">
                     <h3 class="movie-title">${movie.titulo}</h3>
@@ -518,10 +761,11 @@ class NexoTVStreaming {
             }
 
             // E) Resetear controles personalizados
-            if (this.playPauseBtn) this.playPauseBtn.textContent = '▶';
+            if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
             if (this.centerPlayBtn) this.centerPlayBtn.classList.remove('playing');
             if (this.progressFilled) this.progressFilled.style.width = '0%';
             if (this.videoOverlay) this.videoOverlay.classList.add('show');
+            this.stallCount = 0; // Resetear contador al terminar
 
             // F) Intentar reproducir suavemente
             const playPromise = this.videoPlayer.play();
@@ -533,8 +777,10 @@ class NexoTVStreaming {
             }
         }
 
-        // 3. Cargar relacionados y mostrar modal
+        // 3. Cargar ficha técnica, películas relacionadas y mostrar modal
+        this.loadTechnicalSheet(movie);
         this.loadRelatedMovies(movie);
+        this.updateFavoriteButton();
         if (this.playerModal) this.playerModal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -542,6 +788,9 @@ class NexoTVStreaming {
     closePlayer() {
         if (this.playerModal) this.playerModal.classList.remove('active');
         document.body.style.overflow = 'auto';
+
+        // Limpiar el timeout del HUD
+        clearTimeout(this.hudHideTimeout);
 
         // Limpiar el reproductor para que deje de descargar datos
         if (this.videoPlayer) {
@@ -553,24 +802,232 @@ class NexoTVStreaming {
         this.currentMovie = null;
     }
 
-    loadRelatedMovies(current) {
-        if (!this.relatedList) return;
-        this.relatedList.innerHTML = '';
+    // ==========================================
+    //  GESTIÓN DE FAVORITOS
+    // ==========================================
+    toggleFavorite() {
+        if (!this.currentMovie) return;
 
-        const related = this.movies
-            .filter(m => m.id !== current.id)
-            .slice(0, 4);
+        const favorites = this.getFavorites();
+        const isFavorite = favorites.includes(this.currentMovie.id);
+
+        if (isFavorite) {
+            // Remover de favoritos
+            const index = favorites.indexOf(this.currentMovie.id);
+            favorites.splice(index, 1);
+        } else {
+            // Agregar a favoritos
+            favorites.push(this.currentMovie.id);
+        }
+
+        localStorage.setItem(this.favoritesKey, JSON.stringify(favorites));
+        this.updateFavoriteButton();
+    }
+
+    getFavorites() {
+        const data = localStorage.getItem(this.favoritesKey);
+        return data ? JSON.parse(data) : [];
+    }
+
+    isFavorite(movieId) {
+        return this.getFavorites().includes(movieId);
+    }
+
+    updateFavoriteButton() {
+        if (!this.favBtn || !this.currentMovie) return;
+
+        if (this.isFavorite(this.currentMovie.id)) {
+            this.favBtn.classList.add('favorite');
+        } else {
+            this.favBtn.classList.remove('favorite');
+        }
+    }
+
+    loadTechnicalSheet(movie) {
+        console.log('📋 Cargando ficha técnica para:', movie.titulo);
+
+        // Buscar los elementos dinámicamente en caso de que no estén inicializados
+        const sheetDirector = document.getElementById('sheetDirector');
+        const sheetCast = document.getElementById('sheetCast');
+        const sheetProducer = document.getElementById('sheetProducer');
+
+        // Director(es)
+        if (sheetDirector && movie.director) {
+            const directors = movie.director.split(',').map(d => d.trim());
+            const directorElements = directors.map(dir => 
+                `<span class="sheet-clickable" data-search="${dir}">${dir}</span>`
+            );
+            sheetDirector.innerHTML = directorElements.join(', ');
+            
+            // Agregar event listeners
+            sheetDirector.querySelectorAll('.sheet-clickable').forEach(el => {
+                el.addEventListener('click', () => this.searchByPerson(el.dataset.search));
+            });
+        }
+
+        // Reparto
+        if (sheetCast && movie.cast) {
+            const actors = movie.cast.split(',').map(a => a.trim());
+            const actorElements = actors.map(actor => 
+                `<span class="sheet-clickable" data-search="${actor}">${actor}</span>`
+            );
+            sheetCast.innerHTML = actorElements.join(', ');
+            
+            // Agregar event listeners
+            sheetCast.querySelectorAll('.sheet-clickable').forEach(el => {
+                el.addEventListener('click', () => this.searchByPerson(el.dataset.search));
+            });
+        }
+
+        // Productora
+        if (sheetProducer && movie.producer) {
+            sheetProducer.textContent = movie.producer;
+        }
+    }
+
+    loadRelatedMovies(current) {
+        const relatedList = document.getElementById('relatedList');
+        if (!relatedList) return;
+        relatedList.innerHTML = '';
+
+        // Filtrar películas diferentes a la actual y mezclarlas aleatoriamente
+        const availableMovies = this.movies.filter(m => m.id !== current.id);
+        const shuffled = availableMovies.sort(() => Math.random() - 0.5);
+        const related = shuffled.slice(0, 5);
 
         related.forEach(m => {
             const el = document.createElement('div');
             el.className = 'related-item';
             el.innerHTML = `<img src="${m.poster}" alt="${m.titulo}"><span>${m.titulo}</span>`;
             el.addEventListener('click', () => this.playMovie(m));
-            this.relatedList.appendChild(el);
+            relatedList.appendChild(el);
         });
+    }
+
+    searchByPerson(personName) {
+        // Buscar por director/actor
+        if (this.searchInput) {
+            this.searchInput.value = personName;
+            this.handleSearch();
+            // Scroll a la sección de catálogo
+            document.querySelector('.catalog-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    initHeroSlideshow() {
+        if (!this.heroSlidesContainer || this.movies.length === 0) return;
+
+        // Filtrar películas que tengan landscape
+        const slides = this.movies.filter(m => m.landscape);
+        
+        // Si no hay suficientes, usar posters o lo que haya
+        if (slides.length === 0) return;
+
+        // Limpiar contenedor
+        this.heroSlidesContainer.innerHTML = '';
+
+        // Crear elementos de imagen
+        slides.forEach((movie, index) => {
+            const img = document.createElement('img');
+            img.src = movie.landscape;
+            img.alt = `Slide ${movie.titulo}`;
+            img.className = `hero-slide ${index === 0 ? 'active' : ''}`;
+            this.heroSlidesContainer.appendChild(img);
+        });
+
+        // Iniciar intervalo
+        if (this.heroSlideInterval) clearInterval(this.heroSlideInterval);
+        
+        const slideElements = this.heroSlidesContainer.querySelectorAll('.hero-slide');
+        
+        this.heroSlideInterval = setInterval(() => {
+            slideElements[this.currentHeroSlide].classList.remove('active');
+            this.currentHeroSlide = (this.currentHeroSlide + 1) % slideElements.length;
+            slideElements[this.currentHeroSlide].classList.add('active');
+        }, 5000); // Cambiar cada 5 segundos
+    }
+
+    openTerms() {
+        if (this.termsModal) this.termsModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeTerms() {
+        if (this.termsModal) this.termsModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     new NexoTVStreaming();
 });
+
+// Function to detect mobile devices
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Function to show mobile restriction alert
+function showMobileRestrictionAlert() {
+    if (isMobileDevice()) {
+        alert("NEXO.TV no está disponible en dispositivos móviles. Por favor, accede desde un ordenador o un dispositivo compatible.");
+        document.body.innerHTML = "<h1 style='color: white; text-align: center; margin-top: 20%;'>NEXO.TV no está disponible en dispositivos móviles. Por favor, accede desde un ordenador o un dispositivo compatible.</h1>";
+    }
+}
+
+// Function to detect Amazon Fire Stick
+function isAmazonFireStick() {
+    return /AFT|Fire_TV/i.test(navigator.userAgent);
+}
+
+// Function to adjust controls for Amazon Fire Stick
+function adjustControlsForFireStick() {
+    if (isAmazonFireStick()) {
+        const videoPlayer = document.getElementById('videoPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+        // Add keydown event listener for Fire Stick remote
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'Enter': // Play/Pause
+                    if (videoPlayer.paused) {
+                        videoPlayer.play();
+                    } else {
+                        videoPlayer.pause();
+                    }
+                    break;
+                case 'ArrowUp': // Volume Up
+                    videoPlayer.volume = Math.min(videoPlayer.volume + 0.1, 1);
+                    break;
+                case 'ArrowDown': // Volume Down
+                    videoPlayer.volume = Math.max(videoPlayer.volume - 0.1, 0);
+                    break;
+                case 'ArrowRight': // Seek Forward
+                    videoPlayer.currentTime = Math.min(videoPlayer.currentTime + 10, videoPlayer.duration);
+                    break;
+                case 'ArrowLeft': // Seek Backward
+                    videoPlayer.currentTime = Math.max(videoPlayer.currentTime - 10, 0);
+                    break;
+                case 'F': // Fullscreen
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        videoPlayer.requestFullscreen();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        console.log('Controles ajustados para Amazon Fire Stick.');
+    }
+}
+
+// Call the function on page load
+window.onload = function() {
+    showMobileRestrictionAlert();
+    adjustControlsForFireStick();
+};
