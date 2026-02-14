@@ -3,7 +3,7 @@
 <img src="Logos/nexo.png" alt="NEXO.TV Logo" width="300">
 
 ![License: Public Domain](https://img.shields.io/badge/License-Public_Domain-gold.svg)
-![Status: Concept/Academic](https://img.shields.io/badge/Status-Academic_Project-blue.svg)
+![NEXO: Original](https://img.shields.io/badge/NEXO-Original-black?style=flat-square)
 
 > **El cine que definió la historia** — Joyas ocultas, clásicos inmortales y el legado que las plataformas olvidaron.
 
