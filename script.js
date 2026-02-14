@@ -17,6 +17,8 @@ class NexoTVStreaming {
         this.stallCount = 0;
         this.stableMode = false;
         this.bufferInterval = null;
+        this.lastSeekAt = 0; // timestamp of last user/programmatic seek
+        this.bufferSeconds = null; // último valor de segundos de buffer mostrado
 
         this.initializeElements();
         this.setupEventListeners();
@@ -177,6 +179,7 @@ class NexoTVStreaming {
             this.videoPlayer.addEventListener('waiting', () => this.handleBuffering());
             this.videoPlayer.addEventListener('canplay', () => this.hideLoading());
             this.videoPlayer.addEventListener('playing', () => this.hideLoading());
+            this.videoPlayer.addEventListener('seeking', () => { this.lastSeekAt = Date.now(); });
 
             // Manejo de errores
             this.videoPlayer.addEventListener('error', (e) => this.handleVideoError(e));
@@ -474,6 +477,7 @@ class NexoTVStreaming {
 
         const rect = this.progressBar.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
+        this.lastSeekAt = Date.now();
         this.videoPlayer.currentTime = percent * this.videoPlayer.duration;
     }
 
@@ -508,6 +512,12 @@ class NexoTVStreaming {
     }
 
     handleBuffering() {
+        // Ignorar buffering inmediato si proviene de un seek del usuario o del propio reproductor
+        const sinceSeek = Date.now() - (this.lastSeekAt || 0);
+        if (this.videoPlayer && (this.videoPlayer.seeking || sinceSeek < 1200)) {
+            return; // No tratar esto como un fallo de conexión
+        }
+
         this.showLoading();
         this.stallCount++;
         
@@ -537,6 +547,14 @@ class NexoTVStreaming {
                     }
                 }
 
+                // Calcular segundos de buffer disponibles y actualizar popup
+                const availableSeconds = Math.max(0, Math.floor(loadedEnd - current));
+                this.bufferSeconds = availableSeconds;
+                if (this.loadingOverlay) {
+                    const span = this.loadingOverlay.querySelector('span');
+                    if (span) span.textContent = `CARGANDO (Búfer: ${availableSeconds}s)`;
+                }
+
                 // Objetivo: Cargar 8 segundos por delante o llegar al final
                 const targetBuffer = 8; 
                 const remaining = this.videoPlayer.duration - current;
@@ -553,10 +571,14 @@ class NexoTVStreaming {
     showLoading() {
         if (this.loadingOverlay) {
             this.loadingOverlay.classList.add('active');
-            // Asegurar que el mensaje sea "CARGANDO..."
+            // Mantener el mensaje principal siempre como "CARGANDO" y añadir info de buffer si existe
             const span = this.loadingOverlay.querySelector('span');
             if (span) {
-                span.textContent = this.stableMode ? 'OPTIMIZANDO BÚFER...' : 'CARGANDO...';
+                let text = 'CARGANDO';
+                if (this.bufferSeconds !== null && !isNaN(this.bufferSeconds)) {
+                    text += ` (Búfer: ${this.bufferSeconds}s)`;
+                }
+                span.textContent = text;
                 span.style.color = ''; // Resetear color (quitar rojo de error)
             }
             const spinner = this.loadingOverlay.querySelector('.spinner');
@@ -757,6 +779,7 @@ class NexoTVStreaming {
             // D) Restaurar progreso si existe
             const savedTime = this.getSavedProgress(movie.id);
             if (savedTime > 0) {
+                this.lastSeekAt = Date.now();
                 this.videoPlayer.currentTime = savedTime;
             }
 
