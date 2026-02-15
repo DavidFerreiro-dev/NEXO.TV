@@ -19,6 +19,17 @@ class NexoTVStreaming {
         this.bufferInterval = null;
         this.lastSeekAt = 0; // timestamp of last user/programmatic seek
 
+        // Detectar si es dispositivo móvil
+        this.isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        this.isSmallScreen = window.innerWidth <= 480;
+        
+        // Variables para gestos touch
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.touchStartTime = 0;
+        this.lastTapTime = 0;
+        this.doubleTapDetected = false;
+
         this.initializeElements();
         this.setupEventListeners();
         this.loadMovies();
@@ -31,6 +42,9 @@ class NexoTVStreaming {
 
         // Inputs y Botones
         this.searchInput = document.getElementById('searchInput');
+        if (this.searchInput) {
+            this.searchInput.setAttribute('autocomplete', 'off');
+        }
         this.categoryBtns = document.querySelectorAll('.category-btn');
         this.closeBtn = document.getElementById('closeBtn');
 
@@ -66,6 +80,12 @@ class NexoTVStreaming {
         // Sección "Seguir Viendo"
         this.continueWatchingSection = document.getElementById('continueWatchingSection');
         this.continueWatchingContainer = document.getElementById('continueWatchingContainer');
+
+        // Icono central animado (Estilo YouTube)
+        this.centerIcon = document.createElement('div');
+        this.centerIcon.className = 'center-icon-animation';
+        const videoWrapper = document.querySelector('.video-wrapper');
+        if (videoWrapper) videoWrapper.appendChild(this.centerIcon);
 
         // Lista de películas relacionadas
         this.relatedList = document.getElementById('relatedList');
@@ -123,7 +143,20 @@ class NexoTVStreaming {
 
         // Click en el video para play/pause
         if (this.videoPlayer) {
-            this.videoPlayer.addEventListener('click', () => this.togglePlayPause());
+            this.videoPlayer.addEventListener('click', () => {
+                this.togglePlayPause();
+                if (this.isMobile) this.animateCenterIcon();
+            });
+        }
+
+        // Click en overlay para play/pause (cuando controles visibles)
+        if (this.videoOverlay) {
+            this.videoOverlay.addEventListener('click', (e) => {
+                if (e.target === this.videoOverlay) {
+                    this.togglePlayPause();
+                    if (this.isMobile) this.animateCenterIcon();
+                }
+            });
         }
 
         // Mute/Unmute
@@ -184,7 +217,7 @@ class NexoTVStreaming {
             this.videoPlayer.addEventListener('error', (e) => this.handleVideoError(e));
         }
 
-        // Mostrar/ocultar controles en hover
+        // Mostrar/ocultar controles en hover/touch
         if (this.videoOverlay) {
             const videoContainer = this.videoOverlay.parentElement;
 
@@ -194,7 +227,12 @@ class NexoTVStreaming {
                 videoContainer.style.cursor = 'default'; // Mostrar cursor
                 clearTimeout(this.hudHideTimeout);
 
-                // Programar ocultación solo si el video está en reproducción
+                // En móviles, dejar controles siempre visibles
+                if (this.isMobile) {
+                    return;
+                }
+
+                // Programar ocultación solo si el video está en reproducción (solo desktop)
                 if (!this.videoPlayer.paused) {
                     this.hudHideTimeout = setTimeout(() => {
                         this.videoOverlay.classList.remove('show');
@@ -203,9 +241,23 @@ class NexoTVStreaming {
                 }
             };
 
-            // Event listeners para movimiento del ratón
-            videoContainer.addEventListener('mousemove', showControls);
-            videoContainer.addEventListener('mouseenter', showControls);
+            // Event listeners para movimiento del ratón (solo desktop)
+            if (!this.isMobile) {
+                videoContainer.addEventListener('mousemove', showControls);
+                videoContainer.addEventListener('mouseenter', showControls);
+                videoContainer.addEventListener('mouseleave', () => {
+                    if (!this.videoPlayer.paused) {
+                        clearTimeout(this.hudHideTimeout);
+                        this.hudHideTimeout = setTimeout(() => {
+                            this.videoOverlay.classList.remove('show');
+                            videoContainer.style.cursor = 'none';
+                        }, this.hudHideDelay);
+                    }
+                });
+            } else {
+                // En móviles, siempre mostrar controles
+                this.videoOverlay.classList.add('show');
+            }
 
             // Mostrar controles cuando se pausa
             this.videoPlayer.addEventListener('pause', () => {
@@ -213,14 +265,45 @@ class NexoTVStreaming {
                 this.videoOverlay.classList.add('show');
                 videoContainer.style.cursor = 'default';
             });
-            // Ocultar después de 4 segundos cuando se reanuda
+            
+            // Ocultar después de 4 segundos cuando se reanuda (solo desktop)
             this.videoPlayer.addEventListener('play', () => {
                 clearTimeout(this.hudHideTimeout);
-                this.hudHideTimeout = setTimeout(() => {
-                    this.videoOverlay.classList.remove('show');
-                    videoContainer.style.cursor = 'none';
-                }, this.hudHideDelay);
+                if (!this.isMobile) {
+                    this.hudHideTimeout = setTimeout(() => {
+                        this.videoOverlay.classList.remove('show');
+                        videoContainer.style.cursor = 'none';
+                    }, this.hudHideDelay);
+                }
             });
+
+            // Gestos touch mejorados para móviles
+            if (this.isMobile) {
+                videoContainer.addEventListener('touchstart', (e) => {
+                    this.touchStartX = e.touches[0].clientX;
+                    this.touchStartY = e.touches[0].clientY;
+                    this.touchStartTime = Date.now();
+                }, { passive: true });
+
+                videoContainer.addEventListener('touchend', () => {
+                    const touchDuration = Date.now() - this.touchStartTime;
+                    // Detectar doble tap (2 taps en menos de 500ms)
+                    if (touchDuration < 200) {
+                        const now = Date.now();
+                        if (now - this.lastTapTime < 300) {
+                            this.togglePlayPause();
+                            this.doubleTapDetected = true;
+                        }
+                        this.lastTapTime = now;
+                        
+                        // Prevenir play/pause con simple tap si fue doble tap
+                        if (this.doubleTapDetected) {
+                            setTimeout(() => { this.doubleTapDetected = false; }, 300);
+                            return;
+                        }
+                    }
+                }, { passive: true });
+            }
         }
 
         // Eventos Modal Términos
@@ -434,13 +517,17 @@ class NexoTVStreaming {
                     videoWrapper.msRequestFullscreen ? videoWrapper.msRequestFullscreen() :
                         null;
 
-            // Si la API falla, usar fallback con clase CSS
-            if (fsPromise && fsPromise.catch) {
-                fsPromise.catch(() => {
+            if (fsPromise) {
+                fsPromise.then(() => {
+                    // En móviles, forzar orientación landscape DESPUÉS de entrar en fullscreen
+                    if (this.isMobile && screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(console.warn);
+                    }
+                }).catch(() => {
                     videoWrapper.classList.add('is-fullscreen');
                     document.body.style.overflow = 'hidden';
                 });
-            } else if (!fsPromise) {
+            } else {
                 // API no disponible, usar fallback
                 videoWrapper.classList.add('is-fullscreen');
                 document.body.style.overflow = 'hidden';
@@ -457,10 +544,54 @@ class NexoTVStreaming {
                 document.msExitFullscreen();
             }
 
+            // Liberar la orientación en móviles
+            if (this.isMobile && screen.orientation && screen.orientation.unlock) {
+                try {
+                    screen.orientation.unlock();
+                } catch (e) {
+                    console.log('No se pudo desbloquear orientación');
+                }
+            }
+
             // Siempre quitar la clase de fallback
             videoWrapper.classList.remove('is-fullscreen');
 
             if (this.fullscreenBtn) this.fullscreenBtn.querySelector('img').src = 'Assets/fullscreen.png';
+        }
+    }
+
+    animateCenterIcon() {
+        if (!this.centerIcon) return;
+        
+        const isPlaying = !this.videoPlayer.paused;
+        // Icono a mostrar: Si está play, mostramos play. Si pausa, pausa.
+        const iconSrc = isPlaying ? 'Assets/play.png' : 'Assets/pause.png';
+        
+        this.centerIcon.innerHTML = `<img src="${iconSrc}">`;
+        
+        // Reiniciar animación
+        this.centerIcon.classList.remove('active');
+        void this.centerIcon.offsetWidth; // Trigger reflow
+        this.centerIcon.classList.add('active');
+        
+        setTimeout(() => {
+            this.centerIcon.classList.remove('active');
+        }, 600);
+    }
+
+    updateFullscreenButton() {
+        // Esta función se llama cuando cambia el estado de fullscreen
+        const videoWrapper = document.querySelector('.video-wrapper');
+        if (!videoWrapper) return;
+
+        const isFullscreen = document.fullscreenElement ||
+            document.webkitFullscreenElement ||
+            document.mozFullScreenElement ||
+            document.msFullscreenElement ||
+            videoWrapper.classList.contains('is-fullscreen');
+
+        if (this.fullscreenBtn && this.fullscreenBtn.querySelector('img')) {
+            this.fullscreenBtn.querySelector('img').src = isFullscreen ? 'Assets/minimize.png' : 'Assets/fullscreen.png';
         }
     }
 
@@ -936,14 +1067,6 @@ function isMobileDevice() {
     return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
-// Function to show mobile restriction alert
-function showMobileRestrictionAlert() {
-    if (isMobileDevice()) {
-        alert("NEXO.TV no está disponible en dispositivos móviles. Por favor, accede desde un ordenador o un dispositivo compatible.");
-        document.body.innerHTML = "<h1 style='color: white; text-align: center; margin-top: 20%;'>NEXO.TV no está disponible en dispositivos móviles. Por favor, accede desde un ordenador o un dispositivo compatible.</h1>";
-    }
-}
-
 // Function to detect Amazon Fire Stick
 function isAmazonFireStick() {
     return /AFT|Fire_TV/i.test(navigator.userAgent);
@@ -997,6 +1120,5 @@ function adjustControlsForFireStick() {
 
 // Call the function on page load
 window.onload = function() {
-    showMobileRestrictionAlert();
     adjustControlsForFireStick();
 };
