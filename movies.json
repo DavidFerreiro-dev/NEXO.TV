@@ -254,7 +254,21 @@
   "producer": "Selznick International Pictures",
   "country": "Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/pMnXtyGFUrCRH7tVGIkkrGHs3AX.jpg"
+},
+{
+  "id": 17,
+  "titulo": "Mickey Mouse: La banda encadenada",
+  "año": 1930,
+  "sinopsis": "Mickey es un preso controlado por el malvado Pete, pero aprovechará un motín para poder escapar.",
+  "videoUrl": "https://ia801702.us.archive.org/24/items/the-chain-gang_1930/the-chain-gang_1930.mp4",
+  "poster": "https://www.themoviedb.org/t/p/w600_and_h900_face/5rJDPpKGj4j9wVW89eU4mwagiXt.jpg",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": false,
+  "director": "Burt Gillett",
+  "cast": "Walt Disney, Mickey Mouse, Minnie Mouse, Pete, Clarabelle Cow, Pluto (Prototype)",
+  "producer": "Walt Disney Productions",
+  "country": "Estados Unidos",
+  "landscape": "https://image.tmdb.org/t/p/original/86vPxoYYOpf0cRAV9cLTAaFEtWK.jpg"
 }
-  
-
 ]
