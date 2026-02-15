@@ -485,7 +485,11 @@ class NexoTVStreaming {
         if (!this.muteBtn || !this.videoPlayer) return;
 
         const img = this.muteBtn.querySelector('img');
-        if (this.videoPlayer.muted || this.videoPlayer.volume === 0) {
+        let isMuted = false;
+
+        isMuted = this.videoPlayer.muted || this.videoPlayer.volume === 0;
+
+        if (isMuted) {
             if (img) img.src = 'Assets/volumeOff.png';
         } else {
             if (img) img.src = 'Assets/volumeOn.png';
@@ -899,6 +903,7 @@ class NexoTVStreaming {
             this.videoPlayer.removeAttribute('src'); // Elimina la fuente completamente
             this.videoPlayer.load();
         }
+
         this.currentMovie = null;
     }
 
