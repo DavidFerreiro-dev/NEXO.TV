@@ -9,6 +9,7 @@ class NexoTVStreaming {
         this.storageKey = 'nexo-tv-data';
         this.progressKey = 'nexo-tv-progress';
         this.favoritesKey = 'nexo-tv-favorites';
+        this.cookieConsentKey = 'nexo-tv-cookie-consent';
         this.hudHideTimeout = null;
         this.hudHideDelay = 4000; // 4 segundos antes de ocultar los controles
         this.heroSlideInterval = null;
@@ -33,6 +34,7 @@ class NexoTVStreaming {
         this.initializeElements();
         this.setupEventListeners();
         this.loadMovies();
+        this.initCookieConsent();
     }
 
     initializeElements() {
@@ -97,6 +99,20 @@ class NexoTVStreaming {
         this.termsBtn = document.getElementById('termsBtn');
         this.termsModal = document.getElementById('termsModal');
         this.closeTermsBtn = document.getElementById('closeTermsBtn');
+
+        // Inyectar botón de Preferencias de Cookies en el footer (dinámicamente)
+        if (this.termsBtn && this.termsBtn.parentNode) {
+            if (!document.getElementById('cookiePrefsBtn')) {
+                const cookieBtn = document.createElement('button');
+                cookieBtn.id = 'cookiePrefsBtn';
+                cookieBtn.className = 'footer-link-btn'; // Usa el estilo existente en CSS
+                cookieBtn.textContent = 'Preferencias de Cookies';
+                this.termsBtn.parentNode.insertBefore(cookieBtn, this.termsBtn.nextSibling);
+                this.cookiePrefsBtn = cookieBtn;
+            } else {
+                this.cookiePrefsBtn = document.getElementById('cookiePrefsBtn');
+            }
+        }
     }
 
     setupEventListeners() {
@@ -211,7 +227,10 @@ class NexoTVStreaming {
             this.videoPlayer.addEventListener('waiting', () => this.handleBuffering());
             this.videoPlayer.addEventListener('canplay', () => this.hideLoading());
             this.videoPlayer.addEventListener('playing', () => this.hideLoading());
-            this.videoPlayer.addEventListener('seeking', () => { this.lastSeekAt = Date.now(); });
+            this.videoPlayer.addEventListener('seeking', () => { 
+                this.lastSeekAt = Date.now(); 
+                this.showLoading();
+            });
 
             // Manejo de errores
             this.videoPlayer.addEventListener('error', (e) => this.handleVideoError(e));
@@ -319,6 +338,11 @@ class NexoTVStreaming {
             });
         }
 
+        // Botón Preferencias de Cookies
+        if (this.cookiePrefsBtn) {
+            this.cookiePrefsBtn.addEventListener('click', () => this.reopenCookieConsent());
+        }
+
         // CONTROL POR TECLADO
         document.addEventListener('keydown', (e) => {
             if (!this.playerModal || !this.playerModal.classList.contains('active')) return;
@@ -418,20 +442,29 @@ class NexoTVStreaming {
     }
 
     updateTime() {
-        if (this.currentTimeEl && this.videoPlayer) {
-            this.currentTimeEl.textContent = this.formatTime(this.videoPlayer.currentTime);
+        let currentTime = 0;
+        if (this.videoPlayer) {
+            currentTime = this.videoPlayer.currentTime;
+        }
+
+        if (this.currentTimeEl) {
+            this.currentTimeEl.textContent = this.formatTime(currentTime);
 
             // Guardar progreso cada segundo (evita guardar en cada milisegundo)
-            if (Math.floor(this.videoPlayer.currentTime) !== this.lastSavedSecond) {
+            if (Math.floor(currentTime) !== this.lastSavedSecond) {
                 this.saveProgress();
-                this.lastSavedSecond = Math.floor(this.videoPlayer.currentTime);
+                this.lastSavedSecond = Math.floor(currentTime);
             }
         }
     }
 
     updateDuration() {
-        if (this.durationEl && this.videoPlayer) {
-            const duration = this.videoPlayer.duration;
+        let duration = 0;
+        if (this.videoPlayer) {
+            duration = this.videoPlayer.duration;
+        }
+        
+        if (this.durationEl) {
             this.durationEl.textContent = this.formatTime(isNaN(duration) ? 0 : duration);
         }
     }
@@ -446,7 +479,6 @@ class NexoTVStreaming {
 
     togglePlayPause() {
         if (!this.videoPlayer) return;
-
         if (this.videoPlayer.paused) {
             this.videoPlayer.play();
         } else {
@@ -475,9 +507,9 @@ class NexoTVStreaming {
     }
 
     toggleMute() {
-        if (!this.videoPlayer) return;
-
-        this.videoPlayer.muted = !this.videoPlayer.muted;
+        if (this.videoPlayer) {
+            this.videoPlayer.muted = !this.videoPlayer.muted;
+        }
         this.updateMuteButton();
     }
 
@@ -487,7 +519,9 @@ class NexoTVStreaming {
         const img = this.muteBtn.querySelector('img');
         let isMuted = false;
 
-        isMuted = this.videoPlayer.muted || this.videoPlayer.volume === 0;
+        if (this.videoPlayer) {
+            isMuted = this.videoPlayer.muted || this.videoPlayer.volume === 0;
+        }
 
         if (isMuted) {
             if (img) img.src = 'Assets/volumeOff.png';
@@ -497,10 +531,10 @@ class NexoTVStreaming {
     }
 
     changeVolume(value) {
-        if (!this.videoPlayer) return;
-
-        this.videoPlayer.volume = value / 100;
-        this.videoPlayer.muted = false;
+        if (this.videoPlayer) {
+            this.videoPlayer.volume = value / 100;
+            this.videoPlayer.muted = false;
+        }
         this.updateMuteButton();
     }
 
@@ -567,7 +601,9 @@ class NexoTVStreaming {
     animateCenterIcon() {
         if (!this.centerIcon) return;
         
-        const isPlaying = !this.videoPlayer.paused;
+        let isPlaying = false;
+        isPlaying = !this.videoPlayer.paused;
+
         // Icono a mostrar: Si está play, mostramos play. Si pausa, pausa.
         const iconSrc = isPlaying ? 'Assets/play.png' : 'Assets/pause.png';
         
@@ -600,19 +636,31 @@ class NexoTVStreaming {
     }
 
     updateProgressBar() {
-        if (!this.progressFilled || !this.videoPlayer) return;
+        if (!this.progressFilled) return;
 
-        const percent = (this.videoPlayer.currentTime / this.videoPlayer.duration) * 100;
+        let current = 0;
+        let duration = 0;
+
+        if (this.videoPlayer) {
+            current = this.videoPlayer.currentTime;
+            duration = this.videoPlayer.duration;
+        }
+
+        if (duration <= 0) return;
+        const percent = (current / duration) * 100;
         this.progressFilled.style.width = `${percent}%`;
     }
 
     seekVideo(e) {
-        if (!this.progressBar || !this.videoPlayer) return;
+        if (!this.progressBar) return;
 
         const rect = this.progressBar.getBoundingClientRect();
         const percent = (e.clientX - rect.left) / rect.width;
         this.lastSeekAt = Date.now();
-        this.videoPlayer.currentTime = percent * this.videoPlayer.duration;
+        
+        if (this.videoPlayer) {
+            this.videoPlayer.currentTime = percent * this.videoPlayer.duration;
+        }
     }
 
     // === GESTIÓN DE CARGA Y ERRORES ===
@@ -705,21 +753,107 @@ class NexoTVStreaming {
         }, 4000);
     }
 
+    // === GESTIÓN DE COOKIES Y PRIVACIDAD ===
+    initCookieConsent() {
+        if (!localStorage.getItem(this.cookieConsentKey)) {
+            this.createCookieBanner();
+            setTimeout(() => {
+                const banner = document.getElementById('cookieConsent');
+                if (banner) banner.classList.add('show');
+            }, 1000);
+        }
+    }
+
+    createCookieBanner() {
+        if (document.getElementById('cookieConsent')) return; // Evitar duplicados
+        const banner = document.createElement('div');
+        banner.id = 'cookieConsent';
+        banner.className = 'cookie-consent';
+        banner.innerHTML = `
+            <div class="cookie-content">
+                <div class="cookie-text">
+                    <h3>🍪 Preferencias de Almacenamiento</h3>
+                    <p>Utilizamos almacenamiento local para guardar tu progreso en las películas y tus favoritos. ¿Aceptas que guardemos estos datos?</p>
+                </div>
+                <div class="cookie-buttons">
+                    <button id="cookieRejectBtn" class="btn-cookie-reject">Rechazar</button>
+                    <button id="cookieTermsBtn" class="btn-cookie-terms">Leer Términos</button>
+                    <button id="cookieAcceptBtn" class="btn-cookie-accept">Aceptar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(banner);
+
+        document.getElementById('cookieAcceptBtn').addEventListener('click', () => this.handleCookieChoice('accepted'));
+        document.getElementById('cookieRejectBtn').addEventListener('click', () => this.handleCookieChoice('rejected'));
+        document.getElementById('cookieTermsBtn').addEventListener('click', () => this.openTerms());
+    }
+
+    reopenCookieConsent() {
+        this.createCookieBanner();
+        // Pequeño delay para permitir la transición CSS
+        setTimeout(() => {
+            const banner = document.getElementById('cookieConsent');
+            if (banner) banner.classList.add('show');
+        }, 100);
+    }
+
+    handleCookieChoice(choice) {
+        localStorage.setItem(this.cookieConsentKey, choice);
+        const banner = document.getElementById('cookieConsent');
+        if (banner) {
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500);
+        }
+        
+        if (choice === 'accepted') {
+            this.showToast('✅ Preferencias guardadas. ¡Disfruta de NEXO.TV!');
+            this.renderContinueWatching(); // Actualizar interfaz
+        } else {
+            this.showToast('⚠️ Has rechazado las cookies. No se guardará tu progreso.');
+            this.renderContinueWatching(); // Ocultar sección si estaba visible
+        }
+    }
+
+    hasCookieConsent() {
+        return localStorage.getItem(this.cookieConsentKey) === 'accepted';
+    }
+
     // Gestión de Progreso
     saveProgress() {
         if (!this.currentMovie || !this.videoPlayer) return;
+        
         const data = JSON.parse(localStorage.getItem(this.progressKey)) || {};
+        
         data[this.currentMovie.id] = this.videoPlayer.currentTime;
+        
         localStorage.setItem(this.progressKey, JSON.stringify(data));
     }
 
     getSavedProgress(id) {
+        if (!this.hasCookieConsent()) return 0;
         const data = JSON.parse(localStorage.getItem(this.progressKey)) || {};
         return data[id] || 0;
     }
 
+    // Helper para convertir enlaces de Google Drive a directos
+    getDirectUrl(url) {
+        if (url && url.includes('drive.google.com')) {
+            const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (idMatch && idMatch[1]) {
+                return `https://drive.google.com/uc?export=download&confirm=no_antivirus&id=${idMatch[1]}`;
+            }
+        }
+        return url;
+    }
+
     renderContinueWatching() {
         if (!this.continueWatchingContainer || !this.continueWatchingSection) return;
+
+        if (!this.hasCookieConsent()) {
+            this.continueWatchingSection.style.display = 'none';
+            return;
+        }
 
         // No mostrar "Seguir Viendo" si está en categorías especiales
         if (this.currentCategory !== 'all') {
@@ -766,7 +900,7 @@ class NexoTVStreaming {
 
             // Actualizar barra de progreso cuando se carga el video
             const tempVideo = document.createElement('video');
-            tempVideo.src = movie.videoUrl;
+            tempVideo.src = this.getDirectUrl(movie.videoUrl);
             tempVideo.addEventListener('loadedmetadata', () => {
                 const progressPercent = (progress / tempVideo.duration) * 100;
                 const progressBar = card.querySelector('.continue-progress-bar');
@@ -785,6 +919,7 @@ class NexoTVStreaming {
     }
 
     removeFromContinueWatching(movieId) {
+        if (!this.hasCookieConsent()) return;
         const progressData = JSON.parse(localStorage.getItem(this.progressKey)) || {};
         delete progressData[movieId];
         localStorage.setItem(this.progressKey, JSON.stringify(progressData));
@@ -852,7 +987,7 @@ class NexoTVStreaming {
             this.videoPlayer.poster = movie.poster;
 
             // B) ASIGNAR VIDEO DIRECTAMENTE: Es más seguro que usar <source>
-            this.videoPlayer.src = movie.videoUrl;
+            this.videoPlayer.src = this.getDirectUrl(movie.videoUrl);
 
             // C) Cargar
             this.videoPlayer.load();
@@ -913,6 +1048,11 @@ class NexoTVStreaming {
     toggleFavorite() {
         if (!this.currentMovie) return;
 
+        if (!this.hasCookieConsent()) {
+            this.showToast('⚠️ Acepta las cookies para guardar favoritos.');
+            return;
+        }
+
         const favorites = this.getFavorites();
         const isFavorite = favorites.includes(this.currentMovie.id);
 
@@ -930,6 +1070,7 @@ class NexoTVStreaming {
     }
 
     getFavorites() {
+        if (!this.hasCookieConsent()) return [];
         const data = localStorage.getItem(this.favoritesKey);
         return data ? JSON.parse(data) : [];
     }

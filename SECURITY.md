@@ -19,7 +19,9 @@ NEXO.TV opera y se rige bajo las leyes de Propiedad Intelectual y Derechos de Au
 NEXO.TV actúa como un índice y una interfaz de usuario.
 
 * **No alojamos archivos de vídeo:** Ningún archivo audiovisual (mp4, mkv, avi) se encuentra almacenado en nuestros servidores.
-* **Hotlinking y Embedding:** Todo el contenido se reproduce mediante inserción (embedding) o enlaces directos a plataformas de terceros legítimas y organizaciones de preservación digital como **Internet Archive (archive.org)**, **Wikimedia Commons** o **YouTube**.
+* **Hotlinking y Embedding:**
+  * **Catálogo General:** Las películas y cortometrajes se retransmiten desde plataformas de preservación digital como **Internet Archive (archive.org)**, **Wikimedia Commons** o similares.
+  * **NEXO.TV Originals:** Para asegurar la estabilidad de retransmisión de contenido en FullHD/4K, nuestras producciones originales están alojadas en **Hugging Face Datasets**.
 
 > *NEXO.TV no tiene control sobre la disponibilidad, calidad o persistencia de los archivos alojados en dichos servidores externos.*
 

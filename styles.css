@@ -1700,3 +1700,120 @@ video {
 .toast-notification.show {
     transform: translateX(-50%) translateY(0);
 }
+
+/* ==================== COOKIE CONSENT ==================== */
+.cookie-consent {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    background-color: rgba(18, 18, 18, 0.98);
+    border-top: 1px solid var(--gold);
+    padding: 1.5rem;
+    z-index: 99999; /* Encima de todo */
+    transition: bottom 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+}
+
+.cookie-consent.show {
+    bottom: 0;
+}
+
+.cookie-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
+}
+
+.cookie-text h3 {
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cookie-text p {
+    color: var(--text-main);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 800px;
+}
+
+.cookie-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-cookie-accept {
+    background-color: var(--gold);
+    color: #000;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cookie-accept:hover {
+    background-color: var(--gold-hover);
+    transform: scale(1.05);
+}
+
+.btn-cookie-reject {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--text-muted);
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cookie-reject:hover {
+    border-color: #fff;
+    background-color: rgba(255,255,255,0.1);
+}
+
+.btn-cookie-terms {
+    background: none;
+    border: none;
+    color: var(--gold);
+    text-decoration: underline;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.7rem 1rem;
+}
+
+@media (min-width: 768px) {
+    .cookie-content {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+    
+    .cookie-text h3 {
+        justify-content: flex-start;
+    }
+    
+    .cookie-text h3, .cookie-text p {
+        text-align: left;
+    }
+    
+    .cookie-buttons {
+        flex-shrink: 0;
+    }
+}
