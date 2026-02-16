@@ -203,7 +203,7 @@
   "isOriginal": true,
   "director": "Walt Disney, Ub Iwerks",
   "cast": "Walt Disney, Mickey Mouse, Minnie Mouse, Pete",
-  "producer": "NEXO.TV",
+  "producer": "NEXO.TV, Walt Disney Productions",
   "country": "España, Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/98hKhZ7LcniPsI203wvvScaCq04.jpg"
 },
@@ -270,5 +270,21 @@
   "producer": "Walt Disney Productions",
   "country": "Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/86vPxoYYOpf0cRAV9cLTAaFEtWK.jpg"
+},
+{
+  "id": 18,
+  "titulo": "NEXO.TV: A Looney Tunes Trilogy",
+  "año": 1930,
+  "sinopsis": "NEXO.TV: A Looney Tunes Trilogy reúne tres joyas de 1943 que definieron la comedia animada: la batalla de altura entre Bugs Bunny y un gremlin en Falling Hare, la delirante misión de infiltración del Pato Lucas en Daffy - The Commando, y la brillante parodia musical de Porky Pig en A Corny Concerto. Una antología esencial que recupera el caos y el ingenio de los tesoros del dominio público.",
+  "videoUrl": " https://ia600107.us.archive.org/1/items/nexotv-looney-toons-trilogy/NEXOTV_LooneyToonsTrilogy.mp4",
+  "poster": "https://ia600107.us.archive.org/1/items/nexotv-looney-toons-trilogy/LooneyTunesPortada.png ",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": true,
+  "director": "Robert Clampett, Friz Freleng",
+  "cast": "Bugs Bunny, Daffy Duck, Porky Pig, Elmer Fudd, Mel Blanc",
+  "producer": "NEXO.TV, Leon Schlesinger Productions, Warner Bros. Cartoons",
+  "country": "España, Estados Unidos",
+  "landscape": "https://image.tmdb.org/t/p/original/jC8ZBsCWiTj4zSr8xQdBcNb08GB.jpg"
 }
 ]
