@@ -1,0 +1,1819 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+button:not(:disabled),
+.btn:not(:disabled) {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:root {
+    /* Visual DNA Palette */
+    --bg-dark: #121212;       /* Carbón profundo */
+    --bg-card: #1E1E1E;       /* Gris ligeramente más claro para tarjetas */
+    --bg-overlay: rgba(18, 18, 18, 0.95);
+    --gold: #D4AF37;          /* Dorado Metálico */
+    --gold-hover: #F4CF57;
+    --text-main: #E0E0E0;     /* Gris plata suave */
+    --text-muted: #888888;
+    --border-color: #333333;
+    --success: #00d084;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Outfit', sans-serif; /* Tipografía moderna y suave */
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif; /* Misma familia, pesos distintos */
+}
+
+.logo-dot {
+    color: var(--gold);
+    font-size: 3rem;
+}
+
+/* Barra de búsqueda */
+.search-bar {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 300px; /* Más compacto */
+    margin-right: 1.5rem; /* Separación clara de los botones */
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--gold); 
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-btn {
+    padding: 0.6rem 1.2rem;
+    background-color: transparent;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.search-btn:hover {
+    background-color: var(--gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.search-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* ==================== HERO SECTION ==================== */
+.hero-section {
+    height: 70vh;
+    min-height: 550px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.hero-slides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0;
+    z-index: 0;
+    /* Retraso de 2s en la opacidad para mantener la imagen de fondo mientras entra la nueva */
+    transition: opacity 1s ease-in-out 2s, transform 6s ease-out;
+    transform: scale(1.1); /* Ligero zoom para efecto cinemático */
+}
+
+.hero-slide.active {
+    opacity: 1;
+    z-index: 1; /* Asegura que la nueva imagen se pinte ENCIMA de la anterior */
+    transform: scale(1);
+    transition: opacity 2s ease-in-out, transform 6s ease-out;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(18,18,18,0.3) 0%, var(--bg-dark) 100%), radial-gradient(circle, transparent 20%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.hero-logo {
+    width: 350px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* ==================== CATEGORÍAS ==================== */
+.categories {
+    max-width: 1400px;
+    margin: 2rem auto 0;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: flex-start; /* Alineado a la izquierda */
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 50px; /* Botones redondeados */
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.category-btn:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+}
+
+.category-btn.active {
+    background-color: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+/* Sección de búsqueda separada */
+.search-section {
+    max-width: 1400px;
+    margin: 1.5rem auto 0;
+    padding: 0 2rem 2rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* ==================== CONTENIDO PRINCIPAL ==================== */
+.main-content {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+    border-bottom: none;
+    position: relative;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+/* Línea decorativa sutil */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background-color: var(--gold);
+    margin-top: 10px;
+}
+
+/* Sección "Seguir Viendo" */
+.continue-watching-section {
+    margin-bottom: 3rem;
+}
+
+.continue-watching-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.continue-item {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.continue-item .movie-poster {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    display: block;
+    background-color: var(--bg-card);
+}
+
+.continue-item:hover {
+    transform: scale(1.05);
+    border-color: var(--gold);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.15);
+    z-index: 10;
+}
+
+.continue-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 4px 4px;
+}
+
+.continue-progress-bar {
+    height: 100%;
+    background-color: var(--gold);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.continue-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.continue-item:hover .continue-remove-btn {
+    opacity: 1;
+}
+
+.continue-remove-btn:hover {
+    background-color: var(--gold);
+    color: var(--primary-dark);
+    transform: scale(1.1);
+}
+
+/* Botón visible siempre en móviles */
+@media (max-width: 768px) {
+    .continue-remove-btn {
+        opacity: 1 !important;
+    }
+}
+
+/* Sección "Catálogo" */
+.catalog-section {
+    margin-top: 2rem;
+}
+
+.movies-container {
+    display: grid;
+    /* Grid Responsive solicitado */
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 2.5rem; /* Gap generoso */
+    margin-top: 1rem;
+}
+
+.movie-card {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    border-color: var(--gold);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.15);
+    z-index: 10;
+}
+
+.movie-poster {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3;
+    /* Proporción estándar de póster (500x750) */
+    object-fit: cover;
+    display: block;
+    object-position: top;
+    background-color: var(--bg-card);
+}
+
+.movie-info {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.movie-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-year {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+}
+
+.movie-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-essential {
+    background-color: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+}
+
+.badge-original {
+    background-color: rgba(0, 208, 132, 0.2);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background-color: rgba(212, 175, 55, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.play-button img {
+    width: 30px;
+    height: 30px;
+}
+
+.movie-card:hover .play-button {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.play-button:hover {
+    background-color: var(--gold);
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* ==================== MODAL DEL REPRODUCTOR ==================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 0.5rem 1rem;
+    background-color: var(--bg-overlay);
+    overflow-y: auto;
+}
+
+.player-container {
+    background-color: var(--bg-card);
+    border-radius: 8px;
+    width: 95%;
+    max-width: 1200px;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid var(--gold);
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    padding: 0;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    background: var(--gold);
+    color: #000;
+    transform: rotate(90deg);
+}
+
+/* Video Wrapper */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+}
+
+/* ====== FULLSCREEN STYLES ====== */
+/* Usamos tanto :fullscreen como clase .is-fullscreen para máxima compatibilidad */
+
+.video-wrapper:fullscreen,
+.video-wrapper:-webkit-full-screen,
+.video-wrapper:-moz-full-screen,
+.video-wrapper:-ms-fullscreen,
+.video-wrapper.is-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background-color: #000 !important;
+    border-radius: 0 !important;
+}
+
+.video-wrapper:fullscreen .video-player,
+.video-wrapper:-webkit-full-screen .video-player,
+.video-wrapper:-moz-full-screen .video-player,
+.video-wrapper:-ms-fullscreen .video-player,
+.video-wrapper.is-fullscreen .video-player {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+.video-wrapper:fullscreen .video-overlay,
+.video-wrapper:-webkit-full-screen .video-overlay,
+.video-wrapper:-moz-full-screen .video-overlay,
+.video-wrapper:-ms-fullscreen .video-overlay,
+.video-wrapper.is-fullscreen .video-overlay {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10;
+}
+
+.video-wrapper:fullscreen .video-controls,
+.video-wrapper:-webkit-full-screen .video-controls,
+.video-wrapper:-moz-full-screen .video-controls,
+.video-wrapper:-ms-fullscreen .video-controls,
+.video-wrapper.is-fullscreen .video-controls {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 20;
+}
+
+/* Busca .video-player y reemplázalo por esto: */
+.video-player {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    /* Fuerza la proporción de cine */
+    background-color: #000;
+    display: block;
+    object-fit: contain;
+    /* Asegura que se vea toda la película */
+}
+
+/* Asegúrate de que el wrapper no limite el tamaño */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+    line-height: 0;
+    /* Elimina espacios fantasma debajo del video */
+}
+
+video {
+    outline: none;
+}
+
+/* Video Overlay con controles */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.video-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Pantalla de Carga y Error */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--gold);
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 15;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(212, 175, 55, 0.3);
+    border-top: 5px solid var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Botón central de play/pause */
+
+
+
+
+.center-play-btn.playing {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Controles de video */
+.video-controls {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.95) 100%);
+    pointer-events: all;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+/* Barra de progreso */
+.progress-container {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2.5px;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+    transition: height 0.2s ease;
+}
+
+.progress-bar:hover {
+    height: 8px;
+    transition: height 0.2s ease;
+}
+
+.progress-filled {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-hover));
+    border-radius: 2.5px;
+    width: 0%;
+    transition: width 0.1s linear;
+    position: relative;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+}
+
+.progress-filled::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background-color: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.progress-bar:hover .progress-filled::after {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+}
+
+/* Fila de controles */
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+}
+
+.controls-left,
+.controls-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+/* Botones de control */
+.control-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.4rem;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.control-btn img {
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+}
+
+.control-btn:hover {
+    background-color: rgba(212, 175, 55, 0.2);
+    color: var(--gold);
+    transform: scale(1.15);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+/* Botón de Favoritos */
+#favBtn {
+    transition: all 0.3s ease;
+}
+
+#favBtn.favorite img {
+    filter: brightness(0) saturate(100%) invert(35%) sepia(98%) saturate(1285%) hue-rotate(357deg) brightness(103%) contrast(101%);
+}
+
+#favBtn:not(.favorite) img {
+    filter: brightness(0) saturate(100%) invert(47%) sepia(69%) saturate(2155%) hue-rotate(194deg) brightness(100%) contrast(101%);
+}
+
+/* Slider de volumen */
+.volume-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    background: var(--gold-hover);
+    transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    background: var(--gold-hover);
+    transform: scale(1.2);
+}
+
+/* Info del player */
+.player-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Animación Icono Central (Estilo YouTube) */
+.center-icon-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 25;
+    transition: all 0.2s ease;
+}
+
+.center-icon-animation.active {
+    opacity: 1;
+    animation: fadeOutIcon 0.6s forwards;
+}
+
+@keyframes fadeOutIcon {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+
+.center-icon-animation img {
+    width: 30px;
+    height: 30px;
+    filter: invert(1);
+}
+
+#currentTime {
+    color: var(--gold);
+    min-width: 40px;
+}
+
+.time {
+    display: inline-block;
+}
+
+.time-separator {
+    margin: 0 0.3rem;
+}
+
+/* Controles personalizados (info debajo del video) */
+.custom-controls {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.controls-top {
+    margin-bottom: 0;
+}
+
+.player-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+}
+
+.player-synopsis {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Detalles de la película */
+.movie-details {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background-color: var(--bg-dark);
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.detail-value {
+    color: var(--text-main);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Películas relacionadas */
+.related-movies {
+    padding: 2rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background-color: var(--bg-dark);
+}
+
+.related-movies h3 {
+    color: var(--gold);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.related-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.related-item {
+    background-color: var(--bg-card);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.related-item:hover {
+    transform: scale(1.05);
+    border-color: var(--gold);
+}
+
+.related-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    object-position: top;
+    background-color: var(--bg-card);
+}
+
+.related-item span {
+    display: block;
+    padding: 0.8rem;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    text-align: center;
+    background-color: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+}
+
+/* ==================== FICHA TÉCNICA ==================== */
+.technical-sheet {
+    padding: 2rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    background-color: var(--bg-dark);
+}
+
+.technical-sheet h3 {
+    color: var(--gold);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.sheet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.sheet-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sheet-label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.sheet-content {
+    color: var(--text-main);
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
+.sheet-clickable {
+    color: var(--text-main);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    display: inline;
+}
+
+.sheet-clickable:hover {
+    color: var(--gold);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+
+
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .logo {
+        font-size: 2rem;
+    }
+
+    .search-bar {
+        max-width: 100%;
+    }
+    
+    .hero-section {
+        height: 50vh;
+        min-height: 320px;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-logo {
+        width: 220px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .categories {
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .category-btn {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .movies-container {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .movie-card {
+        margin: 0 auto;
+    }
+
+    .continue-watching-container {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Mejora controles tablet */
+    .control-btn {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        min-height: 46px;
+    }
+
+    .control-btn img {
+        width: 23px;
+        height: 23px;
+    }
+
+    .close-btn {
+        width: 42px;
+        height: 42px;
+    }
+
+    /* Mejoras en fichas técnicas */
+    .sheet-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .technical-sheet {
+        padding: 1.5rem;
+    }
+
+    .related-list {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+
+    .related-movies {
+        padding: 1.5rem;
+    }
+
+    .custom-controls {
+        padding: 1.2rem;
+    }
+
+    .movie-details {
+        padding: 1.2rem;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        padding: 0 1rem;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    .categories {
+        padding: 0 1rem 1rem 1rem;
+        gap: 0.5rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap; /* Carrusel horizontal */
+        justify-content: flex-start;
+        scrollbar-width: none; /* Ocultar barra scroll Firefox */
+    }
+    .categories::-webkit-scrollbar { display: none; } /* Ocultar barra scroll Chrome/Safari */
+
+    .main-content {
+        padding: 0 0.5rem; /* Menos padding lateral para aprovechar pantalla */
+    }
+
+    .movies-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 columnas estilo Netflix */
+        gap: 0.4rem;
+    }
+    
+    /* Ocultar texto en móvil para dar protagonismo al póster */
+    .movies-container .movie-info {
+        display: none;
+    }
+
+    .hero-section {
+        height: 55vh; /* Hero más alto e inmersivo */
+        min-height: 350px;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+        padding: 0 1rem;
+    }
+
+    .hero-logo {
+        width: 150px;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .movie-card:hover {
+        transform: none;
+    }
+
+    .play-button {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.9);
+        background-color: rgba(212, 175, 55, 0.8);
+    }
+
+    /* Controles móviles mejorados */
+    .video-controls {
+        padding: 1rem;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom)); /* Soporte para iPhone X+ */
+        background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+    }
+
+    .control-btn {
+        font-size: 1.4rem;
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        min-height: 48px;
+    }
+
+    .control-btn img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .player-info {
+        font-size: 0.8rem;
+        flex: 1;
+        justify-content: flex-start;
+    }
+
+    /* Ocultar volumen y mute en móvil */
+    .volume-slider, #muteBtn {
+        display: none;
+    }
+    
+    /* Ajustar tamaño botones controles */
+    .control-btn {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
+        font-size: 1.1rem;
+    }
+    
+    .control-btn img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Ajuste botón cerrar en móvil */
+    .close-btn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        font-size: 1.8rem;
+        padding: 0;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 60;
+        border: 2px solid var(--gold);
+    }
+
+    /* Título y detalles de película más compactos */
+    .player-title {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.6rem;
+    }
+
+    .player-synopsis {
+        font-size: 0.85rem !important;
+        line-height: 1.5;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .search-input {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.8rem;
+    }
+
+    /* Ficha técnica responsive */
+    .technical-sheet {
+        padding: 1rem;
+    }
+
+    .technical-sheet h3 {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .sheet-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .sheet-item {
+        gap: 0.4rem;
+    }
+
+    .sheet-label {
+        font-size: 0.7rem;
+    }
+
+    .sheet-content {
+        font-size: 0.85rem;
+    }
+
+    /* Películas relacionadas compactas */
+    .related-movies {
+        padding: 1rem;
+    }
+
+    .related-movies h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .related-list {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .related-item img {
+        height: 200px;
+    }
+
+    .related-item span {
+        padding: 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    /* Detalles película */
+    .movie-details {
+        padding: 1rem;
+    }
+
+    .details-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .detail-label {
+        font-size: 0.75rem;
+    }
+
+    .detail-value {
+        font-size: 0.95rem;
+    }
+}
+
+/* Modo Landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    body {
+        overflow: hidden;
+    }
+
+    .player-modal {
+        padding: 0;
+        align-items: flex-start;
+    }
+
+    .player-container {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        border: none;
+        max-width: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .video-wrapper {
+        height: 100%;
+        width: 100%;
+    }
+
+    .video-player {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .movie-details,
+    .technical-sheet,
+    .related-movies,
+    .custom-controls {
+        display: none;
+    }
+
+    .player-synopsis {
+        display: none;
+    }
+
+    .close-btn {
+        top: 12px;
+        right: 16px;
+        z-index: 999;
+        width: 40px;
+        height: 40px;
+    }
+
+    .video-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.5rem 0.8rem;
+        background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.98) 100%);
+    }
+
+    .progress-container {
+        margin-bottom: 0.8rem;
+    }
+
+    .progress-bar {
+        height: 6px;
+    }
+
+    .progress-bar:hover {
+        height: 10px;
+    }
+
+    .control-btn {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        min-height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .control-btn img {
+        width: 26px;
+        height: 26px;
+    }
+
+    .controls-row {
+        gap: 0.3rem;
+        padding: 0;
+    }
+
+    .player-info {
+        font-size: 0.85rem;
+    }
+
+    .volume-slider {
+        width: 50px;
+    }
+}
+
+/* Pequeños ajustes para phone en landscape */
+@media (max-height: 400px) and (orientation: landscape) {
+    .control-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .video-controls {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .progress-container {
+        margin-bottom: 0.6rem;
+    }
+
+    .player-info {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.movie-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ==================== FOOTER & TÉRMINOS ==================== */
+.footer {
+    background-color: #0d0d0d; /* Más oscuro que el fondo */
+    padding: 4rem 2rem 2rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+    margin-top: 4rem;
+}
+
+.footer-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    text-align: left;
+}
+
+.footer-col h3 {
+    color: var(--gold);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.footer-link, .footer-link-btn {
+    display: block;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 0.8rem;
+    transition: color 0.3s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.footer-link:hover, .footer-link-btn:hover {
+    color: var(--gold);
+}
+
+.copyright-text {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.copyright-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+    }
+
+    .footer-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}
+
+.terms-container {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    padding: 3rem 2rem 2rem;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    margin: auto;
+}
+
+.terms-content h2 {
+    color: var(--gold);
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.terms-content h3 {
+    color: var(--text-main);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.terms-content p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.terms-content a {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+.terms-content a:hover {
+    text-decoration: underline;
+}
+
+/* ==================== TOAST NOTIFICATION ==================== */
+.toast-notification {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: rgba(20, 20, 20, 0.95);
+    color: var(--gold);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    border: 1px solid var(--gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 2147483647; /* Visible incluso en fullscreen */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-weight: 600;
+    text-align: center;
+    min-width: 280px;
+    max-width: 90%;
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ==================== COOKIE CONSENT ==================== */
+.cookie-consent {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    background-color: rgba(18, 18, 18, 0.98);
+    border-top: 1px solid var(--gold);
+    padding: 1.5rem;
+    z-index: 99999; /* Encima de todo */
+    transition: bottom 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+    backdrop-filter: blur(10px);
+}
+
+.cookie-consent.show {
+    bottom: 0;
+}
+
+.cookie-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
+}
+
+.cookie-text h3 {
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cookie-text p {
+    color: var(--text-main);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 800px;
+}
+
+.cookie-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-cookie-accept {
+    background-color: var(--gold);
+    color: #000;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cookie-accept:hover {
+    background-color: var(--gold-hover);
+    transform: scale(1.05);
+}
+
+.btn-cookie-reject {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--text-muted);
+    padding: 0.7rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cookie-reject:hover {
+    border-color: #fff;
+    background-color: rgba(255,255,255,0.1);
+}
+
+.btn-cookie-terms {
+    background: none;
+    border: none;
+    color: var(--gold);
+    text-decoration: underline;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.7rem 1rem;
+}
+
+@media (min-width: 768px) {
+    .cookie-content {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+    }
+    
+    .cookie-text h3 {
+        justify-content: flex-start;
+    }
+    
+    .cookie-text h3, .cookie-text p {
+        text-align: left;
+    }
+    
+    .cookie-buttons {
+        flex-shrink: 0;
+    }
+}

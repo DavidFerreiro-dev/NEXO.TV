@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXO.TV</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="Logos/icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-slides" id="heroSlides"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <img src="Logos/nexo.png" alt="NEXO.TV" class="hero-logo">
+            <h1 class="hero-title">El cine que definió la historia</h1>
+            <p class="hero-subtitle">Joyas ocultas, clásicos inmortales y el legado que las plataformas olvidaron.</p>
+        </div>
+    </section>
+
+    <!-- Categorías -->
+    <nav class="categories">
+        <button class="category-btn active" data-category="all">Todas</button>
+        <button class="category-btn" data-category="essential">NEXO.TV Essential</button>
+        <button class="category-btn" data-category="original">NEXO.TV Original</button>
+        <button class="category-btn" data-category="favorites">Favoritos</button>
+    </nav>
+
+    <!-- Buscador -->
+    <div class="search-section">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Buscar películas..." class="search-input">
+            <button class="search-btn"><img src="Assets/search.png" alt="Buscar"></button>
+        </div>
+    </div>
+
+    <!-- Contenedor de películas -->
+    <main class="main-content">
+        <!-- Sección "Seguir Viendo" -->
+        <section class="continue-watching-section" id="continueWatchingSection" style="display: none;">
+            <h2 class="section-title">Seguir Viendo</h2>
+            <div class="continue-watching-container" id="continueWatchingContainer">
+                <!-- Se cargará dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Sección "Nuestro Catálogo" -->
+        <section class="catalog-section">
+            <h2 class="section-title" id="catalogTitle">Nuestro Catálogo</h2>
+            <div class="movies-container" id="moviesContainer">
+                <!-- Las películas se cargarán aquí dinámicamente -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>Legal</h3>
+                <button id="termsBtn" class="footer-link-btn">Términos y Condiciones</button>
+            </div>
+            <div class="footer-col">
+                <h3>Redes</h3>
+                <a href="https://instagram.com/playnexotv" target="_blank" class="footer-link">Instagram</a>
+                <a href="mailto:nexotv.info@gmail.com" class="footer-link">Contacto</a>
+            </div>
+            <div class="footer-col">
+                <h3>NEXO.TV</h3>
+                <p class="copyright-text">© 2026 NEXO.TV. Platform & Original Content.</p>
+                <p class="copyright-sub">Public Domain Movies belong to the collective heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal del reproductor -->
+    <div class="modal" id="playerModal">
+        <div class="player-container">
+            <button class="close-btn" id="closeBtn">&times;</button>
+
+            <div class="video-wrapper">
+                <video id="videoPlayer" class="video-player">
+                    <source id="videoSource" src="" type="video/mp4">
+                    Tu navegador no soporta HTML5 video.
+                </video>
+                
+                <!-- Controles sobre el video -->
+                <div class="video-overlay" id="videoOverlay">
+                    <!-- Pantalla de carga -->
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="spinner"></div>
+                        <span>CARGANDO...</span>
+                    </div>
+
+                    <!-- Controles inferiores -->
+                    <div class="video-controls" id="videoControls">
+                        <!-- Barra de progreso -->
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar">
+                                <div class="progress-filled" id="progressFilled"></div>
+                            </div>
+                        </div>
+
+                        <!-- Controles principales -->
+                        <div class="controls-row">
+                            <div class="controls-left">
+                                <button class="control-btn" id="playPauseBtn"><img src="Assets/play.png" alt="Play"></button>
+                                <button class="control-btn" id="muteBtn"><img src="Assets/volumeOn.png" alt="Volumen"></button>
+                                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100"
+                                    value="100">
+                                <div class="player-info">
+                                    <span id="currentTime" class="time">0:00</span>
+                                    <span class="time-separator">/</span>
+                                    <span id="duration" class="time">0:00</span>
+                                </div>
+                            </div>
+
+                            <div class="controls-right">
+                                <button class="control-btn" id="favBtn"><img src="Assets/heart.png" alt="Favoritos"></button>
+                                <button class="control-btn" id="fullscreenBtn"><img src="Assets/fullscreen.png" alt="Pantalla Completa"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info de la película debajo del video -->
+            <div class="custom-controls">
+                <div class="controls-top">
+                    <h2 id="playerTitle" class="player-title"></h2>
+                    <p id="playerSynopsis" class="player-synopsis"></p>
+                </div>
+            </div>
+
+            <!-- Info de la película -->
+            <div class="movie-details">
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Año:</span>
+                        <span id="detailYear" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Categoría:</span>
+                        <span id="detailCategory" class="detail-value"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Tipo:</span>
+                        <span id="detailType" class="detail-value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ficha Técnica -->
+            <div class="technical-sheet">
+                <h3>Ficha Técnica</h3>
+                <div class="sheet-grid">
+                    <div class="sheet-item">
+                        <span class="sheet-label">Director:</span>
+                        <div id="sheetDirector" class="sheet-content"></div>
+                    </div>
+                    <div class="sheet-item">
+                        <span class="sheet-label">Reparto:</span>
+                        <div id="sheetCast" class="sheet-content"></div>
+                    </div>
+                    <div class="sheet-item">
+                        <span class="sheet-label">Productora:</span>
+                        <div id="sheetProducer" class="sheet-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Películas relacionadas -->
+            <div class="related-movies">
+                <h3>Más películas</h3>
+                <div class="related-list" id="relatedList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Términos y Condiciones -->
+    <div class="modal" id="termsModal">
+        <div class="terms-container">
+            <button class="close-btn" id="closeTermsBtn">&times;</button>
+            <div class="terms-content">
+                <h2>ACERCA DE NEXO.TV - TÉRMINOS DE USO Y LEGAL</h2>
+
+                <h3>SOBRE EL PROYECTO</h3>
+                <p>NEXO.TV es una plataforma de preservación cinematográfica digital y streaming de acceso libre. Nuestra misión es rescatar, curar y facilitar el acceso a obras maestras del cine que han pasado a formar parte del patrimonio común de la humanidad, así como ofrecer nuevas versiones restauradas y doblajes exclusivos producidos por nuestro equipo.</p>
+                <p>Este proyecto es de código abierto en su estructura web y tiene fines educativos, culturales y de entretenimiento sin ánimo de lucro directo mediante suscripciones.</p>
+
+                <h3>MARCO LEGAL Y PROPIEDAD INTELECTUAL (EE.UU.)</h3>
+                <p>NEXO.TV opera y se rige bajo las leyes de Propiedad Intelectual y Derechos de Autor de los Estados Unidos de América.</p>
+                <p><strong>Dominio Público:</strong> Todas las películas catalogadas como "Essential" o "Clásicos" en esta plataforma se encuentran en el Dominio Público en los EE.UU. (obras publicadas antes de 1929 o aquellas cuyos derechos no fueron renovados).</p>
+                <p><strong>Responsabilidad del Usuario:</strong> Dado que las leyes de copyright varían según el país (por ejemplo, la norma de "70 años tras la muerte del autor" en Europa), el usuario es responsable de verificar si el visionado de estas obras es legal en su jurisdicción local.</p>
+
+                <h3>EXENCIÓN DE RESPONSABILIDAD TÉCNICA (NO HOSTING)</h3>
+                <p>NEXO.TV actúa como un índice y una interfaz de usuario.</p>
+                <p><strong>No alojamos archivos de vídeo:</strong> Ningún archivo audiovisual (mp4, mkv, avi) se encuentra almacenado en nuestros servidores.</p>
+                <p><strong>Hotlinking y Embedding:</strong></p>
+                <p><strong>Catálogo General:</strong> Las películas y cortometrajes se retransmiten desde plataformas de preservación digital como Internet Archive (archive.org), Wikimedia Commons o similares.</p>
+                <p><strong>NEXO.TV Originals:</strong> Para asegurar la estabilidad de retransmisión de contenido en FullHD/4K, nuestras producciones originales están alojadas en Hugging Face Datasets.</p>
+                <p>NEXO.TV no tiene control sobre la disponibilidad, calidad o persistencia de los archivos alojados en dichos servidores externos.</p>
+
+                <h3>DERECHOS SOBRE "NEXO ORIGINALS" Y OBRAS DERIVADAS</h3>
+                <p>Aunque las películas base sean de dominio público, las ediciones específicas creadas por NEXO.TV constituyen una "Obra Derivada".</p>
+                <p>Los doblajes originales, subtítulos exclusivos, introducciones, restauraciones visuales y material gráfico (logotipos y diseño web) son propiedad intelectual exclusiva de NEXO.TV y sus creadores.</p>
+                <p>Queda prohibida la redistribución de estas versiones específicas sin autorización expresa.</p>
+
+                <h3>CÓDIGO FUENTE Y DESARROLLO</h3>
+                <p>El código fuente de la plataforma (Frontend y Backend) es transparente y puede ser consultado con fines educativos.</p>
+                <p>Repositorio Oficial en GitHub: <a href="https://github.com/DavidFerreiro-dev/NEXO.TV" target="_blank">https://github.com/DavidFerreiro-dev/NEXO.TV</a></p>
+
+                <h3>POLÍTICA DE PRIVACIDAD</h3>
+                <p>NEXO.TV no requiere registro. No recopilamos datos personales, correos electrónicos ni información de tarjetas de crédito. Utilizamos almacenamiento local (cookies técnicas) únicamente para recordar preferencias básicas del reproductor.</p>
+
+                <h3>CONTACTO Y REDES</h3>
+                <p>Para reclamaciones de derechos (DMCA), sugerencias o colaboraciones:</p>
+                <p>Instagram Oficial: <a href="https://instagram.com/playnexotv" target="_blank">https://instagram.com/playnexotv</a></p>
+                <p>Contacto Administrativo: <a href="mailto:nexotv.info@gmail.com">nexotv.info@gmail.com</a></p>
+
+                <h3>THE TEAM BEHIND NEXO</h3>
+                <p><strong>David Ferreiro – Founder & Lead Developer</strong><br>
+                Arquitectura web, curaduría y dirección general.<br>
+                <a href="mailto:davidjoseferreiro@gmail.com">davidjoseferreiro@gmail.com</a><br>
+                <a href="https://github.com/DavidFerreiro-dev" target="_blank">https://github.com/DavidFerreiro-dev</a></p>
+
+                <p><strong>Roi Cougil – Co-Founder & Creative Director</strong><br>
+                Identidad visual, motion graphics y diseño de marca.<br>
+                <a href="mailto:cougilroi@gmail.com">cougilroi@gmail.com</a><br>
+                <a href="https://github.com/Roi-Cougil" target="_blank">https://github.com/Roi-Cougil</a></p>
+
+                <p><strong>Paulo Pérez – Head of Social Media</strong><br>
+                Gestión de comunidad y comunicación digital.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
