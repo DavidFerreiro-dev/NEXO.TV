@@ -1323,3 +1323,18 @@ function adjustControlsForFireStick() {
 window.onload = function() {
     adjustControlsForFireStick();
 };
+
+// Function to detect if running in Capacitor Native App
+const isNativeApp = () => {
+    return window.Capacitor && window.Capacitor.isNative;
+};
+
+const applyNativeStyles = () => {
+    if (isNativeApp()) {
+        console.log("Running in Native App Mode");
+        document.body.classList.add('mobile-app-mode');
+        // Add your custom logic here (e.g., hide header)
+    }
+};
+
+window.addEventListener('load', applyNativeStyles);
