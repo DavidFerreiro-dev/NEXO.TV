@@ -19,6 +19,7 @@ class NexoTVStreaming {
         this.stableMode = false;
         this.bufferInterval = null;
         this.lastSeekAt = 0; // timestamp of last user/programmatic seek
+        this.isDragging = false; // Estado para controlar el arrastre de la barra
 
         // Detectar si es dispositivo móvil
         this.isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -209,7 +210,37 @@ class NexoTVStreaming {
 
         // Barra de progreso
         if (this.progressBar) {
-            this.progressBar.addEventListener('click', (e) => this.seekVideo(e));
+            // Usamos el contenedor padre para tener mayor área táctil en móviles
+            const progressArea = this.progressBar.parentElement || this.progressBar;
+
+            const startDrag = (e) => {
+                this.isDragging = true;
+                this.seekVideo(e); // Actualizar inmediatamente al tocar/clicar
+            };
+
+            const onDrag = (e) => {
+                if (this.isDragging) {
+                    // Prevenir scroll en móviles mientras se arrastra la barra
+                    if (e.cancelable && (e.type === 'touchmove' || e.type === 'touchstart')) {
+                        e.preventDefault();
+                    }
+                    this.seekVideo(e);
+                }
+            };
+
+            const stopDrag = () => {
+                this.isDragging = false;
+            };
+
+            // Eventos Mouse
+            progressArea.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', stopDrag);
+
+            // Eventos Touch (Passive false para poder usar preventDefault)
+            progressArea.addEventListener('touchstart', startDrag, { passive: false });
+            document.addEventListener('touchmove', onDrag, { passive: false });
+            document.addEventListener('touchend', stopDrag);
         }
 
         // Listeners de Video para tiempo y estado
@@ -628,7 +659,7 @@ class NexoTVStreaming {
     }
 
     updateProgressBar() {
-        if (!this.progressFilled) return;
+        if (!this.progressFilled || this.isDragging) return; // No actualizar si el usuario está arrastrando
 
         let current = 0;
         let duration = 0;
@@ -647,11 +678,25 @@ class NexoTVStreaming {
         if (!this.progressBar) return;
 
         const rect = this.progressBar.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
+        
+        // Obtener coordenada X (Soporte para Mouse y Touch)
+        let clientX = e.clientX;
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+        }
+
+        // Calcular porcentaje y limitar entre 0 y 1 (clamping)
+        let percent = (clientX - rect.left) / rect.width;
+        percent = Math.max(0, Math.min(1, percent));
+
         this.lastSeekAt = Date.now();
         
-        if (this.videoPlayer) {
+        if (this.videoPlayer && isFinite(this.videoPlayer.duration)) {
             this.videoPlayer.currentTime = percent * this.videoPlayer.duration;
+            // Actualización visual inmediata para suavidad
+            if (this.progressFilled) {
+                this.progressFilled.style.width = `${percent * 100}%`;
+            }
         }
     }
 

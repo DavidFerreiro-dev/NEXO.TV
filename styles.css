@@ -714,6 +714,7 @@ video {
     width: 100%;
     margin-bottom: 1rem;
     padding: 0.5rem 0;
+    cursor: pointer;
 }
 
 .progress-bar {
