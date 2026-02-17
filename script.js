@@ -31,6 +31,9 @@ class NexoTVStreaming {
         this.lastTapTime = 0;
         this.doubleTapDetected = false;
 
+        this.isDragging = false;
+        this.currentDragPercent = 0;
+
         this.initializeElements();
         this.setupEventListeners();
         this.loadMovies();
@@ -214,17 +217,23 @@ class NexoTVStreaming {
             // Usamos el contenedor padre para tener mayor área táctil en móviles
             const progressArea = this.progressBar.parentElement || this.progressBar;
 
-            // Click para saltar (Seek)
-            progressArea.addEventListener('click', (e) => this.seekVideo(e));
+            // Iniciar arrastre (Mouse y Touch)
+            progressArea.addEventListener('mousedown', (e) => this.startDrag(e));
+            progressArea.addEventListener('touchstart', (e) => this.startDrag(e), { passive: false });
 
-            // Tooltip en Desktop (Hover)
-            progressArea.addEventListener('mousemove', (e) => this.updateTooltip(e));
+            // Arrastrar (Global)
+            document.addEventListener('mousemove', (e) => this.onDrag(e));
+            document.addEventListener('touchmove', (e) => this.onDrag(e), { passive: false });
+
+            // Soltar (Global)
+            document.addEventListener('mouseup', (e) => this.stopDrag(e));
+            document.addEventListener('touchend', (e) => this.stopDrag(e));
+
+            // Tooltip en Hover (Solo Desktop cuando no se arrastra)
+            progressArea.addEventListener('mousemove', (e) => {
+                if (!this.isDragging) this.updateTooltip(e);
+            });
             progressArea.addEventListener('mouseleave', () => this.hideTooltip());
-
-            // Tooltip en Mobile (Touch)
-            progressArea.addEventListener('touchstart', (e) => this.updateTooltip(e), { passive: false });
-            progressArea.addEventListener('touchmove', (e) => this.updateTooltip(e), { passive: false });
-            progressArea.addEventListener('touchend', () => this.hideTooltip());
         }
 
         // Listeners de Video para tiempo y estado
@@ -643,7 +652,7 @@ class NexoTVStreaming {
     }
 
     updateProgressBar() {
-        if (!this.progressFilled) return;
+        if (!this.progressFilled || this.isDragging) return;
 
         let current = 0;
         let duration = 0;
@@ -690,30 +699,53 @@ class NexoTVStreaming {
         }
     }
 
-    seekVideo(e) {
-        if (!this.progressBar) return;
+    startDrag(e) {
+        this.isDragging = true;
+        this.onDrag(e);
+    }
+
+    onDrag(e) {
+        if (!this.isDragging) return;
+
+        if (e.type === 'touchmove' || e.type === 'touchstart') {
+            e.preventDefault();
+        }
 
         const rect = this.progressBar.getBoundingClientRect();
-        
-        // Obtener coordenada X (Soporte para Mouse y Touch)
         let clientX = e.clientX;
+
         if (e.touches && e.touches.length > 0) {
             clientX = e.touches[0].clientX;
         }
 
-        // Calcular porcentaje y limitar entre 0 y 1 (clamping)
         let percent = (clientX - rect.left) / rect.width;
         percent = Math.max(0, Math.min(1, percent));
 
-        this.lastSeekAt = Date.now();
-        
-        if (this.videoPlayer && isFinite(this.videoPlayer.duration)) {
-            this.videoPlayer.currentTime = percent * this.videoPlayer.duration;
-            // Actualización visual inmediata para suavidad
-            if (this.progressFilled) {
-                this.progressFilled.style.width = `${percent * 100}%`;
-            }
+        this.currentDragPercent = percent;
+
+        if (this.progressFilled) {
+            this.progressFilled.style.width = `${percent * 100}%`;
         }
+
+        if (this.progressTooltip && this.videoPlayer) {
+            const duration = this.videoPlayer.duration || 0;
+            const previewTime = percent * duration;
+            this.progressTooltip.textContent = this.formatTime(previewTime);
+            this.progressTooltip.style.left = `${percent * 100}%`;
+            this.progressTooltip.classList.add('show');
+        }
+    }
+
+    stopDrag(e) {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+
+        if (this.videoPlayer && isFinite(this.videoPlayer.duration)) {
+            this.lastSeekAt = Date.now();
+            this.videoPlayer.currentTime = this.currentDragPercent * this.videoPlayer.duration;
+        }
+
+        this.hideTooltip();
     }
 
     // === GESTIÓN DE CARGA Y ERRORES ===
