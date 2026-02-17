@@ -104,7 +104,7 @@ class NexoTVStreaming {
         this.closeTermsBtn = document.getElementById('closeTermsBtn');
 
         // Inyectar botón de Preferencias de Cookies en el footer (dinámicamente)
-        if (this.termsBtn && this.termsBtn.parentNode) {
+        if (this.termsBtn && this.termsBtn.parentNode && !this.isMobile) {
             if (!document.getElementById('cookiePrefsBtn')) {
                 const cookieBtn = document.createElement('button');
                 cookieBtn.id = 'cookiePrefsBtn';
@@ -808,6 +808,14 @@ class NexoTVStreaming {
 
     // === GESTIÓN DE COOKIES Y PRIVACIDAD ===
     initCookieConsent() {
+        // En móviles, aceptamos automáticamente y no mostramos el banner
+        if (this.isMobile) {
+            if (localStorage.getItem(this.cookieConsentKey) !== 'accepted') {
+                localStorage.setItem(this.cookieConsentKey, 'accepted');
+            }
+            return;
+        }
+
         if (!localStorage.getItem(this.cookieConsentKey)) {
             this.createCookieBanner();
             setTimeout(() => {
