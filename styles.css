@@ -1637,6 +1637,29 @@ video {
     font-family: inherit;
 }
 
+.footer-download-btn {
+    color: var(--gold);
+    font-weight: 700;
+    background: transparent;
+    border: 2px solid var(--gold);
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 1px;
+}
+
+.footer-download-btn:hover {
+    background-color: var(--gold);
+    color: var(--bg-dark);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    transform: translateY(-3px);
+}
+
 .footer-link:hover, .footer-link-btn:hover {
     color: var(--gold);
 }
@@ -1713,6 +1736,84 @@ video {
 
 .terms-content a:hover {
     text-decoration: underline;
+}
+
+/* ==================== DOWNLOAD MODAL ==================== */
+.download-container {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    padding: 3rem 2rem;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    margin: auto;
+    text-align: center;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.download-container h2 {
+    color: var(--gold);
+    margin-bottom: 2.5rem;
+    font-size: 2rem;
+}
+
+.download-options {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.download-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    min-width: 250px;
+}
+
+.download-option:hover {
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.download-option img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+.download-option h3 {
+    color: var(--text-main);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.download-link-btn {
+    background-color: var(--gold);
+    color: var(--bg-dark);
+    text-decoration: none;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.download-link-btn:hover {
+    background-color: var(--gold-hover);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    transform: scale(1.05);
 }
 
 /* ==================== TOAST NOTIFICATION ==================== */

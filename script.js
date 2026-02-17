@@ -106,6 +106,11 @@ class NexoTVStreaming {
         this.termsModal = document.getElementById('termsModal');
         this.closeTermsBtn = document.getElementById('closeTermsBtn');
 
+        // Download Modal
+        this.downloadAppBtn = document.getElementById('downloadAppBtn');
+        this.downloadModal = document.getElementById('downloadModal');
+        this.closeDownloadBtn = document.getElementById('closeDownloadBtn');
+
         // Inyectar botón de Preferencias de Cookies en el footer (dinámicamente)
         if (this.termsBtn && this.termsBtn.parentNode && !this.isMobile) {
             if (!document.getElementById('cookiePrefsBtn')) {
@@ -354,6 +359,19 @@ class NexoTVStreaming {
             });
         }
 
+        // Eventos Modal Descarga
+        if (this.downloadAppBtn) {
+            this.downloadAppBtn.addEventListener('click', () => this.openDownloadModal());
+        }
+        if (this.closeDownloadBtn) {
+            this.closeDownloadBtn.addEventListener('click', () => this.closeDownloadModal());
+        }
+        if (this.downloadModal) {
+            this.downloadModal.addEventListener('click', (e) => {
+                if (e.target === this.downloadModal) this.closeDownloadModal();
+            });
+        }
+
         // Botón Preferencias de Cookies
         if (this.cookiePrefsBtn) {
             this.cookiePrefsBtn.addEventListener('click', () => this.reopenCookieConsent());
@@ -381,6 +399,9 @@ class NexoTVStreaming {
                     // También cerrar términos si está abierto
                     if (this.termsModal && this.termsModal.classList.contains('active')) {
                         this.closeTerms();
+                    }
+                    if (this.downloadModal && this.downloadModal.classList.contains('active')) {
+                        this.closeDownloadModal();
                     }
                 }
             }
@@ -1296,6 +1317,16 @@ class NexoTVStreaming {
 
     closeTerms() {
         if (this.termsModal) this.termsModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    openDownloadModal() {
+        if (this.downloadModal) this.downloadModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeDownloadModal() {
+        if (this.downloadModal) this.downloadModal.classList.remove('active');
         document.body.style.overflow = 'auto';
     }
 
