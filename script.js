@@ -19,7 +19,6 @@ class NexoTVStreaming {
         this.stableMode = false;
         this.bufferInterval = null;
         this.lastSeekAt = 0; // timestamp of last user/programmatic seek
-        this.isDragging = false; // Estado para controlar el arrastre de la barra
 
         // Detectar si es dispositivo móvil
         this.isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -64,6 +63,7 @@ class NexoTVStreaming {
         this.downloadBtn = document.getElementById('downloadBtn');
         this.progressBar = document.getElementById('progressBar');
         this.progressFilled = document.getElementById('progressFilled');
+        this.progressTooltip = document.getElementById('progressTooltip');
 
         // Metadatos del Reproductor
         this.playerTitle = document.getElementById('playerTitle');
@@ -213,34 +213,17 @@ class NexoTVStreaming {
             // Usamos el contenedor padre para tener mayor área táctil en móviles
             const progressArea = this.progressBar.parentElement || this.progressBar;
 
-            const startDrag = (e) => {
-                this.isDragging = true;
-                this.seekVideo(e); // Actualizar inmediatamente al tocar/clicar
-            };
+            // Click para saltar (Seek)
+            progressArea.addEventListener('click', (e) => this.seekVideo(e));
 
-            const onDrag = (e) => {
-                if (this.isDragging) {
-                    // Prevenir scroll en móviles mientras se arrastra la barra
-                    if (e.cancelable && (e.type === 'touchmove' || e.type === 'touchstart')) {
-                        e.preventDefault();
-                    }
-                    this.seekVideo(e);
-                }
-            };
+            // Tooltip en Desktop (Hover)
+            progressArea.addEventListener('mousemove', (e) => this.updateTooltip(e));
+            progressArea.addEventListener('mouseleave', () => this.hideTooltip());
 
-            const stopDrag = () => {
-                this.isDragging = false;
-            };
-
-            // Eventos Mouse
-            progressArea.addEventListener('mousedown', startDrag);
-            document.addEventListener('mousemove', onDrag);
-            document.addEventListener('mouseup', stopDrag);
-
-            // Eventos Touch (Passive false para poder usar preventDefault)
-            progressArea.addEventListener('touchstart', startDrag, { passive: false });
-            document.addEventListener('touchmove', onDrag, { passive: false });
-            document.addEventListener('touchend', stopDrag);
+            // Tooltip en Mobile (Touch)
+            progressArea.addEventListener('touchstart', (e) => this.updateTooltip(e), { passive: false });
+            progressArea.addEventListener('touchmove', (e) => this.updateTooltip(e), { passive: false });
+            progressArea.addEventListener('touchend', () => this.hideTooltip());
         }
 
         // Listeners de Video para tiempo y estado
@@ -659,7 +642,7 @@ class NexoTVStreaming {
     }
 
     updateProgressBar() {
-        if (!this.progressFilled || this.isDragging) return; // No actualizar si el usuario está arrastrando
+        if (!this.progressFilled) return;
 
         let current = 0;
         let duration = 0;
@@ -672,6 +655,38 @@ class NexoTVStreaming {
         if (duration <= 0) return;
         const percent = (current / duration) * 100;
         this.progressFilled.style.width = `${percent}%`;
+    }
+
+    updateTooltip(e) {
+        if (!this.progressTooltip || !this.videoPlayer || !this.progressBar) return;
+        
+        // Prevenir scroll en móviles al tocar la barra
+        if (e.type === 'touchmove' || e.type === 'touchstart') {
+            e.preventDefault();
+        }
+
+        const rect = this.progressBar.getBoundingClientRect();
+        let clientX = e.clientX;
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+        }
+
+        let percent = (clientX - rect.left) / rect.width;
+        percent = Math.max(0, Math.min(1, percent));
+
+        const duration = this.videoPlayer.duration || 0;
+        const previewTime = percent * duration;
+
+        this.progressTooltip.textContent = this.formatTime(previewTime);
+
+        this.progressTooltip.style.left = `${percent * 100}%`;
+        this.progressTooltip.classList.add('show');
+    }
+
+    hideTooltip() {
+        if (this.progressTooltip) {
+            this.progressTooltip.classList.remove('show');
+        }
     }
 
     seekVideo(e) {

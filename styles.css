@@ -472,7 +472,10 @@ h1, h2, h3, h4 {
 
 /* ==================== MODAL DEL REPRODUCTOR ==================== */
 .modal {
-    display: none;
+    display: flex; /* Cambiado de none a flex para permitir transiciones */
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -481,10 +484,13 @@ h1, h2, h3, h4 {
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 1000;
     overflow-y: auto;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s linear;
 }
 
 .modal.active {
-    display: flex;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: all;
     justify-content: center;
     align-items: flex-start;
     padding: 2rem 0.5rem 1rem;
@@ -502,6 +508,12 @@ h1, h2, h3, h4 {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.modal.active .player-container {
+    transform: scale(1);
 }
 
 .close-btn {
@@ -715,6 +727,7 @@ video {
     margin-bottom: 1rem;
     padding: 0.5rem 0;
     cursor: pointer;
+    position: relative;
 }
 
 .progress-bar {
@@ -760,6 +773,31 @@ video {
 
 .progress-bar:hover .progress-filled::after {
     transform: translateY(-50%) scale(1.2);
+}
+
+/* Tooltip de tiempo */
+.progress-tooltip {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    transform: translateX(-50%);
+    background-color: transparent;
+    color: var(--gold);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    z-index: 30;
+    border: none;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.progress-tooltip.show {
+    opacity: 1;
 }
 
 /* Fila de controles */
