@@ -753,12 +753,11 @@ video {
     background-color: var(--gold);
     border-radius: 50%;
     box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .progress-bar:hover .progress-filled::after {
-    opacity: 1;
     transform: translateY(-50%) scale(1.2);
 }
 

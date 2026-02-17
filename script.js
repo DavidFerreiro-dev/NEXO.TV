@@ -247,12 +247,7 @@ class NexoTVStreaming {
                 videoContainer.style.cursor = 'default'; // Mostrar cursor
                 clearTimeout(this.hudHideTimeout);
 
-                // En móviles, dejar controles siempre visibles
-                if (this.isMobile) {
-                    return;
-                }
-
-                // Programar ocultación solo si el video está en reproducción (solo desktop)
+                // Programar ocultación solo si el video está en reproducción
                 if (!this.videoPlayer.paused) {
                     this.hudHideTimeout = setTimeout(() => {
                         this.videoOverlay.classList.remove('show');
@@ -274,9 +269,6 @@ class NexoTVStreaming {
                         }, this.hudHideDelay);
                     }
                 });
-            } else {
-                // En móviles, siempre mostrar controles
-                this.videoOverlay.classList.add('show');
             }
 
             // Mostrar controles cuando se pausa
@@ -286,15 +278,13 @@ class NexoTVStreaming {
                 videoContainer.style.cursor = 'default';
             });
             
-            // Ocultar después de 4 segundos cuando se reanuda (solo desktop)
+            // Ocultar después de 4 segundos cuando se reanuda
             this.videoPlayer.addEventListener('play', () => {
                 clearTimeout(this.hudHideTimeout);
-                if (!this.isMobile) {
-                    this.hudHideTimeout = setTimeout(() => {
-                        this.videoOverlay.classList.remove('show');
-                        videoContainer.style.cursor = 'none';
-                    }, this.hudHideDelay);
-                }
+                this.hudHideTimeout = setTimeout(() => {
+                    this.videoOverlay.classList.remove('show');
+                    videoContainer.style.cursor = 'none';
+                }, this.hudHideDelay);
             });
 
             // Gestos touch mejorados para móviles
@@ -303,6 +293,7 @@ class NexoTVStreaming {
                     this.touchStartX = e.touches[0].clientX;
                     this.touchStartY = e.touches[0].clientY;
                     this.touchStartTime = Date.now();
+                    showControls();
                 }, { passive: true });
 
                 videoContainer.addEventListener('touchend', () => {
