@@ -1607,6 +1607,25 @@ video {
     margin-top: 4rem;
 }
 
+.footer-cta {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.cta-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
 .footer-grid {
     max-width: 1400px;
     margin: 0 auto;
@@ -1638,26 +1657,24 @@ video {
 }
 
 .footer-download-btn {
-    color: var(--gold);
+    background: linear-gradient(45deg, var(--gold), #F4CF57);
+    color: #000;
     font-weight: 700;
-    background: transparent;
-    border: 2px solid var(--gold);
-    padding: 0.6rem 1.5rem;
+    border: none;
+    padding: 1rem 3rem;
     border-radius: 50px;
     cursor: pointer;
-    font-size: 1rem;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
     display: inline-block;
     font-family: 'Outfit', sans-serif;
     letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
 }
 
 .footer-download-btn:hover {
-    background-color: var(--gold);
-    color: var(--bg-dark);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-    transform: translateY(-3px);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
 }
 
 .footer-link:hover, .footer-link-btn:hover {
