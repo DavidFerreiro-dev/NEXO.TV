@@ -35,6 +35,7 @@ class NexoTVStreaming {
         this.setupEventListeners();
         this.loadMovies();
         this.initCookieConsent();
+        this.initMobileLoader();
     }
 
     initializeElements() {
@@ -1256,6 +1257,42 @@ class NexoTVStreaming {
     closeTerms() {
         if (this.termsModal) this.termsModal.classList.remove('active');
         document.body.style.overflow = 'auto';
+    }
+
+    initMobileLoader() {
+        if (this.isMobile) {
+            const loader = document.getElementById('mobileLoader');
+            if (loader) {
+                // Mostrar loader
+                loader.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+
+                const hideLoader = () => {
+                    loader.style.transition = 'opacity 0.5s ease';
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }, 500);
+                };
+
+                // Timeout de seguridad (20s)
+                const safetyTimeout = setTimeout(() => {
+                    hideLoader();
+                }, 20000);
+
+                // Evento de carga completa
+                if (document.readyState === 'complete') {
+                    clearTimeout(safetyTimeout);
+                    hideLoader();
+                } else {
+                    window.addEventListener('load', () => {
+                        clearTimeout(safetyTimeout);
+                        hideLoader();
+                    });
+                }
+            }
+        }
     }
 }
 

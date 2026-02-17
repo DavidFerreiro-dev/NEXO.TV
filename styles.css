@@ -1855,3 +1855,39 @@ video {
         flex-shrink: 0;
     }
 }
+
+/* ==================== MOBILE LOADER ==================== */
+.mobile-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 999999;
+    display: none; /* Controlado por JS */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.loader-text {
+    color: var(--gold);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    animation: pulse 1.5s infinite;
+}
+
+.loader-logo {
+    width: 180px;
+    height: auto;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
