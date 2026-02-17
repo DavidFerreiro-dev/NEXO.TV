@@ -33,6 +33,9 @@ Aunque las películas base sean de dominio público, las ediciones específicas 
 * Los **doblajes originales**, subtítulos exclusivos, introducciones, restauraciones visuales y material gráfico (logotipos y diseño web) son propiedad intelectual exclusiva de NEXO.TV y sus creadores.
 * ⚠️ **Queda prohibida la redistribución de estas versiones específicas sin autorización expresa.**
 
+Big Horns Intro 2 de Audionautix tiene una licencia Atribución 4.0 de Creative Commons. [https://creativecommons.org/licenses/by/4.0/](https://creativecommons.org/licenses/by/4.0/)
+Artista: [http://audionautix.com/](http://audionautix.com/)
+
 ---
 
 ## 5. CÓDIGO FUENTE Y DESARROLLO
