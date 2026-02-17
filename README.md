@@ -2,10 +2,17 @@
 
 <img src="Logos/nexo.png" alt="NEXO.TV Logo" width="300">
 
-![License: Public Domain](https://img.shields.io/badge/License-Public_Domain-gold.svg)
-![Status: Concept/Academic](https://img.shields.io/badge/Status-Academic_Project-blue.svg)
+[![Plataforma Oficial](https://img.shields.io/badge/Plataforma-NEXO.TV-d4af37.svg?style=for-the-badge)](https://nexotv.netlify.app/)
+![License: Public Domain](https://img.shields.io/badge/License-Public_Domain-gold.svg?style=for-the-badge)
+![Status: Concept/Academic](https://img.shields.io/badge/Status-Academic_Project-blue.svg?style=for-the-badge)
 
 > **El cine que definió la historia** — Joyas ocultas, clásicos inmortales y el legado que las plataformas olvidaron.
+
+---
+
+## 🌐 Acceso Oficial
+Puedes visualizar la interfaz en vivo y el catálogo actualizado en el siguiente enlace:
+🚀 **[https://nexotv.netlify.app/](https://nexotv.netlify.app/)**
 
 ---
 
@@ -16,17 +23,17 @@ Este repositorio es el resultado de un proyecto académico personal. El objetivo
 
 ## 🚀 El Concepto
 La idea detrás de NEXO es la **curaduría**. En un mar de archivos desordenados, NEXO actúa como un filtro de calidad:
-* **Selección Histórica:** No subimos todo, solo lo que importa (The Essentials).
-* **Valor Añadido:** Exploramos la creación de "Originals" mediante el doblaje y montaje de obras libres de derechos.
+* **Selección Histórica:** No subimos todo, solo lo que importa (*The Essentials*).
+* **Valor Añadido:** Exploramos la creación de **"NEXO Originals"** mediante el doblaje, restauración 4K y montaje de obras libres de derechos.
 * **UX/UI Cinematográfica:** Una interfaz diseñada para dar dignidad a películas que tienen más de 100 años.
 
 ## ✨ Características Técnicas (PoC)
 * **NEXO Originals:** Demostración de contenido editado (como nuestra edición de *NEXO.TV: The Original Mickey Mouse Trilogy* de 1928).
-* **Streaming vía Hotlinking:** Integración directa con los servidores de Internet Archive para optimizar el almacenamiento.
-* **Arquitectura:** Diseño "Mobile First" y carga dinámica de catálogo mediante archivos de datos estructurados.
+* **Streaming Híbrido:** Integración directa con servidores de **Internet Archive** para catálogo general y **Hugging Face** para retransmisión estable de originales en FullHD/4K.
+* **Arquitectura:** Diseño "Mobile First" y carga dinámica de catálogo mediante archivos de datos estructurados (JSON).
 
 ## 🎞️ Catálogo Destacado (Essentials)
-El proyecto incluye una selección de obras maestras que sirven para testear diferentes formatos y épocas (Alguna se añadirán proximamente):
+El proyecto incluye una selección de obras maestras que sirven para testear diferentes formatos y épocas:
 1.  **Sin Novedad en el Frente (1930)**
 2.  **Häxan (1922)**
 3.  **El Chico (1921)**
@@ -35,18 +42,18 @@ El proyecto incluye una selección de obras maestras que sirven para testear dif
 
 ## ⚖️ Aspectos Legales
 Todo el contenido visualizado en este proyecto pertenece al **Dominio Público**. 
-* Se han respetado las fechas de caducidad de copyright (obras publicadas hace más de 95 años).
+* Se han respetado las fechas de caducidad de copyright (obras publicadas hace más de 95 años en EE.UU.).
 * Este proyecto cumple con propósitos estrictamente educativos y de portfolio personal.
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
-* **Frontend:** [Añade aquí: HTML/CSS/JS o Framework]
-* **Hosting:** [Añade aquí: Netlify/Vercel/GitHub Pages]
-* **Media:** Internet Archive (Public Domain)
+* **Frontend:** HTML5, CSS3 (Custom Design), JavaScript (ES6+).
+* **Hosting:** [Netlify](https://nexotv.netlify.app/) (Producción) / GitHub Pages.
+* **Media Storage:** Internet Archive & Hugging Face Datasets.
 
 ## 👤 Autor
-Desarrollado por **[David Ferreiro]**.
+Desarrollado por **David Ferreiro**.
 
 ---
 *Este proyecto es una carta de amor al cine clásico y al desarrollo de software.*
