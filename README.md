@@ -5,7 +5,7 @@
 [![Plataforma Oficial](https://img.shields.io/badge/Plataforma-NEXO.TV-d4af37)](https://nexotv.netlify.app/)
 ![License: Public Domain](https://img.shields.io/badge/License-Public_Domain-gold)
 ![Status: Concept/Academic](https://img.shields.io/badge/Status-Academic_Project-blue)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d0e5afc9-f2bc-4244-9cc6-8ce6558e272c/deploy-status)](https://app.netlify.com/projects/nexotv/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b27791c3-7e13-4e97-8934-b12e7f4fe86b/deploy-status)](https://app.netlify.com/projects/nexotv/deploys)
 
 > **El cine que definió la historia** — Joyas ocultas, clásicos inmortales y el legado que las plataformas olvidaron.
 
