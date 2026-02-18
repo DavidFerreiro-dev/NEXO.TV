@@ -1,9 +1,15 @@
 {
   "name": "nexo-tv",
   "version": "1.0.0",
+  "description": "Plataforma de cine clásico optimizada",
+  "main": "index.html",
   "scripts": {
-    "build": "mkdir -p dist && cp movies.json dist/ && html-minifier --collapse-whitespace --remove-comments --input-dir . --output-dir dist --file-ext html"
+    "build": "mkdir -p dist && cp movies.json dist/ && cp -r css dist/ 2>/dev/null || : && cp -r js dist/ 2>/dev/null || : && cp -r img dist/ 2>/dev/null || : && html-minifier --collapse-whitespace --remove-comments --input-dir . --output-dir dist --file-ext html",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "NEXO.TV",
+  "license": "ISC",
   "devDependencies": {
     "html-minifier": "^4.0.0"
   }
