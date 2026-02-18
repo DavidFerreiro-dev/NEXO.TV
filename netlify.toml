@@ -1,0 +1,38 @@
+[build]
+  # Ahora le decimos que use el script de package.json
+  command = "npm run build"
+  # La carpeta que Netlify publicará será la optimizada
+  publish = "dist"
+
+[build.processing]
+  # Optimizaciones automáticas de Netlify (Post-procesado)
+  skip_processing = false
+  [build.processing.css]
+    bundle = true
+    minify = true
+  [build.processing.js]
+    bundle = true
+    minify = true
+  [build.processing.html]
+    pretty_urls = true
+  [build.processing.images]
+    compress = true # Esto optimiza tus posters automáticamente
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Vital para el hotlinking de vídeos externos
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Expose-Headers = "Content-Length, Content-Range"
+    Referrer-Policy = "no-referrer-when-downgrade"
+    # Forzar carga segura
+    Content-Security-Policy = "upgrade-insecure-requests; block-all-mixed-content; media-src *; img-src * data:;"
+    # Caché agresiva para que la web vuele al volver a entrar
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/movies.json"
+  [headers.values]
+    # El JSON cambia a menudo, así que pedimos que se valide siempre
+    Cache-Control = "public, max-age=0, must-revalidate"
