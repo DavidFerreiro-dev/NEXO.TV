@@ -3,6 +3,7 @@ class NexoTVStreaming {
         this.movies = [];
         this.filteredMovies = [];
         this.currentCategory = 'all';
+        this.currentSort = 'default';
         this.currentMovie = null;
         // ¡IMPORTANTE! Asegúrate de que este nombre coincida con tu archivo JSON real
         this.jsonUrl = './movies.json';
@@ -51,6 +52,7 @@ class NexoTVStreaming {
         if (this.searchInput) {
             this.searchInput.setAttribute('autocomplete', 'off');
         }
+        this.sortSelect = document.getElementById('sortSelect');
         this.categoryBtns = document.querySelectorAll('.category-btn');
         this.closeBtn = document.getElementById('closeBtn');
 
@@ -130,6 +132,11 @@ class NexoTVStreaming {
         // Búsqueda
         if (this.searchInput) {
             this.searchInput.addEventListener('input', (e) => this.handleSearch(e));
+        }
+
+        // Ordenamiento
+        if (this.sortSelect) {
+            this.sortSelect.addEventListener('change', (e) => this.handleSortChange(e));
         }
 
         // Categorías
@@ -465,11 +472,26 @@ class NexoTVStreaming {
             return matchCat && matchSearch;
         });
 
+        // Aplicar ordenamiento
+        if (this.currentSort === 'alpha') {
+            this.filteredMovies.sort((a, b) => a.titulo.localeCompare(b.titulo));
+        } else if (this.currentSort === 'date-desc') {
+            this.filteredMovies.sort((a, b) => b.año - a.año);
+        } else if (this.currentSort === 'date-asc') {
+            this.filteredMovies.sort((a, b) => a.año - b.año);
+        }
+        // Si es 'default', no hacemos nada porque filteredMovies mantiene el orden relativo de this.movies (que es el del JSON)
+
         this.renderContinueWatching();
         this.render();
     }
 
     handleSearch() { this.filterMovies(); }
+
+    handleSortChange(e) {
+        this.currentSort = e.target.value;
+        this.filterMovies();
+    }
 
     handleCategoryChange(e) {
         this.categoryBtns.forEach(btn => btn.classList.remove('active'));

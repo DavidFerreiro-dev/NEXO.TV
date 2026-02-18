@@ -38,9 +38,19 @@
 
     <!-- Buscador -->
     <div class="search-section">
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Buscar películas..." class="search-input">
-            <button class="search-btn"><img src="Assets/search.png" alt="Buscar"></button>
+        <div class="search-controls-container">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Buscar películas..." class="search-input">
+                <button class="search-btn"><img src="Assets/search.png" alt="Buscar"></button>
+            </div>
+            <div class="sort-box">
+                <select id="sortSelect" class="sort-select">
+                    <option value="default">Por defecto</option>
+                    <option value="alpha">Alfabético (A-Z)</option>
+                    <option value="date-desc">Más recientes</option>
+                    <option value="date-asc">Más antiguas</option>
+                </select>
+            </div>
         </div>
     </div>
 
