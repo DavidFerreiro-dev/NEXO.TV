@@ -1,13 +1,10 @@
 {
   "name": "nexo-tv",
   "version": "1.0.0",
-  "private": true,
   "scripts": {
-    "build": "mkdir -p dist && cp movies.json dist/ && html-minifier --collapse-whitespace --remove-comments --input-dir . --output-dir dist --file-ext html && terser js/*.js -c -m -o dist/script.js",
-    "preview": "netlify dev"
+    "build": "mkdir -p dist && cp movies.json dist/ && html-minifier --collapse-whitespace --remove-comments --input-dir . --output-dir dist --file-ext html"
   },
   "devDependencies": {
-    "html-minifier": "^4.0.0",
-    "terser": "^5.14.0"
+    "html-minifier": "^4.0.0"
   }
 }
