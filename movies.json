@@ -801,7 +801,7 @@
 },
 {
   "id": 51,
-  "titulo": "NEXO.TV: Popeye 1954 ",
+  "titulo": "NEXO.TV: Popeye 1954",
   "año": 1954,
   "sinopsis": "Una antología que reúne la producción íntegra de Famous Studios durante el año 1954. Seis cortometrajes que capturan la era del Technicolor vibrante, donde Popeye y Bluto trasladan su eterna rivalidad a escenarios cotidianos y mitológicos. Incluye piezas clave de la animación Mid-Century como 'Greek Mirthology' y 'Private Eye Popeye'.",
   "videoUrl": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/NEXO.TV_Popeye1954_READY.mp4",
@@ -814,5 +814,21 @@
   "producer": "NEXO.TV, Famous Studios",
   "country": "España, Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/cwyIo32uVKosIHTZn3xloyz9VU9.jpg"
+},
+{
+  "id": 52,
+  "titulo": "Meet John Doe",
+  "año": 1941,
+  "sinopsis": "Cuando un magnate compra un periódico y despide a casi todo el personal, una intrépida periodista decide publicar en su último artículo una falsa e incendiaria carta que lleva la firma de Juan Nadie. En ella se anuncia el suicidio de uno de los empleados despedidos. El éxito del artículo es tal que el periódico decide crear un Juan Nadie y, con este fin, contrata a un vagabundo que acaba convirtiéndose en un personaje extraordinariamente popular.",
+  "videoUrl": "https://dn721800.ca.archive.org/0/items/meet_john_doe/meet_john_doe.mp4",
+  "poster": "https://image.tmdb.org/t/p/original/jgTBufAuYg84R6WdP9wugx3Mc6t.jpg",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": false,
+  "director": "Frank Capra",
+  "cast": "Gary Cooper, Barbara Stanwyck, Edward Arnold, Walter Brennan",
+  "producer": "Liberty Films",
+  "country": "Estados Unidos",
+  "landscape": "https://image.tmdb.org/t/p/original/fy2hkQgAWj1st3FWBzqc27JlytC.jpg"
 }
 ]
