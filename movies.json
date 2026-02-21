@@ -763,7 +763,7 @@
   "isOriginal": true,
   "director": "Chuck Jones",
   "cast": "Wile E. Coyote, Road Runner",
-  "producer": "NEXO.TV Studios, Warner Bros. Cartoons",
+  "producer": "NEXO.TV, Warner Bros. Cartoons",
   "country": "España, Estados Unidos",
   "landscape": ""
 },
@@ -798,5 +798,21 @@
   "producer": "Universal Pictures",
   "country": "Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/yeQGyB8MjpX8KR7rUrP0E3gaviC.jpg"
+},
+{
+  "id": 51,
+  "titulo": "NEXO.TV: Popeye 1954 ",
+  "año": 1954,
+  "sinopsis": "Una antología que reúne la producción íntegra de Famous Studios durante el año 1954. Seis cortometrajes que capturan la era del Technicolor vibrante, donde Popeye y Bluto trasladan su eterna rivalidad a escenarios cotidianos y mitológicos. Incluye piezas clave de la animación Mid-Century como 'Greek Mirthology' y 'Private Eye Popeye'.",
+  "videoUrl": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/NEXO.TV_Popeye1954_READY.mp4",
+  "poster": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/NEXO.TV_Popeye1954.png",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": true,
+  "director": "Izzy Sparber, Seymour Kneitel",
+  "cast": "Popeye the Sailor, Olive Oyl, Bluto, Swee'Pea",
+  "producer": "NEXO.TV, Famous Studios",
+  "country": "España, Estados Unidos",
+  "landscape": "https://image.tmdb.org/t/p/original/cwyIo32uVKosIHTZn3xloyz9VU9.jpg"
 }
 ]
