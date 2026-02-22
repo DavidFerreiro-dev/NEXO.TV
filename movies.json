@@ -830,5 +830,21 @@
   "producer": "Liberty Films",
   "country": "Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/fy2hkQgAWj1st3FWBzqc27JlytC.jpg"
+},
+{
+  "id": 53,
+  "titulo": "Charada",
+  "año": 1963,
+  "sinopsis": "Charles Lampert, buscado por el gobierno de los Estados Unidos bajo la acusacion de haberse apoderado de un cuarto de millón de dólares en oro del fondo federal suma entregada a Charles y a cuatro compañeros de armas de éste, durante la guerra, para ayudar a la Resistencia francesa es asesinado cuando viajaba en tren en las proximidades de Burdeos. La esposa de Lampert -Regine- es sometida a vigilancia en Paris no solo por miembros de la embajada americana, sino por los individuos a los que Charles defraudó y que acusan a Regine de ocultar el dinero. Pero Regine es ajena, al parecer, a toda la maniobra montada por su difunto esposo.",
+  "videoUrl": "https://ia600806.us.archive.org/31/items/charade-1963-cary-grant-audrey-hepburn-comedy-mystery-romance-thriller-full-movie/Charade_READY.mp4",
+  "poster": "https://image.tmdb.org/t/p/original/qqaPjC5FQidtKY65jbAKZPiOTaS.jpg",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": false,
+  "director": "Stanley Donen",
+  "cast": "Cary Grant, Audrey Hepburn, Walter Matthau, James Coburn",
+  "producer": "Universal Pictures",
+  "country": "Estados Unidos",
+  "landscape": "https://image.tmdb.org/t/p/original/gj2TBYmOIy4E2GjMIpnbAEZNCQx.jpg"
 }
 ]
