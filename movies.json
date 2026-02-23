@@ -846,5 +846,21 @@
   "producer": "Universal Pictures",
   "country": "Estados Unidos",
   "landscape": "https://image.tmdb.org/t/p/original/gj2TBYmOIy4E2GjMIpnbAEZNCQx.jpg"
+},
+{
+  "id": 54,
+  "titulo": "The Intruder",
+  "año": 1962,
+  "sinopsis": "Un individuo muy ladino y artero, ataviado con un traje blanco, llega a una pequeña ciudad de Missouri y se presenta como un defensor de los derechos civiles de la población negra. Al día siguiente, está previsto que se aplique una sentencia del Tribunal Supremo que ordena la integración de los negros en la escuela.",
+  "videoUrl": "https://ia800105.us.archive.org/17/items/TheIntruder1962_201709/The%20Intruder%20%281962%29.mp4",
+  "poster": "https://image.tmdb.org/t/p/original/ikbXTVJcAwxVA68kVLEios2Np5J.jpg",
+  "categoria": "NEXO.TV",
+  "isEssential": false,
+  "isOriginal": false,
+  "director": "Roger Corman",
+  "cast": "William Shatner, Frank Maxwell, Beverly Lunsford, Leo Gordon",
+  "producer": "Pathe-America ",
+  "country": "Estados Unidos",
+  "landscape": "https://image.tmdb.org/t/p/original/oOCBt3EtP3tOQ7WNoAzNQucLKsN.jpg"
 }
 ]
