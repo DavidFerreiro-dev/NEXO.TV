@@ -2,7 +2,7 @@
 
 <img src="Logos/nexo.png" alt="NEXO.TV Logo" width="300">
 
-[![Plataforma Oficial](https://img.shields.io/badge/Plataforma-NEXO.TV-d4af37)](https://nexotv.netlify.app/)
+[![Plataforma Oficial](https://img.shields.io/badge/Plataforma-NEXO.TV-d4af37)](https://playnexotv.me)
 ![License: Public Domain](https://img.shields.io/badge/License-Public_Domain-gold)
 ![Status: Concept/Academic](https://img.shields.io/badge/Status-Academic_Project-blue)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/b27791c3-7e13-4e97-8934-b12e7f4fe86b/deploy-status)](https://app.netlify.com/projects/nexotv/deploys)
@@ -13,7 +13,7 @@
 
 ## 🌐 Acceso Oficial
 Puedes visualizar la interfaz en vivo y el catálogo actualizado en el siguiente enlace:
-🚀 **[https://nexotv.netlify.app/](https://nexotv.netlify.app/)**
+🚀 **[https://playnexotv.me](https://playnexotv.me)**
 
 ---
 
@@ -50,7 +50,7 @@ Todo el contenido visualizado en este proyecto pertenece al **Dominio Público**
 
 ## 🛠️ Tecnologías Utilizadas
 * **Frontend:** HTML5, CSS3 (Custom Design), JavaScript (ES6+).
-* **Hosting:** [Netlify](https://nexotv.netlify.app/) (Producción) / GitHub Pages.
+* **Hosting:** [Netlify](https://playnexotv.me) (Producción) / GitHub Pages.
 * **Media Storage:** Internet Archive & Hugging Face Datasets.
 
 ## 👤 Autor
