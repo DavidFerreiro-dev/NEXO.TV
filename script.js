@@ -25,6 +25,15 @@ class NexoTVStreaming {
         this.isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         this.isSmallScreen = window.innerWidth <= 480;
         
+            // Detectar TV y FireStick
+            this.isTV = this.detectTVDevice();
+            this.isFireStick = /Silk|AFTT|AFTM|AFTS|AFTB|AFTT|ARMv/.test(navigator.userAgent);
+        
+            // Variables para navegación remota
+            this.focusableElements = [];
+            this.currentFocusIndex = -1;
+            this.remoteNavigationEnabled = this.isTV || this.isFireStick;
+        
         // Variables para gestos touch
         this.touchStartX = 0;
         this.touchStartY = 0;
@@ -1387,84 +1396,188 @@ class NexoTVStreaming {
             }
         }
     }
+
+    // ==================== TV & FireStick SUPPORT METHODS ====================
+
+    detectTVDevice() {
+        const ua = navigator.userAgent || '';
+        
+        // Detectar FireStick y dispositivos Amazon
+        if (/Silk|AFTT|AFTM|AFTS|AFTB|ARMv/.test(ua)) {
+            return true;
+        }
+        
+        // Detectar Android TV
+        if (/Android.*TV|GoogleTV|NETCAST|SmartTV|WebOS|Tizen/.test(ua)) {
+            return true;
+        }
+        
+        // Detectar por resolución (TVs suelen ser muy grandes)
+        if (window.innerWidth >= 1920 && window.innerHeight >= 1080) {
+            // Pero descartar si parece ser una ventana de navegador grande en desktop
+            if (!/Windows|Macintosh|Linux x86/.test(ua) || window.devicePixelRatio < 1.5) {
+                // Si es una resolución 4K o 1080p landscape, probablemente es TV
+                if (Math.min(window.innerWidth, window.innerHeight) >= 1080) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    initRemoteNavigation() {
+        console.log('🎮 Inicializando navegación por control remoto (TV/FireStick)');
+        
+        // Escuchar teclas de navegación
+        document.addEventListener('keydown', (e) => this.handleRemoteKeyPress(e));
+        
+        // Al cargar las películas, compilar lista de elementos enfocables
+        setTimeout(() => this.updateFocusableElements(), 500);
+    }
+
+    updateFocusableElements() {
+        // Elementos que pueden recibir foco: botones, inputs, tarjetas de película
+        this.focusableElements = Array.from(document.querySelectorAll(
+            'button:not(:disabled), input, select, .category-btn, .movie-card, .footer-link-btn'
+        )).filter(el => {
+            // Excluir elementos ocultos
+            return el.offsetParent !== null && el.style.display !== 'none';
+        });
+
+        // Si hay elementos, enfocar el primero
+        if (this.focusableElements.length > 0 && this.currentFocusIndex === -1) {
+            this.currentFocusIndex = 0;
+            this.focusElement(this.currentFocusIndex);
+        }
+    }
+
+    handleRemoteKeyPress(e) {
+        // Si estamos en player modal, usar controles de video
+        if (this.playerModal && this.playerModal.classList.contains('active')) {
+            this.handlePlayerKeyPress(e);
+            return;
+        }
+
+        switch(e.key) {
+            case 'ArrowUp':
+                e.preventDefault();
+                this.navigateFocus(-1, 'vertical');
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                this.navigateFocus(1, 'vertical');
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                this.navigateFocus(-1, 'horizontal');
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                this.navigateFocus(1, 'horizontal');
+                break;
+            case 'Enter':
+                e.preventDefault();
+                this.activateFocus();
+                break;
+            case 'Backspace':
+                e.preventDefault();
+                this.showToast('Presiona Escape para salir');
+                break;
+        }
+    }
+
+    handlePlayerKeyPress(e) {
+        // Controles especiales en el reproductor de video
+        switch(e.key) {
+            case 'ArrowLeft':
+                e.preventDefault();
+                // Retroceder 10 segundos
+                if (this.videoPlayer) {
+                    this.videoPlayer.currentTime = Math.max(0, this.videoPlayer.currentTime - 10);
+                }
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                // Avanzar 10 segundos
+                if (this.videoPlayer) {
+                    this.videoPlayer.currentTime = Math.min(this.videoPlayer.duration, this.videoPlayer.currentTime + 10);
+                }
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                // Aumentar volumen 10%
+                if (this.videoPlayer) {
+                    this.videoPlayer.volume = Math.min(1, this.videoPlayer.volume + 0.1);
+                    if (this.volumeSlider) this.volumeSlider.value = this.videoPlayer.volume * 100;
+                }
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                // Disminuir volumen 10%
+                if (this.videoPlayer) {
+                    this.videoPlayer.volume = Math.max(0, this.videoPlayer.volume - 0.1);
+                    if (this.volumeSlider) this.volumeSlider.value = this.videoPlayer.volume * 100;
+                }
+                break;
+            case ' ':
+            case 'Enter':
+                e.preventDefault();
+                this.togglePlayPause();
+                break;
+            case 'f':
+            case 'F':
+                e.preventDefault();
+                this.toggleFullscreen();
+                break;
+        }
+    }
+
+    navigateFocus(direction, axis = 'vertical') {
+        if (this.focusableElements.length === 0) {
+            this.updateFocusableElements();
+            return;
+        }
+
+        if (this.currentFocusIndex === -1) {
+            this.currentFocusIndex = 0;
+        } else {
+            this.currentFocusIndex = (this.currentFocusIndex + direction + this.focusableElements.length) % this.focusableElements.length;
+        }
+
+        this.focusElement(this.currentFocusIndex);
+    }
+
+    focusElement(index) {
+        // Remover foco anterior
+        this.focusableElements.forEach(el => el.blur());
+
+        if (index >= 0 && index < this.focusableElements.length) {
+            const element = this.focusableElements[index];
+            element.focus({ behavior: 'smooth' });
+
+            // Scroll suave hacia el elemento si es necesario
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 50);
+        }
+    }
+
+    activateFocus() {
+        if (this.currentFocusIndex >= 0 && this.currentFocusIndex < this.focusableElements.length) {
+            const element = this.focusableElements[this.currentFocusIndex];
+            
+            // Simular click
+            element.click();
+            
+            // Si es un input, enfocar para escritura
+            if (element.tagName === 'INPUT') {
+                element.focus();
+            }
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     new NexoTVStreaming();
 });
-
-// Function to detect mobile devices
-function isMobileDevice() {
-    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-// Function to detect Amazon Fire Stick
-function isAmazonFireStick() {
-    return /AFT|Fire_TV/i.test(navigator.userAgent);
-}
-
-// Function to adjust controls for Amazon Fire Stick
-function adjustControlsForFireStick() {
-    if (isAmazonFireStick()) {
-        const videoPlayer = document.getElementById('videoPlayer');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const muteBtn = document.getElementById('muteBtn');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-
-        // Add keydown event listener for Fire Stick remote
-        document.addEventListener('keydown', (e) => {
-            switch (e.key) {
-                case 'Enter': // Play/Pause
-                    if (videoPlayer.paused) {
-                        videoPlayer.play();
-                    } else {
-                        videoPlayer.pause();
-                    }
-                    break;
-                case 'ArrowUp': // Volume Up
-                    videoPlayer.volume = Math.min(videoPlayer.volume + 0.1, 1);
-                    break;
-                case 'ArrowDown': // Volume Down
-                    videoPlayer.volume = Math.max(videoPlayer.volume - 0.1, 0);
-                    break;
-                case 'ArrowRight': // Seek Forward
-                    videoPlayer.currentTime = Math.min(videoPlayer.currentTime + 10, videoPlayer.duration);
-                    break;
-                case 'ArrowLeft': // Seek Backward
-                    videoPlayer.currentTime = Math.max(videoPlayer.currentTime - 10, 0);
-                    break;
-                case 'F': // Fullscreen
-                    if (document.fullscreenElement) {
-                        document.exitFullscreen();
-                    } else {
-                        videoPlayer.requestFullscreen();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        console.log('Controles ajustados para Amazon Fire Stick.');
-    }
-}
-
-// Call the function on page load
-window.onload = function() {
-    adjustControlsForFireStick();
-};
-
-// Function to detect if running in Capacitor Native App
-const isNativeApp = () => {
-    return window.Capacitor && window.Capacitor.isNative;
-};
-
-const applyNativeStyles = () => {
-    if (isNativeApp()) {
-        console.log("Running in Native App Mode");
-        document.body.classList.add('mobile-app-mode');
-        // Add your custom logic here (e.g., hide header)
-    }
-};
-
-window.addEventListener('load', applyNativeStyles);

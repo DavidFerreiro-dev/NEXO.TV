@@ -2059,4 +2059,363 @@ video {
     0% { opacity: 0.5; }
     50% { opacity: 1; }
     100% { opacity: 0.5; }
+
+/* ==================== TV & FireStick OPTIMIZATION ==================== */
+/* Media query para dispositivos con pantalla muy grande (TVs) */
+@media (min-width: 1920px), (min-height: 1024px) and (orientation: landscape) {
+    /* Textos más grandes para distancia de visualización */
+    body {
+        font-size: 1.2rem;
+        line-height: 1.8;
+    }
+
+    h1 {
+        font-size: 4rem !important;
+    }
+
+    h2 {
+        font-size: 2.5rem !important;
+    }
+
+    h3 {
+        font-size: 1.8rem !important;
+    }
+
+    .hero-title {
+        font-size: 4.5rem !important;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem !important;
+    }
+
+    .section-title {
+        font-size: 2.5rem !important;
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+
+    /* Botones más grandes y espaciados */
+    button {
+        padding: 1rem 2rem !important;
+        font-size: 1.2rem !important;
+        border-radius: 8px;
+        min-height: 54px;
+        min-width: 200px;
+    }
+
+    .category-btn {
+        padding: 1.2rem 2.5rem !important;
+        font-size: 1.3rem !important;
+        min-height: 60px;
+    }
+
+    .search-input {
+        padding: 1rem 1.5rem !important;
+        font-size: 1.1rem !important;
+        border-radius: 8px;
+        min-height: 54px;
+    }
+
+    .sort-select {
+        padding: 1rem 1.5rem !important;
+        font-size: 1.1rem !important;
+        min-height: 54px;
+    }
+
+    .search-controls-container {
+        gap: 2rem;
+    }
+
+    /* Tarjetas de película más grandes */
+    .movie-card {
+        min-height: 450px;
+    }
+
+    .movie-card img {
+        height: 350px;
+    }
+
+    .movie-card-title {
+        font-size: 1.3rem !important;
+        padding: 1.5rem !important;
+    }
+
+    /* Controles del video más accesibles */
+    .video-controls {
+        padding: 1.5rem !important;
+    }
+
+    .control-btn {
+        padding: 0.8rem !important;
+        min-width: 70px;
+    }
+
+    .control-btn img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .volume-slider {
+        width: 200px !important;
+        height: 8px !important;
+    }
+
+    .player-info,
+    .time {
+        font-size: 1.3rem !important;
+    }
+
+    /* Espacios más grandes entre elementos */
+    .main-content {
+        padding: 4rem 2rem !important;
+        gap: 3rem !important;
+    }
+
+    .catalog-section {
+        margin-bottom: 4rem;
+    }
+
+    .movies-container {
+        gap: 2.5rem !important;
+    }
+
+    .continue-watching-container {
+        gap: 2.5rem !important;
+    }
+
+    /* Footer con más espacios */
+    .footer {
+        padding: 4rem 2rem !important;
+        gap: 3rem !important;
+    }
+
+    .footer-col {
+        gap: 1.5rem;
+    }
+
+    .footer-link-btn,
+    .footer-link {
+        padding: 0.8rem 1.5rem !important;
+        font-size: 1.1rem !important;
+    }
+
+    /* Modales con mejor legibilidad */
+    .modal {
+        padding: 2rem !important;
+    }
+
+    .player-container {
+        padding: 2rem !important;
+    }
+
+    .close-btn {
+        font-size: 3.5rem !important;
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    .player-title {
+        font-size: 2.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .player-synopsis {
+        font-size: 1.2rem !important;
+        max-height: none;
+        line-height: 1.8;
+    }
+
+    .detail-item,
+    .sheet-item {
+        padding: 1.2rem !important;
+    }
+
+    .detail-label,
+    .sheet-label {
+        font-size: 1.1rem !important;
+    }
+
+    .detail-value,
+    .sheet-content {
+        font-size: 1rem !important;
+    }
+
+    .technical-sheet h3 {
+        font-size: 1.8rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .sheet-grid {
+        gap: 2rem !important;
+    }
+
+    .related-movies h3 {
+        font-size: 1.8rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .related-list {
+        gap: 2rem !important;
+        margin-top: 1.5rem !important;
+    }
+
+    .related-item {
+        flex-basis: calc(25% - 1.5rem) !important;
+        min-height: 350px !important;
+    }
+}
+
+/* ==================== REMOTE CONTROL NAVIGATION ==================== */
+/* Estilos de foco para navegación con control remoto */
+
+/* Ocultar indicator de foco nativo de navegadores */
+button:focus,
+input:focus,
+select:focus,
+.category-btn:focus,
+.movie-card:focus {
+    outline: none;
+}
+
+/* Indicador personalizado de foco para remoto */
+.category-btn:focus,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+.sort-select:focus-visible {
+    border: 3px solid var(--gold) !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6),
+                inset 0 0 20px rgba(212, 175, 55, 0.3) !important;
+}
+
+/* Foco en tarjetas de película */
+.movie-card:focus-visible,
+.movie-card:focus {
+    transform: scale(1.08) !important;
+    border: 3px solid var(--gold) !important;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.8),
+                0 8px 32px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Foco en botones de película relacionada */
+.related-item:focus-visible,
+.related-item:focus {
+    border: 3px solid var(--gold) !important;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6) !important;
+}
+
+/* Desactivar hover en TV/FireStick (solo foco) */
+@media (hover: none) {
+    button:hover,
+    .category-btn:hover,
+    .movie-card:hover,
+    .footer-link:hover {
+        transform: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+}
+
+/* Modo oscuro aún más oscuro para TV (menor fatiga ocular) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-dark: #0a0a0a;
+        --bg-card: #151515;
+        --bg-overlay: rgba(10, 10, 10, 0.97);
+    }
+}
+
+/* Soporte para orientación landscape (más común en TV) */
+@media (orientation: landscape) and (max-height: 768px) {
+    .hero-section {
+        min-height: 300px !important;
+    }
+
+    .hero-logo {
+        width: 150px !important;
+    }
+
+    .hero-title {
+        font-size: 2.5rem !important;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem !important;
+    }
+
+    .categories {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .search-section {
+        padding: 1.5rem 1rem !important;
+    }
+
+    .main-content {
+        padding: 2rem 1rem !important;
+    }
+
+    .movies-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+        gap: 1.5rem !important;
+    }
+}
+
+/* Optimización para resolutions 4K */
+@media (min-width: 3840px), (min-height: 2160px) {
+    body {
+        font-size: 1.8rem;
+    }
+
+    h1 {
+        font-size: 6rem !important;
+    }
+
+    h2 {
+        font-size: 3.5rem !important;
+    }
+
+    button {
+        padding: 1.5rem 3rem !important;
+        font-size: 1.5rem !important;
+        min-height: 70px;
+    }
+
+    .movie-card {
+        min-height: 600px;
+    }
+
+    .movie-card img {
+        height: 450px;
+    }
+
+    .progress-bar {
+        height: 12px;
+    }
+}
+
+/* Soporte para navegación por teclado (FireStick Silk Browser) */
+@supports (overflow: visible) {
+    /* Asegurar que los elementos sean navegables */
+    button,
+    input,
+    select,
+    .category-btn,
+    .movie-card {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Mejor contraste para accesibilidad */
+    .search-input::placeholder {
+        opacity: 0.8;
+    }
+}
+
+/* Scroll suave en TV */
+html {
+    scroll-behavior: smooth !important;
+}
 }
