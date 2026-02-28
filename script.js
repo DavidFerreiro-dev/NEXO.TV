@@ -1362,37 +1362,36 @@ class NexoTVStreaming {
     }
 
     initMobileLoader() {
-        if (this.isMobile) {
-            const loader = document.getElementById('mobileLoader');
-            if (loader) {
-                // Mostrar loader
-                loader.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
+        // Pantalla de carga para todos los dispositivos (móvil, tablet y PC)
+        const loader = document.getElementById('mobileLoader');
+        if (loader) {
+            // Mostrar loader
+            loader.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
 
-                const hideLoader = () => {
-                    loader.style.transition = 'opacity 0.5s ease';
-                    loader.style.opacity = '0';
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        document.body.style.overflow = '';
-                    }, 500);
-                };
+            const hideLoader = () => {
+                loader.style.transition = 'opacity 0.5s ease';
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 500);
+            };
 
-                // Timeout de seguridad (20s)
-                const safetyTimeout = setTimeout(() => {
-                    hideLoader();
-                }, 20000);
+            // Timeout de seguridad (20s)
+            const safetyTimeout = setTimeout(() => {
+                hideLoader();
+            }, 20000);
 
-                // Evento de carga completa
-                if (document.readyState === 'complete') {
+            // Evento de carga completa
+            if (document.readyState === 'complete') {
+                clearTimeout(safetyTimeout);
+                hideLoader();
+            } else {
+                window.addEventListener('load', () => {
                     clearTimeout(safetyTimeout);
                     hideLoader();
-                } else {
-                    window.addEventListener('load', () => {
-                        clearTimeout(safetyTimeout);
-                        hideLoader();
-                    });
-                }
+                });
             }
         }
     }
