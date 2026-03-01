@@ -1027,37 +1027,12 @@ video {
     margin-bottom: 0;
 }
 
-.player-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
 .player-title {
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--gold);
     margin-bottom: 0.8rem;
     line-height: 1.3;
-}
-
-.copy-link-btn {
-    background: transparent;
-    color: var(--gold);
-    border: 1px solid var(--gold);
-    border-radius: 8px;
-    padding: 0.45rem 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-}
-
-.copy-link-btn:hover {
-    background: var(--gold);
-    color: #000;
 }
 
 .player-synopsis {
@@ -1452,15 +1427,6 @@ video {
     .player-title {
         font-size: 1.2rem !important;
         margin-bottom: 0.6rem;
-    }
-
-    .player-header-row {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .copy-link-btn {
-        width: 100%;
     }
 
     .player-synopsis {
