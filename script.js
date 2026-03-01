@@ -76,6 +76,7 @@ class NexoTVStreaming {
         this.favBtn = document.getElementById('favBtn');
         this.fullscreenBtn = document.getElementById('fullscreenBtn');
         this.downloadBtn = document.getElementById('downloadBtn');
+        this.copyLinkBtn = document.getElementById('copyLinkBtn');
         this.progressBar = document.getElementById('progressBar');
         this.progressFilled = document.getElementById('progressFilled');
         this.progressTooltip = document.getElementById('progressTooltip');
@@ -388,6 +389,12 @@ class NexoTVStreaming {
             });
         }
 
+        if (this.copyLinkBtn) {
+            this.copyLinkBtn.addEventListener('click', () => this.copyCurrentMovieLink());
+        }
+
+        window.addEventListener('popstate', () => this.handleRouteChange());
+
         // Botón Preferencias de Cookies
         if (this.cookiePrefsBtn) {
             this.cookiePrefsBtn.addEventListener('click', () => this.reopenCookieConsent());
@@ -438,6 +445,7 @@ class NexoTVStreaming {
             
             // Iniciar detección de red
             this.initNetworkDetection();
+            this.handleRouteChange();
         } catch (error) {
             console.error('❌ Error cargando películas:', error);
             this.moviesContainer.innerHTML = '<p class="error">Error al cargar el catálogo. Intente recargar la página.</p>';
@@ -457,6 +465,105 @@ class NexoTVStreaming {
             this.movies = JSON.parse(data);
             this.filterMovies();
             this.initHeroSlideshow();
+            this.handleRouteChange();
+        }
+    }
+
+    slugifyMovieTitle(title) {
+        return String(title || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    getMoviePath(movie) {
+        return `/${this.slugifyMovieTitle(movie.titulo)}`;
+    }
+
+    findMovieByCurrentPath(pathname = window.location.pathname) {
+        const cleanPath = (decodeURIComponent(pathname || '/').replace(/\/+$/, '') || '/').toLowerCase();
+        if (cleanPath === '/') return null;
+
+        const routeSlug = cleanPath.slice(1);
+        return this.movies.find(movie => this.slugifyMovieTitle(movie.titulo) === routeSlug) || null;
+    }
+
+    syncUrlWithMovie(movie, replace = false) {
+        if (!movie) return;
+
+        const moviePath = this.getMoviePath(movie);
+        if (window.location.pathname === moviePath) return;
+
+        const state = { movieId: movie.id };
+        if (replace) {
+            window.history.replaceState(state, '', moviePath);
+        } else {
+            window.history.pushState(state, '', moviePath);
+        }
+    }
+
+    resetMovieUrl(replace = true) {
+        if (window.location.pathname === '/') return;
+
+        if (replace) {
+            window.history.replaceState({}, '', '/');
+        } else {
+            window.history.pushState({}, '', '/');
+        }
+    }
+
+    handleRouteChange() {
+        if (!this.movies || this.movies.length === 0) return;
+
+        const movieFromRoute = this.findMovieByCurrentPath();
+        const isPlayerOpen = this.playerModal && this.playerModal.classList.contains('active');
+
+        if (movieFromRoute) {
+            if (!this.currentMovie || this.currentMovie.id !== movieFromRoute.id) {
+                this.playMovie(movieFromRoute, { syncUrl: false });
+            }
+            return;
+        }
+
+        if (isPlayerOpen) {
+            this.closePlayer({ syncUrl: false });
+        }
+    }
+
+    getCurrentMovieShareLink() {
+        if (!this.currentMovie) return window.location.href;
+        return `${window.location.origin}${this.getMoviePath(this.currentMovie)}`;
+    }
+
+    async copyCurrentMovieLink() {
+        if (!this.currentMovie) {
+            this.showToast('⚠️ Abre una película primero.');
+            return;
+        }
+
+        const link = this.getCurrentMovieShareLink();
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(link);
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = link;
+                textArea.setAttribute('readonly', '');
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
+
+            this.showToast('🔗 Enlace copiado al portapapeles.');
+        } catch (error) {
+            console.error('No se pudo copiar el enlace:', error);
+            this.showToast('⚠️ No se pudo copiar el enlace.');
         }
     }
 
@@ -1107,7 +1214,8 @@ class NexoTVStreaming {
     // ==========================================
     //  SECCIÓN DEL REPRODUCTOR ARREGLADA
     // ==========================================
-    async playMovie(movie) {
+    async playMovie(movie, options = {}) {
+        const { syncUrl = true } = options;
         this.currentMovie = movie;
 
         // 1. Llenar textos
@@ -1170,9 +1278,15 @@ class NexoTVStreaming {
         this.updateFavoriteButton();
         if (this.playerModal) this.playerModal.classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        if (syncUrl) {
+            this.syncUrlWithMovie(movie);
+        }
     }
 
-    closePlayer() {
+    closePlayer(options = {}) {
+        const { syncUrl = true } = options;
+
         if (this.playerModal) this.playerModal.classList.remove('active');
         document.body.style.overflow = 'auto';
 
@@ -1188,6 +1302,10 @@ class NexoTVStreaming {
         }
 
         this.currentMovie = null;
+
+        if (syncUrl) {
+            this.resetMovieUrl(true);
+        }
     }
 
     // ==========================================
