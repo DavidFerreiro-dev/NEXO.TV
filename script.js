@@ -15,6 +15,8 @@ class NexoTVStreaming {
         this.hudHideDelay = 4000; // 4 segundos antes de ocultar los controles
         this.heroSlideInterval = null;
         this.currentHeroSlide = 0;
+        this.categorySwitchTimeout = null;
+        this.categorySwitchToken = 0;
         
         this.stallCount = 0;
         this.stableMode = false;
@@ -55,6 +57,7 @@ class NexoTVStreaming {
         // Contenedores principales
         this.moviesContainer = document.getElementById('moviesContainer');
         this.playerModal = document.getElementById('playerModal');
+        this.mainContent = document.querySelector('.main-content');
 
         // Inputs y Botones
         this.searchInput = document.getElementById('searchInput');
@@ -62,8 +65,18 @@ class NexoTVStreaming {
             this.searchInput.setAttribute('autocomplete', 'off');
         }
         this.sortSelect = document.getElementById('sortSelect');
+        this.categoriesNav = document.getElementById('categoryRail');
+        this.categoryDrawerToggle = document.getElementById('categoryDrawerToggle');
+        this.categoryDrawerBackdrop = document.getElementById('categoryDrawerBackdrop');
         this.categoryBtns = document.querySelectorAll('.category-btn');
+        this.catalogTitle = document.getElementById('catalogTitle');
         this.closeBtn = document.getElementById('closeBtn');
+        this.isCategoryMobileView = window.innerWidth <= 900;
+        this.isCategoryExpanded = !this.isCategoryMobileView;
+
+        if (this.categoriesNav) {
+            this.applyCategoryRailState(this.isCategoryExpanded);
+        }
 
         // Elementos del Reproductor
         this.videoPlayer = document.getElementById('videoPlayer');
@@ -152,6 +165,16 @@ class NexoTVStreaming {
         this.categoryBtns.forEach(btn => {
             btn.addEventListener('click', (e) => this.handleCategoryChange(e));
         });
+
+        if (this.categoryDrawerToggle) {
+            this.categoryDrawerToggle.addEventListener('click', () => this.toggleCategoryDrawer());
+        }
+
+        if (this.categoryDrawerBackdrop) {
+            this.categoryDrawerBackdrop.addEventListener('click', () => this.toggleCategoryDrawer(false));
+        }
+
+        window.addEventListener('resize', () => this.handleCategoryViewportChange());
 
         // Cerrar Modal (Botón X)
         if (this.closeBtn) {
@@ -469,7 +492,8 @@ class NexoTVStreaming {
             let matchCat = (this.currentCategory === 'all') ||
                 (this.currentCategory === 'essential' && movie.isEssential) ||
                 (this.currentCategory === 'original' && movie.isOriginal) ||
-                (this.currentCategory === 'favorites' && favorites.includes(movie.id));
+                (this.currentCategory === 'favorites' && favorites.includes(movie.id)) ||
+                (this.currentCategory === 'oscars' && movie.hasOscar);
 
             // Filtro Búsqueda (incluye título, sinopsis, director y reparto)
             let matchSearch = !term ||
@@ -491,8 +515,40 @@ class NexoTVStreaming {
         }
         // Si es 'default', no hacemos nada porque filteredMovies mantiene el orden relativo de this.movies (que es el del JSON)
 
+        this.updateCategoryHeaderTheme();
         this.renderContinueWatching();
         this.render();
+    }
+
+    updateCategoryHeaderTheme() {
+        if (!this.catalogTitle) return;
+
+        const titles = {
+            all: 'Nuestro Catálogo',
+            essential: 'NEXO Essential',
+            original: 'NEXO Original',
+            favorites: 'Favoritos',
+            oscars: 'ACADEMY AWARDS'
+        };
+
+        const isOscars = this.currentCategory === 'oscars';
+        document.body.classList.toggle('theme-oscars', isOscars);
+
+        if (isOscars) {
+            this.catalogTitle.classList.add('catalog-title--oscars');
+            this.catalogTitle.innerHTML = `
+                <span class="oscars-title-wrap">
+                    <img src="Assets/Icons/awards.png" alt="Oscars" class="catalog-title-icon catalog-title-icon--xl" onerror="this.src='Assets/Icons/oscars.png';this.onerror=function(){this.src='Assets/oscars.png';}">
+                    <span class="oscars-title-text">ACADEMY AWARDS</span>
+                    <span class="oscars-title-sub">Una antología imprescindible con las obras maestras y los clásicos de culto<br> 
+                    que hicieron historia en los Premios de la Academia.</span>
+                </span>
+            `;
+            return;
+        }
+
+        this.catalogTitle.classList.remove('catalog-title--oscars');
+        this.catalogTitle.textContent = titles[this.currentCategory] || titles.all;
     }
 
     handleSearch() { this.filterMovies(); }
@@ -503,10 +559,109 @@ class NexoTVStreaming {
     }
 
     handleCategoryChange(e) {
+        const categoryBtn = e.target.closest('.category-btn');
+        if (!categoryBtn) return;
+
         this.categoryBtns.forEach(btn => btn.classList.remove('active'));
-        e.target.classList.add('active');
-        this.currentCategory = e.target.dataset.category;
-        this.filterMovies();
+        categoryBtn.classList.add('active');
+        this.currentCategory = categoryBtn.dataset.category;
+        this.animateCategorySwitch();
+
+        if (window.innerWidth <= 900) {
+            this.toggleCategoryDrawer(false);
+        }
+
+    }
+
+    animateCategorySwitch() {
+        if (!this.mainContent) {
+            this.filterMovies();
+            return;
+        }
+
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) {
+            this.filterMovies();
+            return;
+        }
+
+        const token = ++this.categorySwitchToken;
+        const container = this.mainContent;
+
+        if (container.getAnimations) {
+            container.getAnimations().forEach(animation => animation.cancel());
+        }
+
+        container.style.willChange = 'opacity, transform';
+
+        const fadeOut = container.animate(
+            [
+                { opacity: 1, transform: 'translateY(0px)' },
+                { opacity: 0.05, transform: 'translateY(12px)' }
+            ],
+            { duration: 220, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' }
+        );
+
+        fadeOut.onfinish = () => {
+            if (token !== this.categorySwitchToken) return;
+
+            this.filterMovies();
+
+            requestAnimationFrame(() => {
+                if (!this.mainContent || token !== this.categorySwitchToken) return;
+
+                const fadeIn = this.mainContent.animate(
+                    [
+                        { opacity: 0.05, transform: 'translateY(12px)' },
+                        { opacity: 1, transform: 'translateY(0px)' }
+                    ],
+                    { duration: 320, easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)', fill: 'forwards' }
+                );
+
+                fadeIn.onfinish = () => {
+                    if (token === this.categorySwitchToken && this.mainContent) {
+                        this.mainContent.style.willChange = 'auto';
+                    }
+                };
+            });
+        };
+    }
+
+    handleCategoryViewportChange() {
+        const isMobileView = window.innerWidth <= 900;
+        if (isMobileView === this.isCategoryMobileView) return;
+
+        this.isCategoryMobileView = isMobileView;
+        this.isCategoryExpanded = !isMobileView;
+        this.applyCategoryRailState(this.isCategoryExpanded);
+    }
+
+    applyCategoryRailState(expanded) {
+        this.isCategoryExpanded = expanded;
+        if (!this.categoriesNav) return;
+
+        const isMobileView = window.innerWidth <= 900;
+
+        this.categoriesNav.classList.toggle('rail-expanded', expanded && !isMobileView);
+        this.categoriesNav.classList.toggle('open', expanded && isMobileView);
+
+        document.body.classList.toggle('categories-expanded', expanded && !isMobileView);
+        document.body.classList.toggle('categories-collapsed', !expanded && !isMobileView);
+        document.body.classList.toggle('categories-open', expanded && isMobileView);
+
+        if (this.categoryDrawerBackdrop) {
+            this.categoryDrawerBackdrop.classList.toggle('show', expanded && isMobileView);
+        }
+
+        if (this.categoryDrawerToggle) {
+            this.categoryDrawerToggle.classList.toggle('is-collapsed', !expanded);
+            this.categoryDrawerToggle.setAttribute('aria-label', expanded ? 'Colapsar categorías' : 'Desplegar categorías');
+        }
+    }
+
+    toggleCategoryDrawer(forceState) {
+        const nextState = typeof forceState === 'boolean' ? forceState : !this.isCategoryExpanded;
+        this.applyCategoryRailState(nextState);
     }
 
     updateTime() {
@@ -1088,10 +1243,27 @@ class NexoTVStreaming {
             if (movie.isEssential) badges += '<span class="badge badge-essential">ESSENTIAL</span>';
             if (movie.isOriginal) badges += '<span class="badge badge-original">ORIGINAL</span>';
 
+            const oscarCornerIcon = movie.hasOscar
+                ? `<div class="movie-oscar-corner" aria-label="Película con reconocimiento Oscar"><img src="Assets/Icons/awards.png" alt="Oscar" onerror="this.src='Assets/Icons/oscars.png';this.onerror=function(){this.src='Assets/oscars.png';}"></div>`
+                : '';
+            const isBestPictureNominee = Boolean(
+                movie.bestPictureNominee ||
+                movie.bestPictureNominated
+            );
+            let bestPictureBanner = '';
+
+            if (movie.bestPictureWinner) {
+                bestPictureBanner = '<div class="oscar-winner-banner">GANADORA DEL OSCAR · MEJOR PELÍCULA</div>';
+            } else if (isBestPictureNominee) {
+                bestPictureBanner = '<div class="oscar-nominee-banner">NOMINADA AL OSCAR · MEJOR PELÍCULA</div>';
+            }
+
             card.innerHTML = `
-                <div style="position: relative;">
+                <div class="movie-poster-wrap">
                     <img src="${movie.poster}" alt="${movie.titulo}" class="movie-poster" loading="lazy">
+                    ${oscarCornerIcon}
                     <button class="play-button"><img src="Assets/play.png" alt="Play"></button>
+                    ${bestPictureBanner}
                 </div>
                 <div class="movie-info">
                     <h3 class="movie-title">${movie.titulo}</h3>

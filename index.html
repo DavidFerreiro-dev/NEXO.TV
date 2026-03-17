@@ -59,11 +59,32 @@
     </section>
 
     <!-- Categorías -->
-    <nav class="categories">
-        <button class="category-btn active" data-category="all">Todas</button>
-        <button class="category-btn" data-category="essential">NEXO.TV Essential</button>
-        <button class="category-btn" data-category="original">NEXO.TV Original</button>
-        <button class="category-btn" data-category="favorites">Favoritos</button>
+    <button class="category-drawer-toggle" id="categoryDrawerToggle" type="button" aria-label="Colapsar categorías">
+        <img src="Assets/desplegar.png" alt="">
+    </button>
+    <div class="category-drawer-backdrop" id="categoryDrawerBackdrop" aria-hidden="true"></div>
+
+    <nav class="categories" id="categoryRail" aria-label="Filtros por categoría">
+        <button class="category-btn active" data-category="all" aria-label="Todas">
+            <img src="Assets/Icons/todo.png" alt="" class="category-btn-icon">
+            <span class="category-btn-label">Todas</span>
+        </button>
+        <button class="category-btn" data-category="essential" aria-label="NEXO Essential">
+            <img src="Assets/Icons/essential.png" alt="" class="category-btn-icon">
+            <span class="category-btn-label">NEXO Essential</span>
+        </button>
+        <button class="category-btn" data-category="original" aria-label="NEXO Original">
+            <img src="Assets/Icons/original.png" alt="" class="category-btn-icon">
+            <span class="category-btn-label">NEXO Original</span>
+        </button>
+        <button class="category-btn category-btn--favorites" data-category="favorites" aria-label="Favoritos">
+            <img src="Assets/Icons/heart.png" alt="" class="category-btn-icon">
+            <span class="category-btn-label">Mis Favoritas</span>
+        </button>
+        <button class="category-btn category-btn--oscars" data-category="oscars" aria-label="Awards">
+            <img src="Assets/Icons/awards.png" alt="" class="category-btn-icon">
+            <span class="category-btn-label">ACADEMY AWARDS</span>
+        </button>
     </nav>
 
     <!-- Buscador -->
@@ -268,6 +289,9 @@
                 <p>NEXO.TV opera y se rige bajo las leyes de Propiedad Intelectual y Derechos de Autor de los Estados Unidos de América.</p>
                 <p><strong>Dominio Público:</strong> Todas las películas catalogadas como "Essential" o "Clásicos" en esta plataforma se encuentran en el Dominio Público en los EE.UU. (obras publicadas antes de 1929 o aquellas cuyos derechos no fueron renovados).</p>
                 <p><strong>Responsabilidad del Usuario:</strong> Dado que las leyes de copyright varían según el país (por ejemplo, la norma de "70 años tras la muerte del autor" en Europa), el usuario es responsable de verificar si el visionado de estas obras es legal en su jurisdicción local.</p>
+
+                <h3>INDEPENDENCIA Y NO AFILIACIÓN</h3>
+                <p>NEXO.TV es un proyecto independiente y no está asociado, afiliado, patrocinado ni respaldado por ningún estudio cinematográfico, productora, distribuidora o entidad de la industria audiovisual. Esto incluye, de forma enunciativa y no limitativa, a Universal Pictures, Warner Bros. y la Academia de Artes y Ciencias Cinematográficas (Academy of Motion Picture Arts and Sciences / OSCARS). Todas las marcas, nombres comerciales y referencias mencionadas pertenecen a sus respectivos titulares y se emplean únicamente con fines descriptivos e informativos.</p>
 
                 <h3>EXENCIÓN DE RESPONSABILIDAD TÉCNICA (NO HOSTING)</h3>
                 <p>NEXO.TV actúa como un índice y una interfaz de usuario.</p>
