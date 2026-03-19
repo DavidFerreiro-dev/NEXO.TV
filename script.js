@@ -1293,8 +1293,20 @@ class NexoTVStreaming {
         if (this.detailYear) this.detailYear.textContent = movie.año;
         if (this.detailCategory) {
             const categoryText = movie.categoria || 'General';
-            this.detailCategory.innerHTML = `<span class="sheet-clickable" data-category="${categoryText}">${categoryText}</span>`;
-            this.detailCategory.querySelector('.sheet-clickable').addEventListener('click', () => this.searchByCategory(categoryText));
+            this.detailCategory.innerHTML = '';
+            const categories = categoryText.split(',').map(c => c.trim());
+            categories.forEach((cat, index) => {
+                const span = document.createElement('span');
+                span.className = 'sheet-clickable';
+                span.dataset.category = cat;
+                span.textContent = cat;
+                span.addEventListener('click', () => this.searchByCategory(cat));
+                this.detailCategory.appendChild(span);
+                
+                if (index < categories.length - 1) {
+                    this.detailCategory.appendChild(document.createTextNode(', '));
+                }
+            });
         }
 
         let type = 'Estándar';

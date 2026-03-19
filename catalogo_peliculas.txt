@@ -1,12 +1,60 @@
-CATEGORÍAS:
-  • Terror
-  • Comedia
-  • Drama
-  • Acción
-  • Romance
-  • Thriller
-  • Aventura
-  • Sci-Fi
-  • Misterio
-  • Documental
-  • Animación
+CATÁLOGO DE PELÍCULAS:
+
+- La Noche de los Muertos Vivientes (1968)
+- M, el vampiro de Düsseldorf (1931)
+- Woman on the Run (1950)
+- Clash by Night (1952)
+- El maquinista de la General (1926)
+- El chico (1921)
+- Duck and Cover (1951)
+- Aventuras del Capitán Maravillas (La Maldición del Escorpión) (1941)
+- Nosferatu (1922)
+- El hombre mosca (1923)
+- El moderno Sherlock Holmes (1924)
+- El carnaval de las almas (1962)
+- NEXO.TV: The Original Mickey Mouse Trilogy (1928)
+- El conflicto de los Hermanos Marx (1930)
+- Luna nueva (1940)
+- Ha nacido una estrella (1937)
+- Mickey Mouse: La banda encadenada (1930)
+- NEXO.TV: A Looney Tunes Trilogy (1943)
+- El gabinete del doctor Caligari (1920)
+- Häxan (1922)
+- La extraña mujer (1946)
+- Adiós a las armas (1932)
+- Metrópolis (1927)
+- NEXO.TV: Sylvester Fails to Catch Tweety (1947)
+- Los 39 escalones (1935)
+- Alarma en el expreso (1938)
+- El extraño (1946)
+- D.O.A. (Con las horas contadas) (1949)
+- Detour (1945)
+- Peligros de juventud (1950)
+- NEXO.TV: Tom and Jerry, Adventures in the 40s (1940)
+- The Hitch-Hiker (1953)
+- The Terror (1963)
+- El último hombre sobre la Tierra (1964)
+- House on Haunted Hill (1959)
+- Plan 9 del espacio exterior (1959)
+- Dementia 13 (1963)
+- The Bat (1959)
+- La burla del diablo (1953)
+- White Zombie (1932)
+- The Killer Shrews (1959)
+- The Giant Gila Monster (1959)
+- Un cubo de sangre (1959)
+- El cerebro que no quería morir (1962)
+- La mujer avispa (1959)
+- Siete ocasiones (1925)
+- Charlot, vagabundo (1915)
+- NEXO.TV: ACME Corporation (1949)
+- Tú y yo (1939)
+- Sin novedad en el frente (1930)
+- NEXO.TV: Popeye 1954 (1954)
+- Meet John Doe (1941)
+- Charada (1963)
+- The Intruder (1962)
+- Millie (1931)
+- Apollo 11: The Eagle Has Landed (1969)
+- My Man Godfrey (1936)
+- Apollo 13: Houston, We've Got a Problem (1970)
