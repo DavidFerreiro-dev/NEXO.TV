@@ -1035,7 +1035,7 @@
     "videoUrl": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/Apollo%2013%EF%BC%9A%20Houston%2C%20We%E2%80%99ve%20Got%20a%20Problem%20(1).mp4/",
     "poster": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/Houston.png",
     "categoria": "Documental",
-    "isEssential": true,
+    "isEssential": false,
     "isOriginal": false,
     "director": "NASA Films",
     "cast": "Jim Lovell, Jack Swigert, Fred Haise",
