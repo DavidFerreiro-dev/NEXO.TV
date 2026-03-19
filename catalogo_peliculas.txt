@@ -1,0 +1,12 @@
+CATEGORÍAS:
+  • Terror
+  • Comedia
+  • Drama
+  • Acción
+  • Romance
+  • Thriller
+  • Aventura
+  • Sci-Fi
+  • Misterio
+  • Documental
+  • Animación

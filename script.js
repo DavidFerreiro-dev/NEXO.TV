@@ -1286,7 +1286,11 @@ class NexoTVStreaming {
         if (this.playerTitle) this.playerTitle.textContent = movie.titulo;
         if (this.playerSynopsis) this.playerSynopsis.textContent = movie.sinopsis;
         if (this.detailYear) this.detailYear.textContent = movie.año;
-        if (this.detailCategory) this.detailCategory.textContent = movie.categoria || 'General';
+        if (this.detailCategory) {
+            const categoryText = movie.categoria || 'General';
+            this.detailCategory.innerHTML = `<span class="sheet-clickable" data-category="${categoryText}">${categoryText}</span>`;
+            this.detailCategory.querySelector('.sheet-clickable').addEventListener('click', () => this.searchByCategory(categoryText));
+        }
 
         let type = 'Estándar';
         if (movie.isEssential) type = 'Essential Masterpiece';
@@ -1474,6 +1478,16 @@ class NexoTVStreaming {
         // Buscar por director/actor
         if (this.searchInput) {
             this.searchInput.value = personName;
+            this.handleSearch();
+            // Scroll a la sección de catálogo
+            document.querySelector('.catalog-section').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    searchByCategory(categoryName) {
+        // Buscar por categoría
+        if (this.searchInput) {
+            this.searchInput.value = categoryName;
             this.handleSearch();
             // Scroll a la sección de catálogo
             document.querySelector('.catalog-section').scrollIntoView({ behavior: 'smooth' });
