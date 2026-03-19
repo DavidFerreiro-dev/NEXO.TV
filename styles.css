@@ -2911,3 +2911,11 @@ select:focus-visible,
 html {
     scroll-behavior: smooth !important;
 }
+
+/* ESTADO DESACTIVADO PARA PELICULAS SIN VIDEO */
+.movie-disabled {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}

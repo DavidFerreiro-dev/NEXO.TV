@@ -495,12 +495,13 @@ class NexoTVStreaming {
                 (this.currentCategory === 'favorites' && favorites.includes(movie.id)) ||
                 (this.currentCategory === 'oscars' && movie.hasOscar);
 
-            // Filtro Búsqueda (incluye título, sinopsis, director y reparto)
+            // Filtro Búsqueda (incluye título, sinopsis, director, reparto y categoría)
             let matchSearch = !term ||
                 movie.titulo.toLowerCase().includes(term) ||
                 (movie.sinopsis && movie.sinopsis.toLowerCase().includes(term)) ||
                 (movie.director && movie.director.toLowerCase().includes(term)) ||
-                (movie.cast && movie.cast.toLowerCase().includes(term));
+                (movie.cast && movie.cast.toLowerCase().includes(term)) ||
+                (movie.categoria && movie.categoria.toLowerCase().includes(term));
 
             return matchCat && matchSearch;
         });
@@ -1168,8 +1169,9 @@ class NexoTVStreaming {
         for (const movieId in progressData) {
             const progress = progressData[movieId];
             const movie = this.movies.find(m => m.id == movieId);
+            const hasVideo = movie && movie.videoUrl && movie.videoUrl.trim() !== '';
             
-            if (movie && progress > 0) {
+            if (movie && hasVideo && progress > 0) {
                 moviesWithProgress.push({ movie, progress });
             }
         }
@@ -1236,8 +1238,9 @@ class NexoTVStreaming {
         }
 
         this.filteredMovies.forEach(movie => {
+            const hasVideo = movie.videoUrl && movie.videoUrl.trim() !== '';
             const card = document.createElement('div');
-            card.className = `movie-card ${movie.isOriginal ? 'original-border' : ''}`;
+            card.className = `movie-card ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo ? 'movie-disabled' : ''}`;
 
             let badges = '';
             if (movie.isEssential) badges += '<span class="badge badge-essential">ESSENTIAL</span>';
@@ -1271,7 +1274,9 @@ class NexoTVStreaming {
                 </div>
             `;
 
-            card.addEventListener('click', () => this.playMovie(movie));
+            if (hasVideo) {
+                card.addEventListener('click', () => this.playMovie(movie));
+            }
             this.moviesContainer.appendChild(card);
         });
     }
@@ -1466,10 +1471,13 @@ class NexoTVStreaming {
         const related = shuffled.slice(0, 5);
 
         related.forEach(m => {
+            const hasVideo = m.videoUrl && m.videoUrl.trim() !== '';
             const el = document.createElement('div');
-            el.className = 'related-item';
+            el.className = `related-item ${!hasVideo ? 'movie-disabled' : ''}`;
             el.innerHTML = `<img src="${m.poster}" alt="${m.titulo}"><span>${m.titulo}</span>`;
-            el.addEventListener('click', () => this.playMovie(m));
+            if (hasVideo) {
+                el.addEventListener('click', () => this.playMovie(m));
+            }
             relatedList.appendChild(el);
         });
     }
@@ -1497,8 +1505,8 @@ class NexoTVStreaming {
     initHeroSlideshow() {
         if (!this.heroSlidesContainer || this.movies.length === 0) return;
 
-        // Filtrar películas que tengan landscape
-        const slides = this.movies.filter(m => m.landscape);
+        // Filtrar películas que tengan landscape y vídeo funcional
+        const slides = this.movies.filter(m => m.landscape && m.videoUrl && m.videoUrl.trim() !== '');
         
         // Si no hay suficientes, usar posters o lo que haya
         if (slides.length === 0) return;
@@ -1624,7 +1632,7 @@ class NexoTVStreaming {
     updateFocusableElements() {
         // Elementos que pueden recibir foco: botones, inputs, tarjetas de película
         this.focusableElements = Array.from(document.querySelectorAll(
-            'button:not(:disabled), input, select, .category-btn, .movie-card, .footer-link-btn'
+            'button:not(:disabled), input, select, .category-btn, .movie-card:not(.movie-disabled), .footer-link-btn'
         )).filter(el => {
             // Excluir elementos ocultos
             return el.offsetParent !== null && el.style.display !== 'none';
