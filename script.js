@@ -151,6 +151,28 @@ class NexoTVStreaming {
     }
 
     setupEventListeners() {
+        // Truco de pestaña inactiva
+        const originalTitle = document.title || "NEXO.TV";
+        const inactiveMessages = [
+            "🔴 ¡Eh! En Netflix no tienen a Buster Keaton",
+            "🔴 Vuelve, tenemos los originales",
+            "🔴 Te extrañamos en NEXO.TV",
+            "🔴 ¡No te vayas! Hay cine clásico esperándote",
+            "🔴 El cine de oro te está esperando",
+            "🔴 ¿Ya te vas? Aún queda película",
+            "🔴 Chaplin te echa de menos",
+            "🔴 Tu butaca VIP está vacía"
+        ];
+        
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                const randomMsg = inactiveMessages[Math.floor(Math.random() * inactiveMessages.length)];
+                document.title = randomMsg;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+
         // Búsqueda
         if (this.searchInput) {
             this.searchInput.addEventListener('input', (e) => this.handleSearch(e));
