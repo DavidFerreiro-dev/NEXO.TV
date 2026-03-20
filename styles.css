@@ -266,6 +266,7 @@ h1, h2, h3, h4 {
     border-radius: 18px;
     backdrop-filter: blur(8px);
     z-index: 90;
+    transition: width 0.3s ease, transform 0.3s ease;
 }
 
 .category-btn {
@@ -384,15 +385,16 @@ h1, h2, h3, h4 {
     top: 50%;
     transform: translateY(-50%);
     z-index: 120;
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
+    width: 26px; /* Hecho más pequeño */
+    height: 26px; /* Hecho más pequeño */
+    border-radius: 8px; /* Bordes un poco menos redondeados acorde al tamaño */
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(15, 15, 15, 0.95);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: left 0.3s ease, transform 0.3s ease, background 0.3s ease;
 }
 
 .category-drawer-toggle:hover {
@@ -401,8 +403,8 @@ h1, h2, h3, h4 {
 }
 
 .category-drawer-toggle img {
-    width: 18px;
-    height: 18px;
+    width: 14px; /* Icono más pequeño */
+    height: 14px; /* Icono más pequeño */
     object-fit: contain;
     transform: rotate(180deg);
     transition: transform 0.25s ease;
@@ -439,9 +441,20 @@ body.categories-collapsed .category-btn-label {
 
 @media (min-width: 901px) {
     .search-section,
-    .main-content {
-        margin-left: max(340px, 22vw);
-        width: calc(100% - max(340px, 22vw));
+    .main-content,
+    .footer {
+        margin-left: 260px; /* Margen para el menú extendido */
+        width: calc(100% - 280px); /* Ajusta el ancho y deja margen derecho */
+        max-width: none;
+        /* Una transición un poco más rápida y fluida disimula el salto de la cuadrícula CSS (Grid Reflow) */
+        transition: margin-left 0.35s ease-out, width 0.35s ease-out;
+    }
+
+    body.categories-collapsed .search-section,
+    body.categories-collapsed .main-content,
+    body.categories-collapsed .footer {
+        margin-left: 90px;
+        width: calc(100% - 110px);
     }
 }
 
@@ -620,7 +633,9 @@ body.theme-oscars .footer {
 /* Sección de búsqueda separada */
 .search-section {
     max-width: 1400px;
-    margin: 0 auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: auto;
     padding: 1.25rem 2rem 2rem;
     position: relative;
     background: transparent;
@@ -640,8 +655,10 @@ body.theme-oscars .footer {
 
 /* ==================== CONTENIDO PRINCIPAL ==================== */
 .main-content {
-    max-width: 1400px;
-    margin: 2rem auto;
+    max-width: none; /* Quitamos para dejar que se expanda en todo el ancho restante */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-right: auto;
     padding: 0 2rem;
 }
 
