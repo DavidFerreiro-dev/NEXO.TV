@@ -1269,7 +1269,7 @@ class NexoTVStreaming {
             if (movie.isOriginal) badges += '<span class="badge badge-original">ORIGINAL</span>';
 
             const oscarCornerIcon = movie.hasOscar
-                ? `<div class="movie-oscar-corner" aria-label="Película con reconocimiento Oscar"><img src="Assets/Icons/awards.png" alt="Oscar" onerror="this.src='Assets/Icons/oscars.png';this.onerror=function(){this.src='Assets/oscars.png';}"></div>`
+                ? `<div class="movie-oscar-corner" title="Nominación a los Premios Óscar (todas las categorías)" aria-label="Nominación a los Premios Óscar"><img src="Assets/Icons/awards.png" alt="Oscar" onerror="this.src='Assets/Icons/oscars.png';this.onerror=function(){this.src='Assets/oscars.png';}"></div>`
                 : '';
             const isBestPictureNominee = Boolean(
                 movie.bestPictureNominee ||
