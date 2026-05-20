@@ -691,8 +691,8 @@ body.theme-oscars .footer {
 
 .continue-watching-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(130px, 28vw, 200px), 1fr));
+    gap: clamp(0.6rem, 2vw, 2rem);
     margin-top: 1rem;
 }
 
@@ -1784,6 +1784,11 @@ video {
         grid-template-columns: repeat(3, 1fr); /* 3 columnas estilo Netflix */
         gap: 0.4rem;
     }
+
+    .continue-watching-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
     
     /* Ocultar texto en móvil para dar protagonismo al póster */
     .movies-container .movie-info {
@@ -1818,6 +1823,23 @@ video {
         background-color: rgba(212, 175, 55, 0.8);
     }
 
+    .modal.active {
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
+    }
+
+    .player-container {
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+        min-height: 100dvh;
+    }
+
+    .video-player {
+        max-height: 45dvh;
+    }
+
     /* Controles móviles mejorados */
     .video-controls {
         padding: 1rem;
@@ -1827,15 +1849,38 @@ video {
 
     .control-btn {
         font-size: 1.4rem;
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-        min-height: 48px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
     }
 
     .control-btn img {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
+    }
+
+    .controls-row {
+        flex-wrap: wrap;
+        row-gap: 0.4rem;
+        padding: 0;
+    }
+
+    .controls-left,
+    .controls-right {
+        gap: 0.5rem;
+    }
+
+    .controls-right {
+        margin-left: auto;
+    }
+
+    .progress-bar {
+        height: 7px;
+    }
+
+    .progress-bar:hover {
+        height: 9px;
     }
 
     .player-info {
@@ -1849,25 +1894,11 @@ video {
         display: none;
     }
     
-    /* Ajustar tamaño botones controles */
-    .control-btn {
-        width: 38px;
-        height: 38px;
-        min-width: 38px;
-        min-height: 38px;
-        font-size: 1.1rem;
-    }
-    
-    .control-btn img {
-        width: 20px;
-        height: 20px;
-    }
-
     /* Ajuste botón cerrar en móvil */
     .close-btn {
         position: fixed;
-        top: 10px;
-        right: 10px;
+        top: max(10px, env(safe-area-inset-top));
+        right: max(10px, env(safe-area-inset-right));
         font-size: 1.8rem;
         padding: 0;
         background: rgba(0, 0, 0, 0.7);
@@ -2859,9 +2890,10 @@ select:focus-visible,
 /* ==================== CATEGORY RAIL V2 ==================== */
 @media (max-width: 900px) {
     .must-see-float {
-        position: relative;
-        width: min(420px, 90vw);
-        margin: 0 auto;
+        display: none;
+    }
+    .modal.must-see-active .must-see-float {
+        display: none;
     }
     .category-drawer-toggle img {
         width: 16px;
