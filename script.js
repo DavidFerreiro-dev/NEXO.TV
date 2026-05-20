@@ -57,6 +57,7 @@ class NexoTVStreaming {
         // Contenedores principales
         this.moviesContainer = document.getElementById('moviesContainer');
         this.playerModal = document.getElementById('playerModal');
+        this.playerContainer = document.querySelector('.player-container');
         this.mainContent = document.querySelector('.main-content');
 
         // Inputs y Botones
@@ -99,6 +100,11 @@ class NexoTVStreaming {
         this.detailYear = document.getElementById('detailYear');
         this.detailCategory = document.getElementById('detailCategory');
         this.detailType = document.getElementById('detailType');
+
+        // Must See Floating Image
+        this.mustSeeFloat = document.getElementById('mustSeeFloat');
+        this.mustSeeImage = document.getElementById('mustSeeImage');
+
 
         // Elementos de Tiempo
         this.currentTimeEl = document.getElementById('currentTime');
@@ -1050,6 +1056,7 @@ class NexoTVStreaming {
             const spinner = this.loadingOverlay.querySelector('.spinner');
             if (spinner) spinner.style.display = 'none'; // Ocultar spinner en error
         }
+        this.showToast('⚠️ Esta película tiene un error de reproducción.');
     }
 
     showToast(message) {
@@ -1309,6 +1316,9 @@ class NexoTVStreaming {
     async playMovie(movie) {
         this.currentMovie = movie;
 
+        this.updateMustSeeFloat(movie);
+
+
         // 1. Llenar textos
         if (this.playerTitle) this.playerTitle.textContent = movie.titulo;
         if (this.playerSynopsis) this.playerSynopsis.textContent = movie.sinopsis;
@@ -1387,9 +1397,39 @@ class NexoTVStreaming {
         document.body.style.overflow = 'hidden';
     }
 
+    updateMustSeeFloat(movie) {
+        if (!this.mustSeeFloat || !this.mustSeeImage || !this.playerModal) return;
+
+        const mustSeeImage = typeof movie?.must_see === 'string'
+            ? movie.must_see.trim()
+            : '';
+
+        if (!mustSeeImage) {
+            this.playerModal.classList.remove('must-see-active');
+            this.mustSeeFloat.setAttribute('aria-hidden', 'true');
+            this.mustSeeImage.removeAttribute('src');
+            this.mustSeeImage.alt = '';
+            return;
+        }
+
+        this.playerModal.classList.add('must-see-active');
+        this.mustSeeFloat.setAttribute('aria-hidden', 'false');
+        this.mustSeeImage.src = mustSeeImage;
+        this.mustSeeImage.alt = 'Tarjeta Must See';
+    }
+
+
     closePlayer() {
         if (this.playerModal) this.playerModal.classList.remove('active');
         document.body.style.overflow = 'auto';
+
+        if (this.playerModal) this.playerModal.classList.remove('must-see-active');
+        if (this.mustSeeFloat) this.mustSeeFloat.setAttribute('aria-hidden', 'true');
+        if (this.mustSeeImage) {
+            this.mustSeeImage.removeAttribute('src');
+            this.mustSeeImage.alt = '';
+        }
+
 
         // Limpiar el timeout del HUD
         clearTimeout(this.hudHideTimeout);

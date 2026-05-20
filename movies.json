@@ -15,7 +15,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/bhgMBDnjG9tIVE3RNCD9YeNJHq5.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 2,
@@ -33,7 +35,9 @@
     "country": "Alemania",
     "landscape": "https://image.tmdb.org/t/p/original/56mC5y81W3vIku1uA08Rkaf7HxZ.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/scorsese_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 3,
@@ -51,7 +55,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/4vRFZeIcstzgRKLdhwxpbjD2ZHC.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 4,
@@ -69,7 +75,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/2Ip6SMrHjUN6nJ39PQsZU0OnxrM.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 5,
@@ -87,7 +95,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/oZOav3rgp44C2kUIRUbjNxRMBhv.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 6,
@@ -105,7 +115,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/4H81TyAvjt7WOLXl7km34ZZQGl6.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/mikey_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 7,
@@ -123,7 +135,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/wp538ybGjMOMw3lzm9BCSaSlb3p.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 8,
@@ -141,14 +155,16 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/nLQFKvG22mtcH4xKAtv3kdXVNJX.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 9,
     "titulo": "Nosferatu",
     "año": 1922,
     "sinopsis": "Año 1838. En la ciudad de Wisborg viven felices el joven Hutter y su mujer Ellen, hasta que el oscuro agente inmobiliario Knock decide enviar a Hutter a Transilvania para cerrar un negocio con el conde Orlok. Se trata de la venta de una finca de Wisborg, que linda con la casa de Hutter. Durante el largo viaje Hutter pernocta en una posada, donde hojea un viejo tratado sobre vampiros que encuentra en su habitación.",
-    "videoUrl": "https://ia601206.us.archive.org/29/items/Nosferatu1922VHS/Nosferatu%20(1922).mp4",
+    "videoUrl": "https://dn710901.ca.archive.org/0/items/Nosferatu1922VHS/Nosferatu%20%281922%29.mp4",
     "poster": "https://image.tmdb.org/t/p/original/m54ZM81pqffp5113LFqikEQL4nN.jpg",
     "categoria": "Terror",
     "isEssential": false,
@@ -159,7 +175,9 @@
     "country": "Alemania",
     "landscape": "https://image.tmdb.org/t/p/original/u06SympEEMb7pLhR9W3tvydHT9L.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/paulo_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 10,
@@ -177,7 +195,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/gyVncVdKnGxSq5JAzOfXlcxApqq.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 11,
@@ -195,7 +215,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/hdmfwtpzrCNbTNnX4nC4QHpNZmG.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/ryan_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 12,
@@ -213,7 +235,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/2ttKmB4RYWLoEfGDmgC8fXAOrTo.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 13,
@@ -231,7 +255,9 @@
     "country": "España, Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/98hKhZ7LcniPsI203wvvScaCq04.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 14,
@@ -249,7 +275,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/f9EGHdmhlMogNHZrlOeeeXYNUYr.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 15,
@@ -267,7 +295,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/ihoQaiMFAz4YCTAaSIsQjRknsNH.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 16,
@@ -286,7 +316,8 @@
     "landscape": "https://image.tmdb.org/t/p/original/pMnXtyGFUrCRH7tVGIkkrGHs3AX.jpg",
     "hasOscar": true,
     "bestPictureNominee": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false
   },
   {
     "id": 17,
@@ -304,7 +335,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/86vPxoYYOpf0cRAV9cLTAaFEtWK.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 18,
@@ -322,7 +355,9 @@
     "country": "España, Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/jC8ZBsCWiTj4zSr8xQdBcNb08GB.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 19,
@@ -340,7 +375,9 @@
     "country": "Alemania",
     "landscape": "https://image.tmdb.org/t/p/original/m0N89MIIu6qYZcujCRzBHrkZbns.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/burton_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 20,
@@ -358,7 +395,9 @@
     "country": "Suecia, Dinamarca",
     "landscape": "https://image.tmdb.org/t/p/original/gZwQip2KQRDNZZOEDe0Yi25tW9Z.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": "",
+    "must_see": "mustsee/anya_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 21,
@@ -376,7 +415,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/kgnNCUUIKS1YdEianuRE256t0ZF.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 22,
@@ -395,7 +436,8 @@
     "landscape": "https://image.tmdb.org/t/p/original/bZajSR7mksfZsx81lrDVBpJODDu.jpg",
     "hasOscar": true,
     "bestPictureNominee": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false
   },
   {
     "id": 23,
@@ -413,7 +455,9 @@
     "country": "Alemania",
     "landscape": "https://image.tmdb.org/t/p/original/eeMoFKxjjiCi6iep2GEZtSAMYIr.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 24,
@@ -431,7 +475,9 @@
     "country": "España, Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/9jPhPYhhQMgbbrrp6Sq6js0As5.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 25,
@@ -449,7 +495,9 @@
     "country": "Reino Unido",
     "landscape": "https://image.tmdb.org/t/p/original/6I8ElSljfeA64YxTzkxb5W4zXrL.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 26,
@@ -467,7 +515,9 @@
     "country": "Reino Unido",
     "landscape": "https://image.tmdb.org/t/p/original/15HEZcSKtLcl69avXfmjoIJBuay.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 27,
@@ -485,7 +535,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/eewSm2QKPMueCM3ix5r3aE5eIur.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 28,
@@ -503,7 +555,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/rsl2YCe2bSeni2qGdaMoDBS7sLo.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 29,
@@ -521,7 +575,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/AnomytKsuywtXTQcYT3E3e9D49H.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/tarantino_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 30,
@@ -539,7 +595,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/k2xBKsOIlqpSvbn5Tc6381v1krq.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 31,
@@ -557,7 +615,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/vYKBwcZH8St8Unrs2oXiwLtXU8R.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 32,
@@ -575,7 +635,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/r25MOqbIjOVw2lK7MrZ1dGFNjiy.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 33,
@@ -593,7 +655,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/yZ0dExpNW44xrpOG6qHwLV8pq3P.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 34,
@@ -611,7 +675,9 @@
     "country": "Italia, Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/mgrEMwXW6HjRpGPyc51xbvgsw4K.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 35,
@@ -629,7 +695,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/vzw5733T4PSielVOeq268GdSzhS.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 36,
@@ -647,7 +715,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/9pHCAT1ScILdkhY8ErfOma8W4kB.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 37,
@@ -665,7 +735,9 @@
     "country": "Estados Unidos, Irlanda",
     "landscape": "https://image.tmdb.org/t/p/original/z2ZiFPibdguCYJBN9rZeHCMHxcO.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 38,
@@ -683,7 +755,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/8ydivJF1pFmfHRzrvq1DU1esGpx.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 39,
@@ -701,7 +775,9 @@
     "country": "Reino Unido",
     "landscape": "https://image.tmdb.org/t/p/original/3iYoSUQv40viG13BCR6nm10g304.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 40,
@@ -719,7 +795,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/9tcIzvTfIYkoxjLiTcaXdMwfzT6.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 41,
@@ -737,7 +815,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/4kUnuf67zJlqOB6CaryXwsqDhgv.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 42,
@@ -755,7 +835,9 @@
     "country": "Estados Unidos",
     "landscape": "https://media.themoviedb.org/t/p/w500_and_h282_face/vyGdGlhE0C2TJTDhhaZtpC01EUf.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 43,
@@ -773,7 +855,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/oOUJjdZio15xFkpWui2hwQJr2Nb.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 44,
@@ -791,7 +875,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/rlGq9CU2O5ii0nxWJUi6fMVZlhQ.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 45,
@@ -809,7 +895,9 @@
     "country": "Estados Unidos",
     "landscape": "https://media.themoviedb.org/t/p/w500_and_h282_face/eGmM2ywgVKrpb1n4ATbQrLB0Mee.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 46,
@@ -827,7 +915,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/jWID4Frsol1gIWK6tB4vrCcBxcd.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 47,
@@ -845,7 +935,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/nJ2V7UuLcJXuOAbMILixwluXXtQ.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/emma_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 48,
@@ -863,7 +955,9 @@
     "country": "España, Estados Unidos",
     "landscape": "",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/roi_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 49,
@@ -881,7 +975,9 @@
     "country": "Estados Unidos",
     "landscape": "https://media.themoviedb.org/t/p/w500_and_h282_face/sS1W3HmhIfXbMNp6OECMHyNej6K.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 50,
@@ -899,7 +995,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/yeQGyB8MjpX8KR7rUrP0E3gaviC.jpg",
     "hasOscar": true,
-    "bestPictureWinner": true
+    "bestPictureWinner": true,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 51,
@@ -917,7 +1015,9 @@
     "country": "España, Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/cwyIo32uVKosIHTZn3xloyz9VU9.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 52,
@@ -935,7 +1035,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/fy2hkQgAWj1st3FWBzqc27JlytC.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 53,
@@ -953,7 +1055,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/gj2TBYmOIy4E2GjMIpnbAEZNCQx.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 54,
@@ -971,7 +1075,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/oOCBt3EtP3tOQ7WNoAzNQucLKsN.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 55,
@@ -989,7 +1095,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/bXDUi1roF1MRhvxWwbl0kxNiwCb.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 56,
@@ -1007,7 +1115,9 @@
     "country": "Estados Unidos",
     "landscape": "https://plus.nasa.gov/wp-content/uploads/2024/07/apollo11.webp?w=1024",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 57,
@@ -1025,7 +1135,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/96cNUk1Uj8fQcmbOTnpBauUdqzC.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 58,
@@ -1043,7 +1155,9 @@
     "country": "Estados Unidos",
     "landscape": "https://www.nasa.gov/wp-content/uploads/2020/04/apollo_13_mcc_tv_transmission_just_before_explosion_w_kranz_s70-35136_0.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 59,
@@ -1061,7 +1175,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/z9Hs1wbcJycRL0y0QOr3CNZw48K.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 60,
@@ -1079,7 +1195,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/sGz7JApiDtClRFxffIw3WgRK8y2.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 61,
@@ -1097,7 +1215,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/g0phljbAcccz7bkSZpFEPVLuIRP.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 62,
@@ -1115,7 +1235,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/sWbbwrcKXP5EJgrKXPpy82mxoxq.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/david_card.png",
+    "bestPictureNominee": false
   },
   {
     "id": 63,
@@ -1133,7 +1255,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/6FSs7jMimg1PBYdhZtPNQhtKtEc.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 64,
@@ -1151,7 +1275,9 @@
     "country": "Reino Unido",
     "landscape": "https://image.tmdb.org/t/p/original/88zug5ctQYW2171YDYhSpEnJWb1.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 65,
@@ -1169,7 +1295,9 @@
     "country": "Alemania, Francia",
     "landscape": "https://image.tmdb.org/t/p/original/5B7OZrNgGlSZMqcrDy3FBXR7sC6.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 66,
@@ -1187,7 +1315,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/tbj9THxni2UQVJWV7ykUup3T1b5.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 67,
@@ -1205,7 +1335,9 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/8asUJMTcr1KEfbGtpZhESI0I7X6.jpg",
     "hasOscar": false,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": false,
+    "bestPictureNominee": false
   },
   {
     "id": 68,
@@ -1223,6 +1355,8 @@
     "country": "Estados Unidos",
     "landscape": "https://image.tmdb.org/t/p/original/iHfEGHg5c2urlG82tuRIQA9k1hq.jpg",
     "hasOscar": true,
-    "bestPictureWinner": false
+    "bestPictureWinner": false,
+    "must_see": "mustsee/gunn_card.png",
+    "bestPictureNominee": false
   }
 ]

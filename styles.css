@@ -976,8 +976,30 @@ body.theme-oscars .footer {
     justify-content: center;
     align-items: flex-start;
     padding: 2rem 0.5rem 1rem;
+    gap: 2rem;
     background-color: var(--bg-overlay);
     overflow-y: auto;
+}
+
+.must-see-float {
+    position: sticky;
+    top: 2rem;
+    align-self: flex-start;
+    width: min(320px, 28vw);
+    display: none;
+    z-index: 1;
+}
+
+.modal.must-see-active .must-see-float {
+    display: flex;
+}
+
+.must-see-float img {
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 6rem);
+    object-fit: contain;
+    filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.45));
 }
 
 .player-container {
@@ -993,6 +1015,7 @@ body.theme-oscars .footer {
     transform: scale(0.95);
     transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
+
 
 .modal.active .player-container {
     transform: scale(1);
@@ -2835,6 +2858,11 @@ select:focus-visible,
 
 /* ==================== CATEGORY RAIL V2 ==================== */
 @media (max-width: 900px) {
+    .must-see-float {
+        position: relative;
+        width: min(420px, 90vw);
+        margin: 0 auto;
+    }
     .category-drawer-toggle img {
         width: 16px;
         height: 16px;
