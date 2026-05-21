@@ -1649,7 +1649,7 @@ class NexoTVStreaming {
     getFavorites() {
         if (!this.hasCookieConsent()) return [];
         const data = localStorage.getItem(this.favoritesKey);
-        return data ? JSON.parse(data) : [];
+        return data ? JSON.parse(data).map(id => Number(id)) : [];
     }
 
     isFavorite(movieId) {
@@ -1931,11 +1931,17 @@ class NexoTVStreaming {
 
         try {
             if (this.accountMode === 'login') {
+                // 1. Borramos los datos de localhost ANTES de iniciar sesión
+                // para evitar que se mezclen y asegurar que se descarga la info limpia de la nube.
+                localStorage.removeItem(this.favoritesKey);
+                localStorage.removeItem(this.progressKey);
+
                 const { error } = await this.supabase.auth.signInWithPassword({
                     email,
                     password
                 });
                 if (error) throw error;
+                
                 this.showAccountMessage('Sesion iniciada correctamente.', 'success');
                 this.closeAccountModal();
             } else {
@@ -1945,7 +1951,8 @@ class NexoTVStreaming {
                     options: {
                         data: {
                             username
-                        }
+                        },
+                        emailRedirectTo: window.location.origin
                     }
                 });
                 if (error) throw error;
@@ -1958,7 +1965,10 @@ class NexoTVStreaming {
                 }
             }
         } catch (error) {
-            const message = error?.message || 'Error al autenticar.';
+            let message = error?.message || 'Error al autenticar.';
+            if (message.toLowerCase().includes('rate limit')) {
+                message = 'Límite de intentos excedido. Por favor, espera unos minutos.';
+            }
             this.showAccountMessage(message, 'error');
         } finally {
             if (this.accountSubmitBtn) this.accountSubmitBtn.disabled = false;
@@ -1967,7 +1977,19 @@ class NexoTVStreaming {
 
     async handleSignOut() {
         if (!this.supabase) return;
+        
+        // 2. Borrar datos locales ANTES de lanzar el evento de cerrar sesión
+        localStorage.removeItem(this.favoritesKey);
+        localStorage.removeItem(this.progressKey);
+        
         await this.supabase.auth.signOut();
+
+        this.renderContinueWatching();
+        this.filterMovies();
+        if (this.currentMovie) {
+            this.updateFavoriteButton();
+        }
+        
         this.showAccountMessage('Sesion cerrada.', 'success');
     }
 
@@ -1994,26 +2016,32 @@ class NexoTVStreaming {
         ]);
 
         if (favoritesRes.error || progressRes.error) {
-            this.showAccountMessage('No se pudo sincronizar.', 'error');
+            console.error('Error de sincronización:', favoritesRes.error, progressRes.error);
             return;
         }
 
-        const cloudFavorites = (favoritesRes.data || []).map(row => row.movie_id);
+        const cloudFavorites = (favoritesRes.data || []).map(row => Number(row.movie_id));
         const localFavorites = this.getFavorites();
         const mergedFavorites = Array.from(new Set([...localFavorites, ...cloudFavorites]));
 
         localStorage.setItem(this.favoritesKey, JSON.stringify(mergedFavorites));
-        await this.syncFavoritesBulk(mergedFavorites);
+        if (localFavorites.length > 0) {
+            await this.syncFavoritesBulk(mergedFavorites);
+        }
 
         const localProgress = JSON.parse(localStorage.getItem(this.progressKey)) || {};
         const mergedProgress = { ...localProgress };
         (progressRes.data || []).forEach(row => {
+            const movieId = Number(row.movie_id);
             const cloudValue = Number(row.progress_seconds || 0);
-            const localValue = Number(mergedProgress[row.movie_id] || 0);
-            if (cloudValue > localValue) mergedProgress[row.movie_id] = cloudValue;
+            const localValue = Number(mergedProgress[movieId] || 0);
+            if (cloudValue > localValue) mergedProgress[movieId] = cloudValue;
         });
         localStorage.setItem(this.progressKey, JSON.stringify(mergedProgress));
-        await this.syncProgressBulk(mergedProgress);
+        
+        if (Object.keys(localProgress).length > 0) {
+            await this.syncProgressBulk(mergedProgress);
+        }
 
         this.renderContinueWatching();
         this.filterMovies();
@@ -2025,7 +2053,7 @@ class NexoTVStreaming {
 
         const payload = favorites.map(movieId => ({
             user_id: this.user.id,
-            movie_id: movieId
+            movie_id: Number(movieId)
         }));
 
         await this.supabase.from('favorites').upsert(payload, {
@@ -2039,13 +2067,13 @@ class NexoTVStreaming {
         if (isFavorite) {
             await this.supabase.from('favorites').upsert({
                 user_id: this.user.id,
-                movie_id: movieId
+                movie_id: Number(movieId)
             }, { onConflict: 'user_id,movie_id' });
         } else {
             await this.supabase.from('favorites')
                 .delete()
                 .eq('user_id', this.user.id)
-                .eq('movie_id', movieId);
+                .eq('movie_id', Number(movieId));
         }
     }
 
@@ -2054,7 +2082,7 @@ class NexoTVStreaming {
 
         const payload = Object.entries(progressMap).map(([movieId, progressSeconds]) => ({
             user_id: this.user.id,
-            movie_id: movieId,
+            movie_id: Number(movieId),
             progress_seconds: Number(progressSeconds) || 0,
             updated_at: new Date().toISOString()
         }));
@@ -2090,7 +2118,7 @@ class NexoTVStreaming {
 
         await this.supabase.from('progress').upsert({
             user_id: this.user.id,
-            movie_id: this.currentMovie.id,
+            movie_id: Number(this.currentMovie.id),
             progress_seconds: progressSeconds,
             duration_seconds: durationSeconds,
             updated_at: new Date().toISOString()
@@ -2102,7 +2130,7 @@ class NexoTVStreaming {
         await this.supabase.from('progress')
             .delete()
             .eq('user_id', this.user.id)
-            .eq('movie_id', movieId);
+            .eq('movie_id', Number(movieId));
     }
 
     initMobileLoader() {

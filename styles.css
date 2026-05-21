@@ -2216,7 +2216,8 @@ video {
     }
     
     /* Ajuste botón cerrar en móvil */
-    .close-btn {
+    /* Hacemos que solo el botón de cierre del REPRODUCTOR sea fijo */
+    #closeBtn {
         position: fixed;
         top: max(10px, env(safe-area-inset-top));
         right: max(10px, env(safe-area-inset-right));
@@ -2229,7 +2230,7 @@ video {
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 60;
+        z-index: 9999; /* Debe estar por encima del modal */
         border: 2px solid var(--gold);
     }
 
