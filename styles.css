@@ -75,6 +75,28 @@ h1, h2, h3, h4 {
     min-width: 280px;
 }
 
+/* Boton de cuenta */
+.account-btn {
+    height: 42px;
+    padding: 0 1.2rem;
+    border-radius: 999px;
+    background-color: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.account-btn:hover,
+.account-btn:focus-visible {
+    border-color: rgba(212, 175, 55, 0.5);
+    color: var(--gold);
+    background-color: rgba(25, 25, 25, 0.9);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
 .search-bar:focus-within {
     border-color: rgba(212, 175, 55, 0.5);
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), 0 8px 25px rgba(0, 0, 0, 0.6);
@@ -1068,6 +1090,130 @@ body.theme-oscars .footer {
 
 .modal.active .player-container {
     transform: scale(1);
+}
+
+/* Modal de cuenta */
+.account-container {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    width: min(420px, 92vw);
+    padding: 2rem 1.6rem 1.6rem;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.account-container h2 {
+    color: var(--gold);
+    font-size: 1.6rem;
+    margin-bottom: 0.2rem;
+}
+
+.account-status {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 0.6rem;
+}
+
+.account-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.account-field label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.account-field input {
+    background-color: rgba(20, 20, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+}
+
+.account-field input:focus {
+    outline: none;
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.15);
+}
+
+.account-field--username {
+    display: none;
+}
+
+.account-container.is-register .account-field--username {
+    display: flex;
+}
+
+.account-submit-btn {
+    margin-top: 0.3rem;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(212, 175, 55, 0.14);
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.account-submit-btn:hover {
+    background-color: rgba(212, 175, 55, 0.22);
+    border-color: rgba(212, 175, 55, 0.6);
+}
+
+.account-toggle-btn {
+    margin-top: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.account-toggle-btn:hover {
+    color: var(--gold);
+    opacity: 1;
+}
+
+.account-signout-btn {
+    margin-top: 0.8rem;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    font-weight: 600;
+    display: none;
+}
+
+.account-message {
+    min-height: 1.2rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.account-message.is-error {
+    color: #ff6b6b;
+}
+
+.account-message.is-success {
+    color: var(--success);
 }
 
 /* Ocultar boton de detalles fuera de mobile */

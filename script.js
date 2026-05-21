@@ -1,3 +1,6 @@
+const SUPABASE_URL = 'https://fnyfklhuqormhsnthjal.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZueWZrbGh1cW9ybWhzbnRoamFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNTA2MjksImV4cCI6MjA5NDkyNjYyOX0.FzS5CkGJAbwhTTW2Ym67_au3XCL-SCKvxFYbgIFuRRc';
+
 class NexoTVStreaming {
     constructor() {
         this.movies = [];
@@ -8,6 +11,13 @@ class NexoTVStreaming {
         this.mobileDetailsOverlay = null;
         this.mobileDetailsContent = null;
         this.mobileDetailsCloseBtn = null;
+        this.supabase = null;
+        this.user = null;
+        this.accountMode = 'login';
+        this.lastProgressSyncAt = 0;
+        this.progressSyncTimer = null;
+        this.accountContainer = null;
+        this.cookieSyncWarningShown = false;
         // ¡IMPORTANTE! Asegúrate de que este nombre coincida con tu archivo JSON real
         this.jsonUrl = './movies.json';
         this.storageKey = 'nexo-tv-data';
@@ -54,6 +64,7 @@ class NexoTVStreaming {
         this.loadMovies();
         this.initCookieConsent();
         this.initMobileLoader();
+        this.initSupabase();
     }
 
     initializeElements() {
@@ -145,6 +156,21 @@ class NexoTVStreaming {
         this.downloadAppBtn = document.getElementById('downloadAppBtn');
         this.downloadModal = document.getElementById('downloadModal');
         this.closeDownloadBtn = document.getElementById('closeDownloadBtn');
+
+        // Cuenta
+        this.accountBtn = document.getElementById('accountBtn');
+        this.accountModal = document.getElementById('accountModal');
+        this.accountContainer = this.accountModal ? this.accountModal.querySelector('.account-container') : null;
+        this.closeAccountBtn = document.getElementById('closeAccountBtn');
+        this.accountForm = document.getElementById('accountForm');
+        this.accountStatus = document.getElementById('accountStatus');
+        this.accountMessage = document.getElementById('accountMessage');
+        this.accountEmailInput = document.getElementById('accountEmail');
+        this.accountPasswordInput = document.getElementById('accountPassword');
+        this.accountUsernameInput = document.getElementById('accountUsername');
+        this.accountSubmitBtn = document.getElementById('accountSubmitBtn');
+        this.accountToggleBtn = document.getElementById('accountToggleMode');
+        this.accountSignOutBtn = document.getElementById('accountSignOutBtn');
 
         // Inyectar botón de Preferencias de Cookies en el footer (dinámicamente)
         if (this.termsBtn && this.termsBtn.parentNode && !this.isMobile) {
@@ -442,6 +468,28 @@ class NexoTVStreaming {
             this.downloadModal.addEventListener('click', (e) => {
                 if (e.target === this.downloadModal) this.closeDownloadModal();
             });
+        }
+
+        // Eventos Modal Cuenta
+        if (this.accountBtn) {
+            this.accountBtn.addEventListener('click', () => this.openAccountModal());
+        }
+        if (this.closeAccountBtn) {
+            this.closeAccountBtn.addEventListener('click', () => this.closeAccountModal());
+        }
+        if (this.accountModal) {
+            this.accountModal.addEventListener('click', (e) => {
+                if (e.target === this.accountModal) this.closeAccountModal();
+            });
+        }
+        if (this.accountForm) {
+            this.accountForm.addEventListener('submit', (e) => this.handleAccountSubmit(e));
+        }
+        if (this.accountToggleBtn) {
+            this.accountToggleBtn.addEventListener('click', () => this.toggleAccountMode());
+        }
+        if (this.accountSignOutBtn) {
+            this.accountSignOutBtn.addEventListener('click', () => this.handleSignOut());
         }
 
         // Botón Preferencias de Cookies
@@ -753,6 +801,7 @@ class NexoTVStreaming {
         if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
         if (this.centerPlayBtn) this.centerPlayBtn.classList.remove('playing');
         if (this.videoOverlay) this.videoOverlay.classList.add('show');
+        this.queueProgressSync(true);
     }
 
     onVideoEnded() {
@@ -761,6 +810,7 @@ class NexoTVStreaming {
         if (this.videoOverlay) this.videoOverlay.classList.add('show');
         // Resetear progreso
         if (this.progressFilled) this.progressFilled.style.width = '0%';
+        this.queueProgressSync(true);
     }
 
     toggleMute() {
@@ -1135,6 +1185,7 @@ class NexoTVStreaming {
 
     handleCookieChoice(choice) {
         localStorage.setItem(this.cookieConsentKey, choice);
+        this.cookieSyncWarningShown = false;
         const banner = document.getElementById('cookieConsent');
         if (banner) {
             banner.classList.remove('show');
@@ -1144,6 +1195,7 @@ class NexoTVStreaming {
         if (choice === 'accepted') {
             this.showToast('✅ Preferencias guardadas. ¡Disfruta de NEXO.TV!');
             this.renderContinueWatching(); // Actualizar interfaz
+            if (this.user) this.syncFromCloud();
         } else {
             this.showToast('⚠️ Has rechazado las cookies. No se guardará tu progreso.');
             this.renderContinueWatching(); // Ocultar sección si estaba visible
@@ -1163,6 +1215,7 @@ class NexoTVStreaming {
         data[this.currentMovie.id] = this.videoPlayer.currentTime;
         
         localStorage.setItem(this.progressKey, JSON.stringify(data));
+        this.queueProgressSync();
     }
 
     getSavedProgress(id) {
@@ -1260,6 +1313,7 @@ class NexoTVStreaming {
         delete progressData[movieId];
         localStorage.setItem(this.progressKey, JSON.stringify(progressData));
         this.renderContinueWatching(); // Renderizar nuevamente
+        this.deleteProgressInCloud(movieId);
     }
 
     render() {
@@ -1588,6 +1642,8 @@ class NexoTVStreaming {
 
         localStorage.setItem(this.favoritesKey, JSON.stringify(favorites));
         this.updateFavoriteButton();
+        this.syncFavoriteToCloud(this.currentMovie.id, !isFavorite);
+        if (this.currentCategory === 'favorites') this.filterMovies();
     }
 
     getFavorites() {
@@ -1745,6 +1801,308 @@ class NexoTVStreaming {
     closeDownloadModal() {
         if (this.downloadModal) this.downloadModal.classList.remove('active');
         document.body.style.overflow = 'auto';
+    }
+
+    // ==================== CUENTAS (SUPABASE) ====================
+    initSupabase() {
+        if (!window.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+            if (this.accountStatus) {
+                this.accountStatus.textContent = 'Cuenta no disponible.';
+            }
+            return;
+        }
+
+        this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        this.setAccountMode('login');
+
+        this.supabase.auth.getSession().then(({ data, error }) => {
+            if (error) {
+                this.showAccountMessage('No se pudo iniciar sesion.', 'error');
+                return;
+            }
+            this.handleSession(data.session);
+        });
+
+        this.supabase.auth.onAuthStateChange((event, session) => {
+            this.handleSession(session, event);
+        });
+    }
+
+    handleSession(session) {
+        this.user = session ? session.user : null;
+        this.updateAccountUi();
+
+        if (this.user) {
+            this.syncFromCloud();
+        }
+    }
+
+    getDisplayName() {
+        const username = this.user?.user_metadata?.username;
+        return username || this.user?.email || 'Cuenta';
+    }
+
+    updateAccountUi() {
+        const loggedIn = Boolean(this.user);
+        const displayName = this.getDisplayName();
+
+        if (this.accountBtn) {
+            this.accountBtn.textContent = loggedIn ? `Cuenta (${displayName})` : 'Cuenta';
+        }
+
+        if (this.accountStatus) {
+            this.accountStatus.textContent = loggedIn
+                ? `Sesion iniciada como ${displayName}.`
+                : 'Inicia sesion para sincronizar favoritos y progreso.';
+        }
+
+        if (this.accountForm) this.accountForm.style.display = loggedIn ? 'none' : 'flex';
+        if (this.accountToggleBtn) this.accountToggleBtn.style.display = loggedIn ? 'none' : 'inline-flex';
+        if (this.accountSignOutBtn) this.accountSignOutBtn.style.display = loggedIn ? 'inline-flex' : 'none';
+    }
+
+    setAccountMode(mode) {
+        this.accountMode = mode;
+        if (this.accountContainer) {
+            this.accountContainer.classList.toggle('is-register', mode === 'register');
+        }
+        if (this.accountUsernameInput) {
+            this.accountUsernameInput.required = mode === 'register';
+            this.accountUsernameInput.disabled = mode !== 'register';
+        }
+        if (this.accountSubmitBtn) {
+            this.accountSubmitBtn.textContent = mode === 'register' ? 'Crear cuenta' : 'Entrar';
+        }
+        if (this.accountToggleBtn) {
+            this.accountToggleBtn.textContent = mode === 'register'
+                ? 'Ya tengo cuenta. Iniciar sesion'
+                : 'No tienes cuenta? Registrate';
+        }
+    }
+
+    toggleAccountMode() {
+        const nextMode = this.accountMode === 'login' ? 'register' : 'login';
+        this.setAccountMode(nextMode);
+        this.showAccountMessage('');
+    }
+
+    openAccountModal() {
+        if (this.accountModal) this.accountModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        this.showAccountMessage('');
+    }
+
+    closeAccountModal() {
+        if (this.accountModal) this.accountModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    showAccountMessage(message, type = 'info') {
+        if (!this.accountMessage) return;
+        this.accountMessage.textContent = message;
+        this.accountMessage.classList.remove('is-error', 'is-success');
+        if (type === 'error') this.accountMessage.classList.add('is-error');
+        if (type === 'success') this.accountMessage.classList.add('is-success');
+    }
+
+    async handleAccountSubmit(e) {
+        e.preventDefault();
+
+        if (!this.supabase) {
+            this.showAccountMessage('Cuenta no disponible.', 'error');
+            return;
+        }
+
+        const email = this.accountEmailInput?.value.trim();
+        const password = this.accountPasswordInput?.value.trim();
+        const username = this.accountUsernameInput?.value.trim();
+
+        if (!email || !password) {
+            this.showAccountMessage('Completa email y contrasena.', 'error');
+            return;
+        }
+
+        if (this.accountMode === 'register' && !username) {
+            this.showAccountMessage('El username es obligatorio.', 'error');
+            return;
+        }
+
+        if (this.accountSubmitBtn) this.accountSubmitBtn.disabled = true;
+
+        try {
+            if (this.accountMode === 'login') {
+                const { error } = await this.supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                if (error) throw error;
+                this.showAccountMessage('Sesion iniciada correctamente.', 'success');
+                this.closeAccountModal();
+            } else {
+                const { data, error } = await this.supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            username
+                        }
+                    }
+                });
+                if (error) throw error;
+
+                if (data?.session) {
+                    this.showAccountMessage('Cuenta creada. Bienvenido.', 'success');
+                    this.closeAccountModal();
+                } else {
+                    this.showAccountMessage('Cuenta creada. Revisa tu email para confirmar.', 'success');
+                }
+            }
+        } catch (error) {
+            const message = error?.message || 'Error al autenticar.';
+            this.showAccountMessage(message, 'error');
+        } finally {
+            if (this.accountSubmitBtn) this.accountSubmitBtn.disabled = false;
+        }
+    }
+
+    async handleSignOut() {
+        if (!this.supabase) return;
+        await this.supabase.auth.signOut();
+        this.showAccountMessage('Sesion cerrada.', 'success');
+    }
+
+    canCloudSync() {
+        if (!this.supabase || !this.user) return false;
+        if (!this.hasCookieConsent()) {
+            if (!this.cookieSyncWarningShown) {
+                this.showToast('⚠️ Acepta las cookies para sincronizar.');
+                this.cookieSyncWarningShown = true;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    async syncFromCloud() {
+        if (!this.canCloudSync()) return;
+
+        const userId = this.user.id;
+
+        const [favoritesRes, progressRes] = await Promise.all([
+            this.supabase.from('favorites').select('movie_id').eq('user_id', userId),
+            this.supabase.from('progress').select('movie_id, progress_seconds').eq('user_id', userId)
+        ]);
+
+        if (favoritesRes.error || progressRes.error) {
+            this.showAccountMessage('No se pudo sincronizar.', 'error');
+            return;
+        }
+
+        const cloudFavorites = (favoritesRes.data || []).map(row => row.movie_id);
+        const localFavorites = this.getFavorites();
+        const mergedFavorites = Array.from(new Set([...localFavorites, ...cloudFavorites]));
+
+        localStorage.setItem(this.favoritesKey, JSON.stringify(mergedFavorites));
+        await this.syncFavoritesBulk(mergedFavorites);
+
+        const localProgress = JSON.parse(localStorage.getItem(this.progressKey)) || {};
+        const mergedProgress = { ...localProgress };
+        (progressRes.data || []).forEach(row => {
+            const cloudValue = Number(row.progress_seconds || 0);
+            const localValue = Number(mergedProgress[row.movie_id] || 0);
+            if (cloudValue > localValue) mergedProgress[row.movie_id] = cloudValue;
+        });
+        localStorage.setItem(this.progressKey, JSON.stringify(mergedProgress));
+        await this.syncProgressBulk(mergedProgress);
+
+        this.renderContinueWatching();
+        this.filterMovies();
+        this.updateFavoriteButton();
+    }
+
+    async syncFavoritesBulk(favorites) {
+        if (!this.canCloudSync() || !favorites.length) return;
+
+        const payload = favorites.map(movieId => ({
+            user_id: this.user.id,
+            movie_id: movieId
+        }));
+
+        await this.supabase.from('favorites').upsert(payload, {
+            onConflict: 'user_id,movie_id'
+        });
+    }
+
+    async syncFavoriteToCloud(movieId, isFavorite) {
+        if (!this.canCloudSync()) return;
+
+        if (isFavorite) {
+            await this.supabase.from('favorites').upsert({
+                user_id: this.user.id,
+                movie_id: movieId
+            }, { onConflict: 'user_id,movie_id' });
+        } else {
+            await this.supabase.from('favorites')
+                .delete()
+                .eq('user_id', this.user.id)
+                .eq('movie_id', movieId);
+        }
+    }
+
+    async syncProgressBulk(progressMap) {
+        if (!this.canCloudSync()) return;
+
+        const payload = Object.entries(progressMap).map(([movieId, progressSeconds]) => ({
+            user_id: this.user.id,
+            movie_id: movieId,
+            progress_seconds: Number(progressSeconds) || 0,
+            updated_at: new Date().toISOString()
+        }));
+
+        if (!payload.length) return;
+
+        await this.supabase.from('progress').upsert(payload, {
+            onConflict: 'user_id,movie_id'
+        });
+    }
+
+    queueProgressSync(force = false) {
+        if (!this.canCloudSync()) return;
+
+        if (force) {
+            this.flushProgressSync();
+            return;
+        }
+
+        clearTimeout(this.progressSyncTimer);
+        this.progressSyncTimer = setTimeout(() => this.flushProgressSync(), 1500);
+    }
+
+    async flushProgressSync() {
+        if (!this.canCloudSync() || !this.currentMovie || !this.videoPlayer) return;
+
+        const now = Date.now();
+        if (now - this.lastProgressSyncAt < 1200) return;
+        this.lastProgressSyncAt = now;
+
+        const progressSeconds = this.videoPlayer.currentTime || 0;
+        const durationSeconds = isFinite(this.videoPlayer.duration) ? this.videoPlayer.duration : null;
+
+        await this.supabase.from('progress').upsert({
+            user_id: this.user.id,
+            movie_id: this.currentMovie.id,
+            progress_seconds: progressSeconds,
+            duration_seconds: durationSeconds,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id,movie_id' });
+    }
+
+    async deleteProgressInCloud(movieId) {
+        if (!this.canCloudSync()) return;
+        await this.supabase.from('progress')
+            .delete()
+            .eq('user_id', this.user.id)
+            .eq('movie_id', movieId);
     }
 
     initMobileLoader() {
