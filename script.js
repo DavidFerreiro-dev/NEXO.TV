@@ -5,6 +5,9 @@ class NexoTVStreaming {
         this.currentCategory = 'all';
         this.currentSort = 'default';
         this.currentMovie = null;
+        this.mobileDetailsOverlay = null;
+        this.mobileDetailsContent = null;
+        this.mobileDetailsCloseBtn = null;
         // ¡IMPORTANTE! Asegúrate de que este nombre coincida con tu archivo JSON real
         this.jsonUrl = './movies.json';
         this.storageKey = 'nexo-tv-data';
@@ -104,6 +107,8 @@ class NexoTVStreaming {
         // Must See Floating Image
         this.mustSeeFloat = document.getElementById('mustSeeFloat');
         this.mustSeeImage = document.getElementById('mustSeeImage');
+
+        if (window.innerWidth <= 900) this.ensureMobileDetailsOverlay();
 
 
         // Elementos de Tiempo
@@ -1269,7 +1274,7 @@ class NexoTVStreaming {
         this.filteredMovies.forEach(movie => {
             const hasVideo = movie.videoUrl && movie.videoUrl.trim() !== '';
             const card = document.createElement('div');
-            card.className = `movie-card ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo ? 'movie-disabled' : ''}`;
+            card.className = `movie-card ${movie.must_see ? 'must-see' : ''} ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo ? 'movie-disabled' : ''}`;
 
             let badges = '';
             if (movie.isEssential) badges += '<span class="badge badge-essential">ESSENTIAL</span>';
@@ -1302,6 +1307,15 @@ class NexoTVStreaming {
                     <p class="movie-year">${movie.año} ${badges}</p>
                 </div>
             `;
+
+            // Si la película es MUST SEE, añadimos un pie elegante dentro del marco dorado
+            if (movie.must_see) {
+                const footer = document.createElement('div');
+                footer.className = 'must-see-frame-footer';
+                footer.innerHTML = '<span class="must-see-footer-text">MUST SEE</span>';
+                // Insertar en el contenedor principal de la tarjeta para posicionarlo en el pie del marco
+                card.appendChild(footer);
+            }
 
             if (hasVideo) {
                 card.addEventListener('click', () => this.playMovie(movie));
@@ -1345,6 +1359,44 @@ class NexoTVStreaming {
         if (movie.isEssential) type = 'Essential Masterpiece';
         if (movie.isOriginal) type = 'NEXO Original';
         if (this.detailType) this.detailType.textContent = type;
+
+        const isMobileDetailsView = window.innerWidth <= 900;
+
+        // En móviles, añadir botón "Más detalles" que abre ventana flotante centrada
+        if (isMobileDetailsView && this.playerContainer) {
+            this.ensureMobileDetailsOverlay();
+            this.updateMobileDetailsContent();
+
+            // Crear botón si no existe
+            let moreBtn = document.getElementById('moreDetailsBtn');
+            if (!moreBtn) {
+                moreBtn = document.createElement('button');
+                moreBtn.id = 'moreDetailsBtn';
+                moreBtn.className = 'more-details-btn';
+                moreBtn.type = 'button';
+                moreBtn.innerText = 'Más detalles';
+                moreBtn.addEventListener('click', () => this.openMobileDetails());
+            }
+
+            // Insertar el botón justo después de la sinopsis
+            const controlsTop = this.playerContainer.querySelector('.controls-top');
+            if (controlsTop && !controlsTop.querySelector('#moreDetailsBtn')) {
+                controlsTop.appendChild(moreBtn);
+            }
+
+            // Asegurar que no se muestren 'related-movies' en móvil
+            const related = this.playerContainer.querySelector('.related-movies');
+            if (related) related.style.display = 'none';
+        } else if (this.playerContainer) {
+            // En PC: asegurar que no quede el boton y mostrar "mas peliculas"
+            const moreBtn = document.getElementById('moreDetailsBtn');
+            if (moreBtn && moreBtn.parentNode) {
+                moreBtn.parentNode.removeChild(moreBtn);
+            }
+            const related = this.playerContainer.querySelector('.related-movies');
+            if (related) related.style.display = '';
+            this.closeMobileDetails();
+        }
 
         // 2. Configurar el Video (LA PARTE CLAVE)
         if (this.videoPlayer) {
@@ -1418,6 +1470,66 @@ class NexoTVStreaming {
         this.mustSeeImage.alt = 'Tarjeta Must See';
     }
 
+    ensureMobileDetailsOverlay() {
+        if (this.mobileDetailsOverlay || !this.playerModal) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'mobile-details-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.innerHTML = `
+            <div class="mobile-details-panel" role="dialog" aria-modal="true">
+                <button class="close-btn close-details-btn" type="button">&times;</button>
+                <div class="mobile-details-content"></div>
+            </div>
+        `;
+
+        this.playerModal.appendChild(overlay);
+        this.mobileDetailsOverlay = overlay;
+        this.mobileDetailsContent = overlay.querySelector('.mobile-details-content');
+        this.mobileDetailsCloseBtn = overlay.querySelector('.close-details-btn');
+
+        if (this.mobileDetailsCloseBtn) {
+            this.mobileDetailsCloseBtn.addEventListener('click', () => this.closeMobileDetails());
+        }
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) this.closeMobileDetails();
+        });
+    }
+
+    updateMobileDetailsContent() {
+        if (!this.mobileDetailsContent) return;
+
+        this.mobileDetailsContent.innerHTML = '';
+
+        const overview = document.createElement('div');
+        overview.className = 'mobile-details-overview';
+        overview.innerHTML = `
+            <h3 class="player-title">${this.playerTitle ? this.playerTitle.textContent : ''}</h3>
+            <p class="player-synopsis">${this.playerSynopsis ? this.playerSynopsis.textContent : ''}</p>
+        `;
+        this.mobileDetailsContent.appendChild(overview);
+
+        const details = this.playerContainer?.querySelector('.movie-details');
+        const technical = this.playerContainer?.querySelector('.technical-sheet');
+
+        if (details) this.mobileDetailsContent.appendChild(details.cloneNode(true));
+        if (technical) this.mobileDetailsContent.appendChild(technical.cloneNode(true));
+    }
+
+    openMobileDetails() {
+        if (!this.mobileDetailsOverlay) return;
+        this.updateMobileDetailsContent();
+        this.mobileDetailsOverlay.classList.add('active');
+        this.mobileDetailsOverlay.setAttribute('aria-hidden', 'false');
+    }
+
+    closeMobileDetails() {
+        if (!this.mobileDetailsOverlay) return;
+        this.mobileDetailsOverlay.classList.remove('active');
+        this.mobileDetailsOverlay.setAttribute('aria-hidden', 'true');
+    }
+
 
     closePlayer() {
         if (this.playerModal) this.playerModal.classList.remove('active');
@@ -1443,6 +1555,12 @@ class NexoTVStreaming {
         }
 
         this.currentMovie = null;
+        // Quitar botón de detalles en móvil y cerrar la ventana flotante
+        const moreBtn = document.getElementById('moreDetailsBtn');
+        if (moreBtn && moreBtn.parentNode) {
+            moreBtn.parentNode.removeChild(moreBtn);
+        }
+        this.closeMobileDetails();
     }
 
     // ==========================================

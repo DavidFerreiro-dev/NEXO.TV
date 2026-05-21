@@ -691,8 +691,8 @@ body.theme-oscars .footer {
 
 .continue-watching-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(clamp(130px, 28vw, 200px), 1fr));
-    gap: clamp(0.6rem, 2vw, 2rem);
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 2rem;
     margin-top: 1rem;
 }
 
@@ -806,11 +806,60 @@ body.theme-oscars .footer {
     border: 1px solid transparent;
 }
 
+/* Necesario para posicionar el pie del marco correctamente */
+.movie-card {
+    position: relative;
+}
+
 .movie-card:hover {
     transform: scale(1.05);
     border-color: var(--gold);
     box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.15);
     z-index: 10;
+}
+
+/* Estilo para películas marcadas como MUST SEE: marco dorado destacado */
+.movie-card.must-see {
+    /* Anillo dorado alrededor de la tarjeta sin romper el layout */
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.95), 0 15px 30px rgba(0,0,0,0.55);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.movie-card.must-see:hover {
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 1), 0 20px 40px rgba(0,0,0,0.6);
+}
+
+/* Badge específica para MUST SEE */
+/* Pie elegante dentro del marco para películas MUST SEE */
+.must-see-frame-footer {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    backdrop-filter: blur(6px);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.32));
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    z-index: 30;
+}
+.must-see-footer-text {
+    color: #bfbfbf; /* gris elegante */
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 1.2px;
+    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+/* Reservar espacio para el pie en las tarjetas MUST SEE para evitar que el texto del título se solape */
+.movie-card.must-see .movie-info {
+    padding-bottom: 2.6rem;
 }
 
 .movie-poster-wrap {
@@ -1019,6 +1068,132 @@ body.theme-oscars .footer {
 
 .modal.active .player-container {
     transform: scale(1);
+}
+
+/* Ocultar boton de detalles fuera de mobile */
+.more-details-btn {
+    display: none;
+}
+
+/* Mantener overlay oculto por defecto */
+.mobile-details-overlay {
+    display: none;
+}
+
+/* Mobile: mostrar solo reproductor + sinopsis + botón 'Más detalles' */
+@media (max-width: 900px) {
+    .modal.active {
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 0.5rem;
+        background-color: rgba(0,0,0,0.5);
+        backdrop-filter: blur(2px);
+    }
+
+    .player-container {
+        width: min(720px, 96%);
+        max-width: 96%;
+        border-radius: 12px;
+        padding-bottom: 0.5rem;
+        margin: 0 auto;
+        background-color: rgba(18,18,18,0.82);
+    }
+
+    /* Ocultar secciones extensas por defecto en móvil */
+    .player-container .movie-details,
+    .player-container .technical-sheet {
+        display: none;
+    }
+
+    /* Ocultar sección 'Más películas' en móvil por completo */
+    .player-container .related-movies,
+    .related-movies {
+        display: none !important;
+    }
+
+    /* Ajustes del área de sinopsis para que se vea correctamente */
+    .custom-controls .controls-top {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .custom-controls {
+        text-align: center;
+    }
+
+    .player-title,
+    .player-synopsis {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Botón 'Más detalles' visible en móvil */
+    .more-details-btn {
+        display: inline-flex;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.6rem 0.9rem;
+        margin: 0.8rem auto 0;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.04);
+        color: var(--text-main);
+        border: 1px solid rgba(255,255,255,0.06);
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    /* Asegurar que el footer y botones no se solapen con el video */
+    .video-wrapper {
+        max-height: 48vh;
+        overflow: hidden;
+    }
+
+    /* Ventana flotante de detalles centrada */
+    .mobile-details-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.6);
+        z-index: 1200;
+        padding: 1rem;
+    }
+
+    .mobile-details-overlay.active {
+        display: flex;
+    }
+
+    .mobile-details-panel {
+        width: min(92vw, 560px);
+        max-height: 85vh;
+        overflow: auto;
+        background: rgba(18,18,18,0.96);
+        border-radius: 12px;
+        padding: 1rem 1rem 1.25rem;
+        box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+        position: relative;
+        text-align: center;
+    }
+
+    .mobile-details-panel .player-title,
+    .mobile-details-panel .player-synopsis {
+        text-align: center;
+    }
+
+    .mobile-details-panel .close-details-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+}
+
+/* Ocultar el pie/marco de MUST SEE dentro de la sección 'Seguir Viendo' */
+.continue-item .must-see-frame-footer,
+.continue-item .movie-card.must-see {
+    display: none !important;
 }
 
 .close-btn {
