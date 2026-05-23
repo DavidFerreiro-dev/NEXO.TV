@@ -1828,11 +1828,7 @@ class NexoTVStreaming {
 
         // Productora
         if (sheetProducer && movie.producer) {
-            if (Number(movie.id) === 69) {
-                sheetProducer.innerHTML = `<img src="https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/SRProductions.png" alt="Studios Riba Productions" class="sheet-producer-logo">`;
-            } else {
-                sheetProducer.textContent = movie.producer;
-            }
+            sheetProducer.textContent = movie.producer;
         }
     }
 

@@ -663,13 +663,6 @@ body.theme-oscars .footer {
     background: transparent;
     border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 }
-.sheet-producer-logo {
-    max-width: 240px;
-    height: auto;
-    display: block;
-    margin-top: 0.25rem;
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
-}
 
 .search-section::before {
     content: none;
@@ -2182,6 +2175,16 @@ video {
         display: none;
     }
 
+    .play-button--coming-soon {
+        max-width: 90%;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.55rem;
+        letter-spacing: 0.4px;
+        line-height: 1.2;
+        text-align: center;
+        white-space: normal;
+    }
+
     .hero-section {
         height: 55vh; /* Hero más alto e inmersivo */
         min-height: 350px;
@@ -2387,6 +2390,18 @@ video {
 
     .detail-value {
         font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .coming-soon-overlay {
+        max-width: 90%;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.4px;
+        line-height: 1.2;
+        text-align: center;
+        white-space: normal;
     }
 }
 
