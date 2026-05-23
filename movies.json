@@ -1358,5 +1358,26 @@
     "bestPictureWinner": false,
     "must_see": "mustsee/gunn_card.png",
     "bestPictureNominee": false
+  },
+  {
+    "id": 69,
+    "titulo": "EL CASO DARKFACE",
+    "año": 2026,
+    "sinopsis": "En una oscura ciudad californiana, el detective Vincent Moreau investiga una serie de asesinatos cometidos por el misterioso “Darkface”, un asesino que deja una pluma sobre cada víctima. Mientras las sospechas y la paranoia crecen, Vincent descubre que la verdad se oculta dentro de la propia comisaría, llevando el caso a un enfrentamiento final lleno de tensión, traición y violencia.",
+    "videoUrl": "",
+    "poster": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/Cartel_V3.png",
+    "categoria": "Thriller, Cine Noir",
+    "isEssential": false,
+    "isOriginal": true,
+    "director": "David Ferreiro",
+    "cast": "Lucas Dominguez, Roi Cougil, David Ferreiro, Paulo Pérez",
+    "producer": "Studios Riba Productions",
+    "country": "España",
+    "landscape": "",
+    "hasOscar": false,
+    "bestPictureWinner": false,
+    "must_see": "",
+    "bestPictureNominee": false,
+    "comingSoon": "20 de Junio de 2026"
   }
 ]

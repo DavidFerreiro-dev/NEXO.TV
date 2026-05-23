@@ -60,6 +60,7 @@ class NexoTVStreaming {
         this.currentDragPercent = 0;
 
         this.isHandlingPopState = false;
+        this.comingSoonOverlay = null;
 
         this.initializeElements();
         this.setupEventListeners();
@@ -1382,8 +1383,10 @@ class NexoTVStreaming {
 
         this.filteredMovies.forEach(movie => {
             const hasVideo = movie.videoUrl && movie.videoUrl.trim() !== '';
+            const comingSoonText = typeof movie.comingSoon === 'string' ? movie.comingSoon.trim() : '';
+            const isComingSoon = !hasVideo && Boolean(comingSoonText);
             const card = document.createElement('div');
-            card.className = `movie-card ${movie.must_see ? 'must-see' : ''} ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo ? 'movie-disabled' : ''}`;
+            card.className = `movie-card ${movie.must_see ? 'must-see' : ''} ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo && !isComingSoon ? 'movie-disabled' : ''} ${isComingSoon ? 'movie-coming-soon' : ''}`;
 
             let badges = '';
             if (movie.isEssential) badges += '<span class="badge badge-essential">ESSENTIAL</span>';
@@ -1404,11 +1407,15 @@ class NexoTVStreaming {
                 bestPictureBanner = '<div class="oscar-nominee-banner">NOMINADA AL OSCAR · MEJOR PELÍCULA</div>';
             }
 
+            const playOverlay = hasVideo
+                ? '<button class="play-button"><img src="Assets/play.png" alt="Play"></button>'
+                : (isComingSoon ? `<div class="play-button play-button--coming-soon">PROXIMAMENTE: ${comingSoonText}</div>` : '');
+
             card.innerHTML = `
                 <div class="movie-poster-wrap">
                     <img src="${movie.poster}" alt="${movie.titulo}" class="movie-poster" loading="lazy">
                     ${oscarCornerIcon}
-                    <button class="play-button"><img src="Assets/play.png" alt="Play"></button>
+                    ${playOverlay}
                     ${bestPictureBanner}
                 </div>
                 <div class="movie-info">
@@ -1426,7 +1433,7 @@ class NexoTVStreaming {
                 card.appendChild(footer);
             }
 
-            if (hasVideo) {
+            if (hasVideo || isComingSoon) {
                 card.addEventListener('click', () => this.playMovie(movie));
             }
             this.moviesContainer.appendChild(card);
@@ -1438,6 +1445,12 @@ class NexoTVStreaming {
     // ==========================================
     async playMovie(movie, options = {}) {
         this.currentMovie = movie;
+
+        const hasVideo = movie.videoUrl && movie.videoUrl.trim() !== '';
+
+        if (this.playerModal) {
+            this.playerModal.classList.toggle('player-no-video', !hasVideo);
+        }
 
         if (!options.skipHistory) {
             this.syncUrlForMovie(movie);
@@ -1511,6 +1524,8 @@ class NexoTVStreaming {
             this.closeMobileDetails();
         }
 
+        this.updateComingSoonOverlay(movie, hasVideo);
+
         // 2. Configurar el Video (LA PARTE CLAVE)
         if (this.videoPlayer) {
             // Reseteamos el reproductor
@@ -1521,36 +1536,43 @@ class NexoTVStreaming {
             // A) ASIGNAR PÓSTER: Esto hace que la imagen se vea antes de dar play
             this.videoPlayer.poster = movie.poster;
 
-            // B) ASIGNAR VIDEO DIRECTAMENTE: Es más seguro que usar <source>
-            
-            let videoSrc = this.getDirectUrl(movie.videoUrl);
-            
-            this.videoPlayer.src = videoSrc;
+            if (hasVideo) {
+                // B) ASIGNAR VIDEO DIRECTAMENTE: Es más seguro que usar <source>
+                let videoSrc = this.getDirectUrl(movie.videoUrl);
+                this.videoPlayer.src = videoSrc;
 
-            // C) Cargar
-            this.videoPlayer.load();
+                // C) Cargar
+                this.videoPlayer.load();
 
-            // D) Restaurar progreso si existe
-            const savedTime = this.getSavedProgress(movie.id);
-            if (savedTime > 0) {
-                this.lastSeekAt = Date.now();
-                this.videoPlayer.currentTime = savedTime;
-            }
+                // D) Restaurar progreso si existe
+                const savedTime = this.getSavedProgress(movie.id);
+                if (savedTime > 0) {
+                    this.lastSeekAt = Date.now();
+                    this.videoPlayer.currentTime = savedTime;
+                }
 
-            // E) Resetear controles personalizados
-            if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
-            if (this.centerPlayBtn) this.centerPlayBtn.classList.remove('playing');
-            if (this.progressFilled) this.progressFilled.style.width = '0%';
-            if (this.videoOverlay) this.videoOverlay.classList.add('show');
-            this.stallCount = 0; // Resetear contador al terminar
+                // E) Resetear controles personalizados
+                if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
+                if (this.centerPlayBtn) this.centerPlayBtn.classList.remove('playing');
+                if (this.progressFilled) this.progressFilled.style.width = '0%';
+                if (this.videoOverlay) this.videoOverlay.classList.add('show');
+                this.stallCount = 0; // Resetear contador al terminar
 
-            // F) Intentar reproducir suavemente
-            const playPromise = this.videoPlayer.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    console.log('Autoplay bloqueado por el navegador. El usuario debe pulsar play.');
-                    // No pasa nada, los controles nativos mostrarán el botón de play gigante.
-                });
+                // F) Intentar reproducir suavemente
+                const playPromise = this.videoPlayer.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        console.log('Autoplay bloqueado por el navegador. El usuario debe pulsar play.');
+                        // No pasa nada, los controles nativos mostrarán el botón de play gigante.
+                    });
+                }
+            } else {
+                this.videoPlayer.removeAttribute('src');
+                this.videoPlayer.load();
+                if (this.playPauseBtn) this.playPauseBtn.querySelector('img').src = 'Assets/play.png';
+                if (this.progressFilled) this.progressFilled.style.width = '0%';
+                if (this.videoOverlay) this.videoOverlay.classList.add('show');
+                this.stallCount = 0;
             }
         }
 
@@ -1581,6 +1603,36 @@ class NexoTVStreaming {
         this.mustSeeFloat.setAttribute('aria-hidden', 'false');
         this.mustSeeImage.src = mustSeeImage;
         this.mustSeeImage.alt = 'Tarjeta Must See';
+    }
+
+    updateComingSoonOverlay(movie, hasVideo) {
+        const wrapper = this.playerContainer?.querySelector('.video-wrapper');
+        if (!wrapper) return;
+
+        if (hasVideo) {
+            if (this.comingSoonOverlay) {
+                this.comingSoonOverlay.remove();
+                this.comingSoonOverlay = null;
+            }
+            return;
+        }
+
+        const comingSoonText = typeof movie?.comingSoon === 'string' ? movie.comingSoon.trim() : '';
+        if (!comingSoonText) {
+            if (this.comingSoonOverlay) {
+                this.comingSoonOverlay.remove();
+                this.comingSoonOverlay = null;
+            }
+            return;
+        }
+
+        if (!this.comingSoonOverlay) {
+            this.comingSoonOverlay = document.createElement('div');
+            this.comingSoonOverlay.className = 'coming-soon-overlay';
+            wrapper.appendChild(this.comingSoonOverlay);
+        }
+
+        this.comingSoonOverlay.textContent = `PROXIMAMENTE: ${comingSoonText}`;
     }
 
     ensureMobileDetailsOverlay() {
@@ -1648,11 +1700,20 @@ class NexoTVStreaming {
         if (this.playerModal) this.playerModal.classList.remove('active');
         document.body.style.overflow = 'auto';
 
+        if (this.playerModal) {
+            this.playerModal.classList.remove('player-no-video');
+        }
+
         if (this.playerModal) this.playerModal.classList.remove('must-see-active');
         if (this.mustSeeFloat) this.mustSeeFloat.setAttribute('aria-hidden', 'true');
         if (this.mustSeeImage) {
             this.mustSeeImage.removeAttribute('src');
             this.mustSeeImage.alt = '';
+        }
+
+        if (this.comingSoonOverlay) {
+            this.comingSoonOverlay.remove();
+            this.comingSoonOverlay = null;
         }
 
 
@@ -1767,7 +1828,11 @@ class NexoTVStreaming {
 
         // Productora
         if (sheetProducer && movie.producer) {
-            sheetProducer.textContent = movie.producer;
+            if (Number(movie.id) === 69) {
+                sheetProducer.innerHTML = `<img src="https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/SRProductions.png" alt="Studios Riba Productions" class="sheet-producer-logo">`;
+            } else {
+                sheetProducer.textContent = movie.producer;
+            }
         }
     }
 

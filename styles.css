@@ -663,6 +663,13 @@ body.theme-oscars .footer {
     background: transparent;
     border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 }
+.sheet-producer-logo {
+    max-width: 240px;
+    height: auto;
+    display: block;
+    margin-top: 0.25rem;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
+}
 
 .search-section::before {
     content: none;
@@ -970,6 +977,21 @@ body.theme-oscars .footer {
     z-index: 10;
 }
 
+.play-button--coming-soon {
+    width: auto;
+    height: auto;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #151515;
+    background-color: rgba(212, 175, 55, 0.95);
+    cursor: default;
+    opacity: 1;
+}
+
 .play-button img {
     width: 30px;
     height: 30px;
@@ -980,9 +1002,53 @@ body.theme-oscars .footer {
     transform: translate(-50%, -50%) scale(1.1);
 }
 
+.movie-card:hover .play-button--coming-soon {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
 .play-button:hover {
     background-color: var(--gold);
     transform: translate(-50%, -50%) scale(1.2);
+}
+
+.play-button--coming-soon:hover {
+    background-color: rgba(212, 175, 55, 0.95);
+    transform: translate(-50%, -50%);
+}
+
+.movie-coming-soon {
+    opacity: 0.85;
+}
+
+.movie-coming-soon .movie-poster {
+    filter: grayscale(35%);
+}
+
+.coming-soon-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    background: rgba(212, 175, 55, 0.95);
+    color: #151515;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    z-index: 15;
+    pointer-events: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.player-no-video .video-overlay {
+    display: none;
+}
+
+.player-no-video .video-player {
+    pointer-events: none;
 }
 
 .movie-oscar-corner {
