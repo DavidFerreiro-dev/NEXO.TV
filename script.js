@@ -59,6 +59,8 @@ class NexoTVStreaming {
         this.isDragging = false;
         this.currentDragPercent = 0;
 
+        this.isHandlingPopState = false;
+
         this.initializeElements();
         this.setupEventListeners();
         this.loadMovies();
@@ -526,6 +528,8 @@ class NexoTVStreaming {
                 }
             }
         });
+
+        window.addEventListener('popstate', () => this.handlePopState());
     }
 
     async loadMovies() {
@@ -539,6 +543,7 @@ class NexoTVStreaming {
             this.filterMovies();
             this.saveToStorage();
             this.initHeroSlideshow();
+            this.openMovieFromPath();
             
             // Iniciar detección de red
             this.initNetworkDetection();
@@ -561,7 +566,57 @@ class NexoTVStreaming {
             this.movies = JSON.parse(data);
             this.filterMovies();
             this.initHeroSlideshow();
+            this.openMovieFromPath();
         }
+    }
+
+    getIdFromPath() {
+        const rawPath = window.location.pathname || '/';
+        const cleaned = decodeURIComponent(rawPath).replace(/^\/+|\/+$/g, '');
+        const numericId = Number(cleaned);
+        return Number.isFinite(numericId) && numericId > 0 ? numericId : null;
+    }
+
+    openMovieFromPath() {
+        const movieId = this.getIdFromPath();
+        if (!movieId) return;
+
+        const movie = this.movies.find(item => Number(item.id) === movieId);
+
+        if (movie) {
+            history.replaceState({ movieId: movie.id }, '', `/${movie.id}`);
+            this.playMovie(movie, { skipHistory: true });
+        }
+    }
+
+    syncUrlForMovie(movie) {
+        if (!movie) return;
+        history.pushState({ movieId: movie.id }, '', `/${movie.id}`);
+    }
+
+    clearMovieUrl() {
+        history.pushState({}, '', '/');
+    }
+
+    handlePopState() {
+        if (this.isHandlingPopState) return;
+        this.isHandlingPopState = true;
+
+        const movieId = this.getIdFromPath();
+        if (!movieId) {
+            this.closePlayer({ skipHistory: true });
+            this.isHandlingPopState = false;
+            return;
+        }
+
+        const movie = this.movies.find(item => Number(item.id) === movieId);
+        if (movie) {
+            this.playMovie(movie, { skipHistory: true });
+        } else {
+            this.closePlayer({ skipHistory: true });
+        }
+
+        this.isHandlingPopState = false;
     }
 
     filterMovies() {
@@ -1381,8 +1436,12 @@ class NexoTVStreaming {
     // ==========================================
     //  SECCIÓN DEL REPRODUCTOR ARREGLADA
     // ==========================================
-    async playMovie(movie) {
+    async playMovie(movie, options = {}) {
         this.currentMovie = movie;
+
+        if (!options.skipHistory) {
+            this.syncUrlForMovie(movie);
+        }
 
         this.updateMustSeeFloat(movie);
 
@@ -1585,7 +1644,7 @@ class NexoTVStreaming {
     }
 
 
-    closePlayer() {
+    closePlayer(options = {}) {
         if (this.playerModal) this.playerModal.classList.remove('active');
         document.body.style.overflow = 'auto';
 
@@ -1615,6 +1674,10 @@ class NexoTVStreaming {
             moreBtn.parentNode.removeChild(moreBtn);
         }
         this.closeMobileDetails();
+
+        if (!options.skipHistory) {
+            this.clearMovieUrl();
+        }
     }
 
     // ==========================================
