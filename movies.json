@@ -1365,12 +1365,12 @@
     "año": 2026,
     "sinopsis": "En una oscura ciudad californiana, el detective Vincent Moreau investiga una serie de asesinatos cometidos por el misterioso “Darkface”, un asesino que deja una pluma sobre cada víctima. Mientras las sospechas y la paranoia crecen, Vincent descubre que la verdad se oculta dentro de la propia comisaría, llevando el caso a un enfrentamiento final lleno de tensión, traición y violencia.",
     "videoUrl": "",
-    "poster": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/Cartel_V3.png",
-    "categoria": "Thriller, Cine Noir",
+    "poster": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/ElCasoDarkface.jpg",
+    "categoria": "Thriller",
     "isEssential": false,
     "isOriginal": true,
     "director": "David Ferreiro",
-    "cast": "Roi Cougil, David Ferreiro, Paulo Pérez",
+    "cast": "Martín de Sousa, Roi Cougil, David Ferreiro, Paulo Pérez",
     "producer": "Studios Riba Productions",
     "country": "España",
     "landscape": "",
@@ -1378,6 +1378,6 @@
     "bestPictureWinner": false,
     "must_see": "",
     "bestPictureNominee": false,
-    "comingSoon": "20 de Junio de 2026"
+    "comingSoon": "12 de Julio de 2026"
   }
 ]
