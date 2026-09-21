@@ -40,6 +40,7 @@ El proyecto incluye una selección de obras maestras que sirven para testear dif
 3.  **El Chico (1921)**
 4.  **Metrópolis (1927)**
 5.  **Nosferatu (1922)**
+6.  **Scarlet Street (1945)**
 
 ## ⚖️ Aspectos Legales
 Todo el contenido visualizado en este proyecto pertenece al **Dominio Público**. 
