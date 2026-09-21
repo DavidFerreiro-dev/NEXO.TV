@@ -1358,26 +1358,5 @@
     "bestPictureWinner": false,
     "must_see": "mustsee/gunn_card.png",
     "bestPictureNominee": false
-  },
-  {
-    "id": 69,
-    "titulo": "El caso Darkface",
-    "año": 2026,
-    "sinopsis": "Tras el brutal asesinato de su amigo Kenji a manos del asesino enmascarado \"Darkface\", un criminal que deja una pluma sobre sus víctimas, el nervioso y afectado Samuel Rosenberg se ve involucrado en la investigación liderada por el detective Vincent Moreau. Cuando una misteriosa nota olvidada llama su atención de forma accidental, Samuel decide no quedarse de brazos cruzados. Su descubrimiento lo guiará directamente al frío y húmedo callejón donde su amigo perdió la vida, empujándolo a un letal enfrentamiento cara a cara con el mismísimo asesino.",
-    "videoUrl": "",
-    "poster": "https://huggingface.co/datasets/Deybiddd/NEXOTV/resolve/main/ElCasoDarkface.jpg",
-    "categoria": "Thriller",
-    "isEssential": false,
-    "isOriginal": true,
-    "director": "David Ferreiro",
-    "cast": "Martín de Sousa, Roi Cougil, David Ferreiro, Paulo Pérez",
-    "producer": "Studios Riba Productions",
-    "country": "España",
-    "landscape": "",
-    "hasOscar": false,
-    "bestPictureWinner": false,
-    "must_see": "",
-    "bestPictureNominee": false,
-    "comingSoon": "12 de Julio de 2026"
   }
 ]
