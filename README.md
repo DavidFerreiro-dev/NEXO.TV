@@ -15,6 +15,8 @@
 Puedes visualizar la interfaz en vivo y el catálogo actualizado en el siguiente enlace:
 🚀 **[https://playnexotv.me](https://playnexotv.me)**
 
+📚 **[Read the technical documentation](https://playnexotv.me/docs/index.html)**
+
 ---
 
 ## 📖 Sobre este Proyecto
