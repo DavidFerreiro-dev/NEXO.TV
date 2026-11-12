@@ -36,7 +36,12 @@ NEXO.TV está dispuesta a revisar y retirar cualquier obra, enlace o referencia 
 
 ---
 
-## 5. DERECHOS SOBRE "NEXO ORIGINALS" Y OBRAS DERIVADAS
+## 5. REFERENCIA A LA NORMATIVA SOBRE SERVICIOS DE ENLACES
+El funcionamiento de NEXO.TV como plataforma de consulta y localización de contenidos externos podrá estar sujeto, cuando corresponda, al régimen jurídico aplicable a los prestadores de servicios de intermediación y a los servicios que facilitan enlaces o instrumentos de búsqueda, incluida la normativa española y europea pertinente.
+
+La aplicación de cualquier régimen de limitación de responsabilidad dependerá del cumplimiento de sus requisitos legales y de las circunstancias concretas de cada caso.
+
+## 6. DERECHOS SOBRE "NEXO ORIGINALS" Y OBRAS DERIVADAS
 Aunque las películas base sean de dominio público, las ediciones específicas creadas por NEXO.TV constituyen una **"Obra Derivada"**.
 
 * Los **doblajes originales**, subtítulos exclusivos, introducciones, restauraciones visuales y material gráfico (logotipos y diseño web) son propiedad intelectual exclusiva de NEXO.TV y sus creadores.
