@@ -11,15 +11,12 @@ class NexoTVStreaming {
         this.mobileDetailsOverlay = null;
         this.mobileDetailsContent = null;
         this.mobileDetailsCloseBtn = null;
-        this.supabase = null;
-        this.user = null;
-        this.accountMode = 'login';
         this.lastProgressSyncAt = 0;
         this.progressSyncTimer = null;
         this.accountContainer = null;
         this.cookieSyncWarningShown = false;
-        // ¡IMPORTANTE! Asegúrate de que este nombre coincida con tu archivo JSON real
-        this.jsonUrl = './movies.json';
+        this.catalogUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSF1IG0vUwyd4f9ubkjbRKMi_EUVRYLNFXWzAHX7kvt2s2m4Sqic1k8rI_pXjqqy6dMZFJOGlZa7LYH/pub?gid=753526431&single=true&output=csv';
+        this.tmdbUrl = '/.netlify/functions/tmdb';
         this.storageKey = 'nexo-tv-data';
         this.progressKey = 'nexo-tv-progress';
         this.favoritesKey = 'nexo-tv-favorites';
@@ -67,7 +64,6 @@ class NexoTVStreaming {
         this.loadMovies();
         this.initCookieConsent();
         this.initMobileLoader();
-        this.initSupabase();
     }
 
     initializeElements() {
@@ -117,10 +113,9 @@ class NexoTVStreaming {
         this.detailYear = document.getElementById('detailYear');
         this.detailCategory = document.getElementById('detailCategory');
         this.detailType = document.getElementById('detailType');
-
-        // Must See Floating Image
-        this.mustSeeFloat = document.getElementById('mustSeeFloat');
-        this.mustSeeImage = document.getElementById('mustSeeImage');
+        this.detailRating = document.getElementById('detailRating');
+        this.detailReleaseDate = document.getElementById('detailReleaseDate');
+        this.detailDuration = document.getElementById('detailDuration');
 
         if (window.innerWidth <= 900) this.ensureMobileDetailsOverlay();
 
@@ -159,21 +154,6 @@ class NexoTVStreaming {
         this.downloadAppBtn = document.getElementById('downloadAppBtn');
         this.downloadModal = document.getElementById('downloadModal');
         this.closeDownloadBtn = document.getElementById('closeDownloadBtn');
-
-        // Cuenta
-        this.accountBtn = document.getElementById('accountBtn');
-        this.accountModal = document.getElementById('accountModal');
-        this.accountContainer = this.accountModal ? this.accountModal.querySelector('.account-container') : null;
-        this.closeAccountBtn = document.getElementById('closeAccountBtn');
-        this.accountForm = document.getElementById('accountForm');
-        this.accountStatus = document.getElementById('accountStatus');
-        this.accountMessage = document.getElementById('accountMessage');
-        this.accountEmailInput = document.getElementById('accountEmail');
-        this.accountPasswordInput = document.getElementById('accountPassword');
-        this.accountUsernameInput = document.getElementById('accountUsername');
-        this.accountSubmitBtn = document.getElementById('accountSubmitBtn');
-        this.accountToggleBtn = document.getElementById('accountToggleMode');
-        this.accountSignOutBtn = document.getElementById('accountSignOutBtn');
 
         // Inyectar botón de Preferencias de Cookies en el footer (dinámicamente)
         if (this.termsBtn && this.termsBtn.parentNode && !this.isMobile) {
@@ -348,7 +328,10 @@ class NexoTVStreaming {
                 this.updateTime();
                 this.updateProgressBar();
             });
-            this.videoPlayer.addEventListener('loadedmetadata', () => this.updateDuration());
+            this.videoPlayer.addEventListener('loadedmetadata', () => {
+                this.updateDuration();
+                this.updateDurationDetailFromVideo();
+            });
             this.videoPlayer.addEventListener('play', () => this.onVideoPlay());
             this.videoPlayer.addEventListener('pause', () => this.onVideoPause());
             this.videoPlayer.addEventListener('ended', () => this.onVideoEnded());
@@ -473,28 +456,6 @@ class NexoTVStreaming {
             });
         }
 
-        // Eventos Modal Cuenta
-        if (this.accountBtn) {
-            this.accountBtn.addEventListener('click', () => this.openAccountModal());
-        }
-        if (this.closeAccountBtn) {
-            this.closeAccountBtn.addEventListener('click', () => this.closeAccountModal());
-        }
-        if (this.accountModal) {
-            this.accountModal.addEventListener('click', (e) => {
-                if (e.target === this.accountModal) this.closeAccountModal();
-            });
-        }
-        if (this.accountForm) {
-            this.accountForm.addEventListener('submit', (e) => this.handleAccountSubmit(e));
-        }
-        if (this.accountToggleBtn) {
-            this.accountToggleBtn.addEventListener('click', () => this.toggleAccountMode());
-        }
-        if (this.accountSignOutBtn) {
-            this.accountSignOutBtn.addEventListener('click', () => this.handleSignOut());
-        }
-
         // Botón Preferencias de Cookies
         if (this.cookiePrefsBtn) {
             this.cookiePrefsBtn.addEventListener('click', () => this.reopenCookieConsent());
@@ -535,10 +496,18 @@ class NexoTVStreaming {
 
     async loadMovies() {
         try {
-            const response = await fetch(this.jsonUrl);
+            const catalogUrl = `${this.catalogUrl}&cacheBust=${Date.now()}`;
+            const response = await fetch(catalogUrl, { cache: 'no-store' });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-            this.movies = await response.json();
+            const csv = await response.text();
+            this.movies = this.parseCatalogCsv(csv);
+            this.updateLoaderMessage('CARGANDO DATOS DE TMDB');
+            try {
+                await this.enrichMoviesFromTmdb();
+            } catch (error) {
+                console.error('Error enriqueciendo el catálogo desde TMDB:', error);
+            }
             console.log(`✅ Cargadas ${this.movies.length} películas`);
 
             this.filterMovies();
@@ -548,11 +517,110 @@ class NexoTVStreaming {
             
             // Iniciar detección de red
             this.initNetworkDetection();
+            this.finishMobileLoader();
         } catch (error) {
             console.error('❌ Error cargando películas:', error);
             this.moviesContainer.innerHTML = '<p class="error">Error al cargar el catálogo. Intente recargar la página.</p>';
-            this.loadFromStorage();
+            this.updateLoaderMessage('NO SE PUDO CARGAR EL CATÁLOGO');
+            this.finishMobileLoader();
         }
+    }
+
+    parseCatalogCsv(csv) {
+        const rows = [];
+        let row = [];
+        let value = '';
+        let quoted = false;
+
+        for (let index = 0; index < csv.length; index += 1) {
+            const character = csv[index];
+            const nextCharacter = csv[index + 1];
+
+            if (character === '"' && quoted && nextCharacter === '"') {
+                value += '"';
+                index += 1;
+            } else if (character === '"') {
+                quoted = !quoted;
+            } else if (character === ',' && !quoted) {
+                row.push(value);
+                value = '';
+            } else if ((character === '\n' || character === '\r') && !quoted) {
+                if (character === '\r' && nextCharacter === '\n') index += 1;
+                row.push(value);
+                if (row.some(cell => cell.trim() !== '')) rows.push(row);
+                row = [];
+                value = '';
+            } else {
+                value += character;
+            }
+        }
+
+        if (value || row.length) {
+            row.push(value);
+            if (row.some(cell => cell.trim() !== '')) rows.push(row);
+        }
+
+        const headers = rows.shift().map(header => header.replace(/^\uFEFF/, '').trim());
+        const asBoolean = value => ['true', '1', 'yes', 'si', 'sí'].includes(String(value).trim().toLowerCase());
+        const valueFor = (record, ...names) => names.map(name => record[name]?.trim()).find(Boolean) || '';
+
+        return rows.map(cells => {
+            const record = Object.fromEntries(headers.map((header, index) => [header, cells[index] || '']));
+            return {
+                id: Number(valueFor(record, 'idCatalogo')),
+                tmdbId: Number(valueFor(record, 'idTMDB')) || null,
+                titulo: valueFor(record, 'titulo'),
+                año: Number(valueFor(record, 'año')) || '',
+                sinopsis: valueFor(record, 'sinopsis'),
+                categoria: valueFor(record, 'generos'),
+                director: valueFor(record, 'director'),
+                cast: valueFor(record, 'reparto'),
+                producer: valueFor(record, 'productoras'),
+                country: valueFor(record, 'paisesProduccion'),
+                poster: valueFor(record, 'posterURL'),
+                landscape: valueFor(record, 'landscapeURL'),
+                videoUrl: valueFor(record, 'videoUrl'),
+                isEssential: asBoolean(record.isEssential),
+                isOriginal: asBoolean(record.isOriginal),
+                hasOscar: asBoolean(record.hasOscar),
+                bestPictureWinner: asBoolean(record.bestPictureWinner),
+                bestPictureNominee: asBoolean(record.bestPictureNominee)
+            };
+        }).filter(movie => movie.id && movie.titulo);
+    }
+
+    async enrichMoviesFromTmdb() {
+        const ids = this.movies.map(movie => movie.tmdbId).filter(Boolean);
+        if (!ids.length) return;
+
+        const response = await fetch(`${this.tmdbUrl}?ids=${ids.join(',')}&cacheBust=${Date.now()}`, {
+            cache: 'no-store'
+        });
+        if (!response.ok) throw new Error(`TMDB proxy error! status: ${response.status}`);
+
+        const tmdbMovies = await response.json();
+        const byId = new Map(Object.entries(tmdbMovies));
+
+        this.movies = this.movies.map(movie => {
+            const tmdb = byId.get(String(movie.tmdbId));
+            if (!tmdb) return movie;
+
+            return {
+                ...movie,
+                titulo: tmdb.title || movie.titulo,
+                año: movie.año || tmdb.year || (tmdb.releaseDate ? Number(tmdb.releaseDate.slice(0, 4)) : ''),
+                categoria: movie.categoria || tmdb.genres || movie.categoria,
+                poster: tmdb.poster || movie.poster,
+                landscape: tmdb.landscape || movie.landscape,
+                rating: tmdb.rating,
+                releaseDate: tmdb.releaseDate,
+                duration: tmdb.duration,
+                director: tmdb.director || movie.director,
+                cast: tmdb.cast || movie.cast,
+                producer: tmdb.producer || movie.producer,
+                country: tmdb.country || movie.country
+            };
+        });
     }
 
     saveToStorage() {
@@ -1251,7 +1319,6 @@ class NexoTVStreaming {
         if (choice === 'accepted') {
             this.showToast('✅ Preferencias guardadas. ¡Disfruta de NEXO.TV!');
             this.renderContinueWatching(); // Actualizar interfaz
-            if (this.user) this.syncFromCloud();
         } else {
             this.showToast('⚠️ Has rechazado las cookies. No se guardará tu progreso.');
             this.renderContinueWatching(); // Ocultar sección si estaba visible
@@ -1386,7 +1453,7 @@ class NexoTVStreaming {
             const comingSoonText = typeof movie.comingSoon === 'string' ? movie.comingSoon.trim() : '';
             const isComingSoon = !hasVideo && Boolean(comingSoonText);
             const card = document.createElement('div');
-            card.className = `movie-card ${movie.must_see ? 'must-see' : ''} ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo && !isComingSoon ? 'movie-disabled' : ''} ${isComingSoon ? 'movie-coming-soon' : ''}`;
+            card.className = `movie-card ${movie.isOriginal ? 'original-border' : ''} ${!hasVideo && !isComingSoon ? 'movie-disabled' : ''} ${isComingSoon ? 'movie-coming-soon' : ''}`;
 
             let badges = '';
             if (movie.isEssential) badges += '<span class="badge badge-essential">ESSENTIAL</span>';
@@ -1424,15 +1491,6 @@ class NexoTVStreaming {
                 </div>
             `;
 
-            // Si la película es MUST SEE, añadimos un pie elegante dentro del marco dorado
-            if (movie.must_see) {
-                const footer = document.createElement('div');
-                footer.className = 'must-see-frame-footer';
-                footer.innerHTML = '<span class="must-see-footer-text">MUST SEE</span>';
-                // Insertar en el contenedor principal de la tarjeta para posicionarlo en el pie del marco
-                card.appendChild(footer);
-            }
-
             if (hasVideo || isComingSoon) {
                 card.addEventListener('click', () => this.playMovie(movie));
             }
@@ -1455,9 +1513,6 @@ class NexoTVStreaming {
         if (!options.skipHistory) {
             this.syncUrlForMovie(movie);
         }
-
-        this.updateMustSeeFloat(movie);
-
 
         // 1. Llenar textos
         if (this.playerTitle) this.playerTitle.textContent = movie.titulo;
@@ -1485,6 +1540,16 @@ class NexoTVStreaming {
         if (movie.isEssential) type = 'Essential Masterpiece';
         if (movie.isOriginal) type = 'NEXO Original';
         if (this.detailType) this.detailType.textContent = type;
+        if (this.detailRating) this.detailRating.textContent = movie.rating ? `${movie.rating.toFixed(1)} / 10` : '';
+        if (this.detailReleaseDate) this.detailReleaseDate.textContent = movie.releaseDate || '';
+        if (this.detailDuration) {
+            this.detailDuration.textContent = movie.duration
+                ? `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}min`
+                : '';
+        }
+        this.setDetailItemVisibility(this.detailRating, Boolean(movie.rating));
+        this.setDetailItemVisibility(this.detailReleaseDate, Boolean(movie.releaseDate));
+        this.setDetailItemVisibility(this.detailDuration, Boolean(movie.duration));
 
         const isMobileDetailsView = window.innerWidth <= 900;
 
@@ -1584,25 +1649,26 @@ class NexoTVStreaming {
         document.body.style.overflow = 'hidden';
     }
 
-    updateMustSeeFloat(movie) {
-        if (!this.mustSeeFloat || !this.mustSeeImage || !this.playerModal) return;
-
-        const mustSeeImage = typeof movie?.must_see === 'string'
-            ? movie.must_see.trim()
-            : '';
-
-        if (!mustSeeImage) {
-            this.playerModal.classList.remove('must-see-active');
-            this.mustSeeFloat.setAttribute('aria-hidden', 'true');
-            this.mustSeeImage.removeAttribute('src');
-            this.mustSeeImage.alt = '';
-            return;
+    setDetailItemVisibility(element, visible) {
+        const item = element?.closest('.detail-item');
+        if (item) {
+            item.hidden = !visible;
+            item.style.display = visible ? '' : 'none';
         }
+    }
 
-        this.playerModal.classList.add('must-see-active');
-        this.mustSeeFloat.setAttribute('aria-hidden', 'false');
-        this.mustSeeImage.src = mustSeeImage;
-        this.mustSeeImage.alt = 'Tarjeta Must See';
+    updateDurationDetailFromVideo() {
+        if (!this.currentMovie || this.currentMovie.duration || !this.videoPlayer) return;
+
+        const duration = this.videoPlayer.duration;
+        if (!Number.isFinite(duration) || duration <= 0) return;
+
+        const totalMinutes = Math.round(duration / 60);
+        if (this.detailDuration) {
+            this.detailDuration.textContent = `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}min`;
+        }
+        this.setDetailItemVisibility(this.detailDuration, true);
+        this.updateMobileDetailsContent();
     }
 
     updateComingSoonOverlay(movie, hasVideo) {
@@ -1704,12 +1770,6 @@ class NexoTVStreaming {
             this.playerModal.classList.remove('player-no-video');
         }
 
-        if (this.playerModal) this.playerModal.classList.remove('must-see-active');
-        if (this.mustSeeFloat) this.mustSeeFloat.setAttribute('aria-hidden', 'true');
-        if (this.mustSeeImage) {
-            this.mustSeeImage.removeAttribute('src');
-            this.mustSeeImage.alt = '';
-        }
 
         if (this.comingSoonOverlay) {
             this.comingSoonOverlay.remove();
@@ -1799,6 +1859,9 @@ class NexoTVStreaming {
         const sheetProducer = document.getElementById('sheetProducer');
 
         // Director(es)
+        if (sheetDirector) {
+            sheetDirector.textContent = movie.director || 'Sin datos';
+        }
         if (sheetDirector && movie.director) {
             const directors = movie.director.split(',').map(d => d.trim());
             const directorElements = directors.map(dir => 
@@ -1813,6 +1876,9 @@ class NexoTVStreaming {
         }
 
         // Reparto
+        if (sheetCast) {
+            sheetCast.textContent = movie.cast || 'Sin datos';
+        }
         if (sheetCast && movie.cast) {
             const actors = movie.cast.split(',').map(a => a.trim());
             const actorElements = actors.map(actor => 
@@ -1827,9 +1893,7 @@ class NexoTVStreaming {
         }
 
         // Productora
-        if (sheetProducer && movie.producer) {
-            sheetProducer.textContent = movie.producer;
-        }
+        if (sheetProducer) sheetProducer.textContent = movie.producer || 'Sin datos';
     }
 
     loadRelatedMovies(current) {
@@ -2258,38 +2322,29 @@ class NexoTVStreaming {
     }
 
     initMobileLoader() {
-        // Pantalla de carga para todos los dispositivos (móvil, tablet y PC)
         const loader = document.getElementById('mobileLoader');
         if (loader) {
-            // Mostrar loader
             loader.style.display = 'flex';
+            loader.style.opacity = '1';
             document.body.style.overflow = 'hidden';
-
-            const hideLoader = () => {
-                loader.style.transition = 'opacity 0.5s ease';
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    document.body.style.overflow = '';
-                }, 500);
-            };
-
-            // Timeout de seguridad (20s)
-            const safetyTimeout = setTimeout(() => {
-                hideLoader();
-            }, 20000);
-
-            // Evento de carga completa
-            if (document.readyState === 'complete') {
-                clearTimeout(safetyTimeout);
-                hideLoader();
-            } else {
-                window.addEventListener('load', () => {
-                    clearTimeout(safetyTimeout);
-                    hideLoader();
-                });
-            }
         }
+    }
+
+    updateLoaderMessage(message) {
+        const loaderText = document.querySelector('#mobileLoader .loader-text');
+        if (loaderText) loaderText.textContent = message;
+    }
+
+    finishMobileLoader() {
+        const loader = document.getElementById('mobileLoader');
+        if (!loader) return;
+
+        loader.style.transition = 'opacity 0.5s ease';
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 500);
     }
 
     // ==================== TV & FireStick SUPPORT METHODS ====================

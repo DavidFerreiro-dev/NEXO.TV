@@ -31,7 +31,7 @@ La idea detrás de NEXO es la **curaduría**. En un mar de archivos desordenados
 ## ✨ Características Técnicas (PoC)
 * **NEXO Originals:** Demostración de contenido editado (como nuestra edición de *NEXO.TV: The Original Mickey Mouse Trilogy* de 1928).
 * **Streaming Híbrido:** Integración directa con servidores de **Internet Archive** para catálogo general y **Hugging Face** para retransmisión estable de originales en FullHD/4K.
-* **Arquitectura:** Diseño "Mobile First" y carga dinámica de catálogo mediante archivos de datos estructurados (JSON).
+* **Arquitectura:** Diseño "Mobile First", catálogo dinámico desde Google Sheets y metadatos cinematográficos enriquecidos desde TMDB.
 
 ## 🎞️ Catálogo Destacado (Essentials)
 El proyecto incluye una selección de obras maestras que sirven para testear diferentes formatos y épocas:
@@ -53,6 +53,12 @@ Todo el contenido visualizado en este proyecto pertenece al **Dominio Público**
 * **Frontend:** HTML5, CSS3 (Custom Design), JavaScript (ES6+).
 * **Hosting:** [Netlify](https://playnexotv.me) (Producción) / GitHub Pages.
 * **Media Storage:** Internet Archive & Hugging Face Datasets.
+
+### Fuentes de catálogo y TMDB
+
+El catálogo se lee desde la hoja publicada de Google Sheets configurada en `script.js`; `movies.json` ya no participa en la carga de la aplicación. Los campos curatoriales (vídeo, etiquetas y sinopsis) proceden de la hoja. Los identificadores `idTMDB` se usan para completar imágenes, nota, estreno, duración, director, reparto, productoras y países mediante la función `/.netlify/functions/tmdb`. Las tarjetas Must See ya no forman parte del catálogo.
+
+Configura en Netlify la variable de entorno `TMDB_READ_TOKEN` con un token de lectura de API de TMDB. No incluyas ese token en el frontend ni en el repositorio.
 
 ## 👤 Autor
 Desarrollado por **David Ferreiro**.

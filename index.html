@@ -102,7 +102,6 @@
                     <option value="date-asc">Más antiguas</option>
                 </select>
             </div>
-            <button id="accountBtn" class="account-btn" type="button">Cuenta</button>
         </div>
     </div>
 
@@ -152,10 +151,6 @@
 
     <!-- Modal del reproductor -->
     <div class="modal" id="playerModal">
-        <aside class="must-see-float" id="mustSeeFloat" aria-hidden="true">
-            <img id="mustSeeImage" src="" alt="">
-        </aside>
-
         <div class="player-container">
             <button class="close-btn" id="closeBtn">&times;</button>
 
@@ -229,6 +224,18 @@
                         <span class="detail-label">Tipo:</span>
                         <span id="detailType" class="detail-value"></span>
                     </div>
+                    <div id="detailRatingItem" class="detail-item">
+                        <span class="detail-label">Nota TMDB:</span>
+                        <span id="detailRating" class="detail-value"></span>
+                    </div>
+                    <div id="detailReleaseDateItem" class="detail-item">
+                        <span class="detail-label">Estreno:</span>
+                        <span id="detailReleaseDate" class="detail-value"></span>
+                    </div>
+                    <div id="detailDurationItem" class="detail-item">
+                        <span class="detail-label">Duración:</span>
+                        <span id="detailDuration" class="detail-value"></span>
+                    </div>
                 </div>
             </div>
 
@@ -256,33 +263,6 @@
                 <h3>Más películas</h3>
                 <div class="related-list" id="relatedList"></div>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal de Cuenta -->
-    <div class="modal" id="accountModal">
-        <div class="account-container">
-            <button class="close-btn" id="closeAccountBtn">&times;</button>
-            <h2>Cuenta</h2>
-            <p class="account-status" id="accountStatus">Inicia sesion para sincronizar favoritos y progreso.</p>
-            <form id="accountForm" class="account-form">
-                <div class="account-field account-field--username">
-                    <label for="accountUsername">Usuario</label>
-                    <input id="accountUsername" type="text" autocomplete="username" placeholder="Tu username">
-                </div>
-                <div class="account-field">
-                    <label for="accountEmail">Email</label>
-                    <input id="accountEmail" type="email" autocomplete="email" placeholder="tucorreo@email.com" required>
-                </div>
-                <div class="account-field">
-                    <label for="accountPassword">Contrasena</label>
-                    <input id="accountPassword" type="password" autocomplete="current-password" placeholder="********" required>
-                </div>
-                <button id="accountSubmitBtn" type="submit" class="account-submit-btn">Entrar</button>
-            </form>
-            <button id="accountToggleMode" class="account-toggle-btn" type="button">No tienes cuenta? Registrate</button>
-            <button id="accountSignOutBtn" class="account-signout-btn" type="button">Cerrar sesion</button>
-            <div class="account-message" id="accountMessage"></div>
         </div>
     </div>
 
@@ -374,7 +354,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>
 
