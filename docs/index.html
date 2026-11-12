@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NEXO.TV Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="container">
+            <a href="../index.html" class="project-name">NEXO.TV</a>
+            <span class="topbar-title">Documentation</span>
+        </div>
+    </header>
+
+    <div class="layout container">
+        <aside class="sidebar">
+            <strong>Contents</strong>
+            <a href="#overview">Overview</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#catalog">Catalog</a>
+            <a href="#tmdb">TMDB integration</a>
+            <a href="#frontend">Frontend behavior</a>
+            <a href="#deployment">Deployment</a>
+            <a href="#maintenance">Maintenance</a>
+            <hr>
+            <strong>External links</strong>
+            <a href="https://playnexotv.me" target="_blank" rel="noopener">NEXO.TV</a>
+            <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>
+            <a href="https://developer.themoviedb.org/docs" target="_blank" rel="noopener">TMDB API docs</a>
+            <a href="https://app.netlify.com/" target="_blank" rel="noopener">Netlify</a>
+            <a href="https://archive.org/" target="_blank" rel="noopener">Internet Archive</a>
+            <a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a>
+        </aside>
+
+        <main class="content">
+            <h1>NEXO.TV Documentation</h1>
+            <p class="subtitle">Technical documentation for the NEXO.TV static movie catalog.</p>
+            <p class="version">Last updated: November 12, 2026</p>
+
+            <section id="overview">
+                <h2>Overview</h2>
+                <p>NEXO.TV is a static web application for browsing and playing a curated movie catalog. The catalog is managed in Google Sheets and enriched with movie metadata from TMDB.</p>
+                <div class="badges">
+                    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>Google Sheets</span><span>TMDB</span><span>Netlify</span>
+                </div>
+                <h3>External media and legal scope</h3>
+                <p>NEXO.TV is a public index and interface, not a media host. Movies are linked from <a href="https://archive.org/" target="_blank" rel="noopener">Internet Archive</a>; in cases involving NEXO.TV original works, links may point to <a href="https://huggingface.co/" target="_blank" rel="noopener">Hugging Face</a>. NEXO.TV only crosses TMDB data with those external URLs and does not own, upload, store or host the linked works.</p>
+                <p>NEXO.TV does not guarantee the legality, license, authenticity or availability of any external file. The project follows applicable United States copyright rules, but access may be subject to different laws in each country. Users must verify the legality of access in their jurisdiction. NEXO.TV is available worldwide for cultural access, without claiming ownership of any linked work.</p>
+                <p>If a rights holder requests removal, NEXO.TV is willing to review and remove the relevant work, link or reference. Send notices to <a href="mailto:nexotv.info@gmail.com">nexotv.info@gmail.com</a> or <a href="mailto:davidjoseferreiro@gmail.com">davidjoseferreiro@gmail.com</a>.</p>
+            </section>
+
+            <section id="architecture">
+                <h2>Architecture</h2>
+                <table>
+                    <thead><tr><th>Component</th><th>Location</th><th>Purpose</th></tr></thead>
+                    <tbody>
+                        <tr><td>Frontend</td><td><code>index.html</code>, <code>styles.css</code>, <code>script.js</code></td><td>Catalog UI, filters, player and local preferences.</td></tr>
+                        <tr><td>Catalog</td><td>Published Google Sheet</td><td>Editorial movie data and playback URLs.</td></tr>
+                        <tr><td>TMDB proxy</td><td><code>netlify/functions/tmdb.js</code></td><td>Fetches metadata without exposing the API token.</td></tr>
+                        <tr><td>Documentation</td><td><code>docs/</code></td><td>This technical reference.</td></tr>
+                    </tbody>
+                </table>
+                <p><code>movies.json</code> is not used by the application.</p>
+            </section>
+
+            <section id="catalog">
+                <h2>Catalog source</h2>
+                <p>The CSV published from Google Sheets is loaded every time the application starts. Requests use a cache-busting parameter and <code>cache: "no-store"</code>.</p>
+                <p><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSF1IG0vUwyd4f9ubkjbRKMi_EUVRYLNFXWzAHX7kvt2s2m4Sqic1k8rI_pXjqqy6dMZFJOGlZa7LYH/pubhtml?gid=753526431&single=true" target="_blank" rel="noopener">Open the published catalog</a></p>
+
+                <h3>Columns</h3>
+                <table>
+                    <thead><tr><th>Column</th><th>Use</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>idCatalogo</code></td><td>Internal catalog ID and URL route.</td></tr>
+                        <tr><td><code>idTMDB</code></td><td>TMDB movie ID used for metadata enrichment.</td></tr>
+                        <tr><td><code>titulo</code>, <code>sinopsis</code>, <code>videoUrl</code></td><td>Title, synopsis and playback source.</td></tr>
+                        <tr><td><code>año</code>, <code>generos</code></td><td>Used from the sheet when present; TMDB is used when empty.</td></tr>
+                        <tr><td><code>director</code>, <code>reparto</code>, <code>productoras</code></td><td>Editorial fallback values for technical data.</td></tr>
+                        <tr><td><code>posterURL</code>, <code>landscapeURL</code></td><td>Fallback artwork when TMDB has no image.</td></tr>
+                        <tr><td><code>isEssential</code>, <code>isOriginal</code>, <code>hasOscar</code></td><td>Catalog filters and labels.</td></tr>
+                    </tbody>
+                </table>
+                <p>After changing the spreadsheet, use <strong>File → Share → Publish to web → Republish</strong>.</p>
+            </section>
+
+            <section id="tmdb">
+                <h2>TMDB integration</h2>
+                <p>The Netlify function calls the TMDB movie endpoint with Spanish localization and credits:</p>
+                <pre><code>/3/movie/{id}?language=es-ES&amp;append_to_response=credits</code></pre>
+                <p>It returns:</p>
+                <ul>
+                    <li>Title, poster and landscape image</li>
+                    <li>Rating, release date and runtime</li>
+                    <li>Year and genres</li>
+                    <li>Director and cast</li>
+                    <li>Production companies and countries</li>
+                </ul>
+                <p>Data priority is:</p>
+                <ol>
+                    <li>Non-empty values from the Google Sheet.</li>
+                    <li>TMDB values for missing fields.</li>
+                    <li>Video metadata for duration when TMDB has no runtime.</li>
+                </ol>
+                <p>Rating and release date fields are hidden when no value is available.</p>
+                <p>Reference: <a href="https://developer.themoviedb.org/docs" target="_blank" rel="noopener">TMDB API documentation</a>.</p>
+            </section>
+
+            <section id="frontend">
+                <h2>Frontend behavior</h2>
+                <ul>
+                    <li>The loading screen remains visible while the catalog and TMDB data are being loaded.</li>
+                    <li>Favorites and Continue Watching use browser <code>localStorage</code>.</li>
+                    <li>There is no account or user synchronization system.</li>
+                    <li>Essential, Original and Academy Awards filters are controlled by spreadsheet fields.</li>
+                    <li>Must See cards and Must See artwork are no longer used.</li>
+                    <li>Videos are hosted externally, including Internet Archive and Hugging Face.</li>
+                </ul>
+            </section>
+
+            <section id="deployment">
+                <h2>Deployment</h2>
+                <p>Netlify hosts the static site and the serverless TMDB function.</p>
+                <h3>Environment variable</h3>
+                <p>Configure this variable in Netlify. Do not put the token in frontend files.</p>
+                <pre><code>TMDB_READ_TOKEN=YOUR_TMDB_READ_TOKEN</code></pre>
+                <h3>CLI commands</h3>
+                <pre><code>cd "C:\Users\david\OneDrive\Documentos\ReposPersonales\NEXO.TV"
+netlify login
+netlify link
+netlify env:set TMDB_READ_TOKEN "YOUR_TOKEN"
+netlify deploy --prod</code></pre>
+                <p>Local development:</p>
+                <pre><code>netlify dev</code></pre>
+                <p>Function test:</p>
+                <pre><code>/.netlify/functions/tmdb?ids=558</code></pre>
+                <p>References: <a href="https://docs.netlify.com/functions/overview/" target="_blank" rel="noopener">Netlify Functions</a> · <a href="https://app.netlify.com/" target="_blank" rel="noopener">Netlify dashboard</a>.</p>
+            </section>
+
+            <section id="maintenance">
+                <h2>Maintenance</h2>
+                <p>Update this documentation whenever a project change affects the data source, metadata, deployment or user interface.</p>
+                <ol>
+                    <li>Update the date at the top of this page.</li>
+                    <li>Update the affected section.</li>
+                    <li>Update <code>README.md</code> when setup instructions change.</li>
+                    <li>Run the syntax and diff checks.</li>
+                    <li>Verify that no API token was added to the repository.</li>
+                </ol>
+                <pre><code>node --check .\script.js
+node --check .\netlify\functions\tmdb.js
+git diff --check</code></pre>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            NEXO.TV · <a href="../README.md">README</a> · <a href="https://github.com/DavidFerreiro-dev/NEXO.TV" target="_blank" rel="noopener">GitHub</a>
+        </div>
+    </footer>
+</body>
+</html>

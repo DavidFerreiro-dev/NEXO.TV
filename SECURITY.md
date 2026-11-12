@@ -1,17 +1,21 @@
 # 🎬 ACERCA DE NEXO.TV - TÉRMINOS DE USO Y LEGAL
 
-## 1. SOBRE EL PROYECTO
-**NEXO.TV** es una plataforma de preservación cinematográfica digital y streaming de acceso libre. Nuestra misión es rescatar, curar y facilitar el acceso a obras maestras del cine que han pasado a formar parte del patrimonio común de la humanidad, así como ofrecer nuevas versiones restauradas y doblajes exclusivos producidos por nuestro equipo.
+## 1. SOBRE EL PROYECTO Y EL ALCANCE DE NEXO.TV
+**NEXO.TV** es un repositorio público y una interfaz de indexación cultural. El catálogo cruza datos de TMDB con enlaces de vídeo de terceros, principalmente **Internet Archive** y, en casos de obras originales, **Hugging Face**.
+
+NEXO.TV no aloja, almacena, distribuye ni es propietaria de las películas enlazadas. NEXO.TV no controla los archivos externos ni garantiza su disponibilidad, autenticidad, licencia o legalidad. La plataforma únicamente organiza referencias públicas en una interfaz.
+
+NEXO.TV comparte ciertos principios de funcionamiento con plataformas como **Stremio**, que reúnen información audiovisual y facilitan el acceso a contenidos procedentes de distintas fuentes mediante una interfaz unificada. Esta comparación describe una similitud de funcionamiento y no implica una relación, afiliación o situación jurídica idéntica.
 
 Este proyecto es de código abierto en su estructura web y tiene fines educativos, culturales y de entretenimiento sin ánimo de lucro directo mediante suscripciones.
 
 ---
 
-## 2. MARCO LEGAL Y PROPIEDAD INTELECTUAL (EE.UU.)
-NEXO.TV opera y se rige bajo las leyes de Propiedad Intelectual y Derechos de Autor de los Estados Unidos de América.
+## 2. MARCO LEGAL Y PROPIEDAD INTELECTUAL
+NEXO.TV se rige por las normas estadounidenses aplicables de propiedad intelectual y derechos de autor. La interfaz está disponible mundialmente con fines culturales, pero la legalidad del acceso a cada obra puede variar según el país y la situación concreta de los derechos.
 
-* **Dominio Público:** Todas las películas catalogadas como "Essential" o "Clásicos" en esta plataforma se encuentran en el Dominio Público en los EE.UU. (obras publicadas antes de 1929 o aquellas cuyos derechos no fueron renovados).
-* **Responsabilidad del Usuario:** Dado que las leyes de copyright varían según el país (por ejemplo, la norma de "70 años tras la muerte del autor" en Europa), el usuario es responsable de verificar si el visionado de estas obras es legal en su jurisdicción local.
+* **Sin garantía jurídica:** NEXO.TV no determina ni garantiza que cada archivo externo sea de dominio público o que pueda visualizarse legalmente en todas las jurisdicciones.
+* **Responsabilidad del usuario:** Cada usuario debe verificar la legalidad del acceso y uso de cualquier obra en su jurisdicción.
 
 ---
 
@@ -20,14 +24,19 @@ NEXO.TV actúa como un índice y una interfaz de usuario.
 
 * **No alojamos archivos de vídeo:** Ningún archivo audiovisual (mp4, mkv, avi) se encuentra almacenado en nuestros servidores.
 * **Hotlinking y Embedding:**
-  * **Catálogo General:** Las películas y cortometrajes se retransmiten desde plataformas de preservación digital como **Internet Archive (archive.org)**, **Wikimedia Commons** o similares.
-  * **NEXO.TV Originals:** Para asegurar la estabilidad de retransmisión de contenido en FullHD/4K, nuestras producciones originales están alojadas en **Hugging Face Datasets**.
+  * **Catálogo General:** Las películas y cortometrajes se enlazan principalmente desde **Internet Archive (archive.org)** y otros servicios externos.
+  * **NEXO.TV Originals:** Algunos enlaces de obras originales pueden apuntar a **Hugging Face Datasets**.
 
 > *NEXO.TV no tiene control sobre la disponibilidad, calidad o persistencia de los archivos alojados en dichos servidores externos.*
 
+NEXO.TV tampoco se hace responsable de la legalidad del archivo externo enlazado. La plataforma no es dueña de ninguna obra.
+
+## 4. NOTIFICACIONES Y RETIRADAS
+NEXO.TV está dispuesta a revisar y retirar cualquier obra, enlace o referencia cuando el titular de derechos lo solicite o cuando exista una reclamación razonable. Para solicitar una retirada, escribe a **nexotv.info@gmail.com** o **davidjoseferreiro@gmail.com**, incluyendo la obra, el enlace afectado y una explicación de la reclamación.
+
 ---
 
-## 4. DERECHOS SOBRE "NEXO ORIGINALS" Y OBRAS DERIVADAS
+## 5. DERECHOS SOBRE "NEXO ORIGINALS" Y OBRAS DERIVADAS
 Aunque las películas base sean de dominio público, las ediciones específicas creadas por NEXO.TV constituyen una **"Obra Derivada"**.
 
 * Los **doblajes originales**, subtítulos exclusivos, introducciones, restauraciones visuales y material gráfico (logotipos y diseño web) son propiedad intelectual exclusiva de NEXO.TV y sus creadores.
@@ -38,27 +47,27 @@ Artista: [http://audionautix.com/](http://audionautix.com/)
 
 ---
 
-## 5. CÓDIGO FUENTE Y DESARROLLO
+## 7. CÓDIGO FUENTE Y DESARROLLO
 El código fuente de la plataforma (Frontend y Backend) es transparente y puede ser consultado con fines educativos.
 
 * 💻 **Repositorio Oficial en GitHub:** [DavidFerreiro-dev/NEXO.TV](https://github.com/DavidFerreiro-dev/NEXO.TV)
 
 ---
 
-## 6. POLÍTICA DE PRIVACIDAD
+## 8. POLÍTICA DE PRIVACIDAD
 NEXO.TV **no requiere registro**. No recopilamos datos personales, correos electrónicos ni información de tarjetas de crédito. Utilizamos almacenamiento local (cookies técnicas) únicamente para recordar preferencias básicas del reproductor.
 
 ---
 
-## 7. CONTACTO Y REDES
+## 9. CONTACTO Y REDES
 Para reclamaciones de derechos (DMCA), sugerencias o colaboraciones:
 
 * 📸 **Instagram Oficial:** [@playnexotv](https://instagram.com/playnexotv)
-* 📧 **Contacto Administrativo:** [nexotv.info@gmail.com](mailto:nexotv.info@gmail.com)
+* 📧 **Contacto Administrativo:** [nexotv.info@gmail.com](mailto:nexotv.info@gmail.com) o [davidjoseferreiro@gmail.com](mailto:davidjoseferreiro@gmail.com)
 
 ---
 
-## 8. LICENCIA Y COPYRIGHT
+## 10. LICENCIA Y COPYRIGHT
 
 ### 🛡️ Licencia del Código (MIT)
 El código fuente (HTML, PHP, CSS, JS) de este proyecto se distribuye bajo la **Licencia MIT**. Eres libre de usarlo, modificarlo y distribuirlo siempre que se mantenga la atribución al autor original.
